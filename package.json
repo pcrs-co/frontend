@@ -10,8 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.7",
+    "axios": "^1.9.0",
+    "daisyui": "^5.0.35",
+    "intl-tel-input": "^25.3.1",
+    "jwt-decode": "^4.0.0",
+    "notistack": "^3.0.2",
+    "ra-data-fakerest": "^5.8.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-admin": "^5.8.2",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "react-toastify": "^11.0.5",
+    "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
