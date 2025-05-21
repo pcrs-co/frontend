@@ -3,9 +3,9 @@ import { Link } from "react-router";
 export default function Footer() {
   return (
     <>
-      <footer className="footer sm:footer-horizontal">
+      <footer className="footer sm:footer-horizontal footer-center p-4">
         <aside>
-          <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             {new Date().getFullYear()} -{" "}
             <Link to="/" className="link link-hover">
               PCRS

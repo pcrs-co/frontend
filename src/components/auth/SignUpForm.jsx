@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -70,7 +73,7 @@ export default function SignUpForm() {
 
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* Phone */}
-                <fieldset className="fieldset w-full md:w-[54%]">
+                <fieldset className="fieldset w-full md:w-[56%]">
                   <legend className="fieldset-legend">Phone</legend>
                   <label className="input validator w-full">
                     <svg
@@ -91,21 +94,28 @@ export default function SignUpForm() {
                         ></path>
                       </g>
                     </svg>
-                    <input
-                      type="tel"
-                      className="tabular-nums"
-                      required
-                      placeholder="Phone"
-                      pattern="[0-9]*"
-                      minlength="10"
-                      maxlength="10"
-                      title="Must be 10 digits"
+                    <PhoneInput
+                      country={"tz"}
+                      value={phone}
+                      onChange={setPhone}
+                      enableSearch={true}
+                      inputProps={{
+                        name: "phone",
+                        required: true,
+                        placeholder: "Enter phone number",
+                        className: "input input-bordered w-full tabular-nums", // DaisyUI styling
+                      }}
+                      containerClass="flex w-full !border-none"
+                      buttonClass="!bg-base-100 !border-none !px-2"
+                      inputClass="!w-full !pl-12 !pr-4 tabular-nums" // override internal input class
+                      dropdownClass="!bg-base-100 !text-base-content !shadow-md z-50"
+                      // searchClass="input input-sm input-bordered w-full mb-2"
                     />
                   </label>
                 </fieldset>
 
                 {/* Date of Birth */}
-                <fieldset className="fieldset w-full md:w-[42%]">
+                <fieldset className="fieldset w-full md:w-[40%]">
                   <legend className="fieldset-legend">Date of Birth</legend>
                   <input
                     type="date"
