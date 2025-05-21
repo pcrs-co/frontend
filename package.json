@@ -13,7 +13,6 @@
     "@tailwindcss/vite": "^4.1.7",
     "axios": "^1.9.0",
     "daisyui": "^5.0.35",
-    "intl-tel-input": "^25.3.1",
     "jwt-decode": "^4.0.0",
     "notistack": "^3.0.2",
     "ra-data-fakerest": "^5.8.2",
