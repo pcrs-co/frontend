@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -45,7 +48,7 @@ export default function SignInForm() {
 
                 {/* Password */}
                 <legend className="fieldset-legend text-sm">Password</legend>
-                <label className="input validator w-full">
+                <label className="input w-full">
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -72,16 +75,16 @@ export default function SignInForm() {
                     required
                     placeholder="Enter your Password"
                   />
-                  <span
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                  >
-                    {showPassword ? (
-                      <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    ) : (
-                      <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                    )}
-                  </span>
+                  <label className="swap">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={togglePasswordVisibility}
+                      className="hidden"
+                    />
+                    <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
+                    <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
+                  </label>
                 </label>
               </fieldset>
             </div>
