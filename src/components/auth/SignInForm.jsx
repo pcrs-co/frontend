@@ -117,7 +117,7 @@ export default function SignInForm() {
 
               <div className="flex flex-row items-center justify-between">
                 <fieldset className="fieldset">
-                  <label className="label text-sm">
+                  <label className="label text-sm ml-px">
                     <input
                       type="checkbox"
                       defaultChecked
@@ -127,7 +127,10 @@ export default function SignInForm() {
                   </label>
                 </fieldset>
 
-                <Link to="/auth/forgot-password" className="link-info text-sm">
+                <Link
+                  to="/auth/forgot-password"
+                  className="link-info text-sm mr-px"
+                >
                   Forgot Password?
                 </Link>
               </div>
