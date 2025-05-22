@@ -6,7 +6,37 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(false);
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPassword = () => {
+    setConfirmPassword(!confirmPassword);
+  };
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    birthDate: "",
+    region: "",
+    district: "",
+    newPassword: "",
+    repeatPassword: "",
+  });
+
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formData);
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -27,12 +57,17 @@ export default function SignUpForm() {
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* First Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend text-sm">First Name</legend>
+                  <legend className="fieldset-legend text-sm">
+                    First Name
+                  </legend>
                   <input
                     className="input validator"
+                    name="firstName"
                     type="text"
                     required
-                    placeholder="Enter your first name"
+                    placeholder="e.g. John"
+                    title="Enter your first name"
+                    onChange={handleInput}
                   />
                 </fieldset>
 
@@ -41,9 +76,12 @@ export default function SignUpForm() {
                   <legend className="fieldset-legend text-sm">Last Name</legend>
                   <input
                     className="input validator"
+                    name="lastName"
                     type="text"
                     required
-                    placeholder="Enter your last name"
+                    placeholder="e.g. Doe"
+                    title="Enter your last name"
+                    onChange={handleInput}
                   />
                 </fieldset>
               </div>
@@ -68,7 +106,14 @@ export default function SignUpForm() {
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                     </g>
                   </svg>
-                  <input type="email" placeholder="e.g. mail@site.com" required />
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="e.g. mail@site.com"
+                    title="Enter your e-mail"
+                    onChange={handleInput}
+                    required
+                  />
                 </label>
               </fieldset>
 
@@ -98,14 +143,14 @@ export default function SignUpForm() {
                     <input
                       type="tel"
                       className="tabular-nums"
-                      value={phone}
-                      onChange={setPhone}
+                      name="phoneNumber"
                       required
                       placeholder="Enter your Phone Number"
                       pattern="[0-9]*"
                       minlength="10"
                       maxlength="10"
                       title="Must be 10 digits"
+                      onChange={handleInput}
                     />
 
                     {/* <PhoneInput
@@ -119,11 +164,16 @@ export default function SignUpForm() {
 
                 {/* Date of Birth */}
                 <fieldset className="fieldset w-full md:w-[40%]">
-                  <legend className="fieldset-legend text-sm">Date of Birth</legend>
+                  <legend className="fieldset-legend text-sm">
+                    Date of Birth
+                  </legend>
                   <input
                     type="date"
+                    name="birthDate"
                     className="input validator w-full"
                     required
+                    title="The day you were born"
+                    onChange={handleInput}
                   />
                 </fieldset>
               </div>
@@ -135,7 +185,7 @@ export default function SignUpForm() {
                   <div className="flex flex-row md:flex-wrap items-center justify-between">
                     <label className="select w-full md:w-[48%]">
                       <span className="label">Region</span>
-                      <select>
+                      <select name="region" onChange={handleInput}>
                         <option>Choose...</option>
                         <option>Dar Es Salaam</option>
                       </select>
@@ -143,7 +193,7 @@ export default function SignUpForm() {
 
                     <label className="select w-full md:w-[48%]">
                       <span className="label">District</span>
-                      <select>
+                      <select name="district" onChange={handleInput}>
                         <option>Choose...</option>
                         <option>Ubungo</option>
                       </select>
@@ -155,7 +205,9 @@ export default function SignUpForm() {
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend text-sm">Your Password</legend>
+                  <legend className="fieldset-legend text-sm">
+                    Your Password
+                  </legend>
                   <label className="input validator w-full">
                     <svg
                       className="h-[1em] opacity-50"
@@ -180,11 +232,13 @@ export default function SignUpForm() {
                     </svg>
                     <input
                       type={showPassword ? "text" : "password"}
+                      name="newPassword"
                       required
                       placeholder="Enter new Password"
+                      onChange={handleInput}
                     />
                     <span
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={togglePassword}
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                     >
                       {showPassword ? (
@@ -198,7 +252,9 @@ export default function SignUpForm() {
 
                 {/* Confirm Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend text-sm">Confirm Password</legend>
+                  <legend className="fieldset-legend text-sm">
+                    Confirm Password
+                  </legend>
                   <label className="input validator w-full">
                     <svg
                       className="h-[1em] opacity-50"
@@ -223,11 +279,13 @@ export default function SignUpForm() {
                     </svg>
                     <input
                       type={showPassword ? "text" : "password"}
+                      name="repeatPassword"
                       required
                       placeholder="Repeat Password"
+                      onChange={handleInput}
                     />
                     <span
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={togglePassword}
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                     >
                       {showPassword ? (
@@ -241,7 +299,7 @@ export default function SignUpForm() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-soft btn-info w-full">
+            <button onClick={handleSubmit} className="btn btn-soft btn-info w-full">
               Sign Up
             </button>
           </form>
