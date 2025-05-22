@@ -13,31 +13,7 @@ cd frontend
 npm install
 ```
 
-```bash
-npm install axios react-router-dom jwt-decode
-```
-
-```bash
-npm install react-toastify
-npm install bootstrap
-npm install intl-tel-input
-npm install intl-tel-input/build/css/intlTelInput.css
-```
-
-if warning errors of old verion occur do the following:
-
-```bash
-sudo npm install -g n
-sudo n 22
-```
-
-```bash
-sudo n 22
-```
-
-```bash
-node -v
-```
+This will install all the necessary dependencies for the frontend.
 
 ---
 
