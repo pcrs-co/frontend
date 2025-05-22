@@ -25,7 +25,7 @@ export default function NotFound() {
 
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+            className="inline-flex items-center text-sm link-info"
           >
             <ChevronLeftIcon className="size-5" />
             <span className="link link-hover">Go Back</span>

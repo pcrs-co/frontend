@@ -15,17 +15,37 @@ export default function SignInForm() {
           <h1 className="mb-2 font-semibold text-gray-800 text-2xl dark:text-white/90 sm:text-title-md">
             Welcome Back!
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Enter your email and password to sign in
+          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+            Don't have an account? {""}
+            <Link
+              to="/signup"
+              className="inline-flex items-center link-info gap-x-1"
+            >
+              <span className="link link-hover">Sign Up</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-4"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.25 3.75H19.5a.75.75 0 0 1 .75.75v11.25a.75.75 0 0 1-1.5 0V6.31L5.03 20.03a.75.75 0 0 1-1.06-1.06L17.69 5.25H8.25a.75.75 0 0 1 0-1.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </Link>
           </p>
         </div>
 
         <div>
           <form className="space-y-6">
-            <div>
+            <div className="space-y-3">
               <fieldset className="fieldset">
                 {/* E-mail */}
-                <legend className="fieldset-legend text-sm">E-mail</legend>
+                <legend className="fieldset-legend text-sm">
+                  E-mail<span className="text-error">*</span>
+                </legend>
                 <label className="input validator w-full">
                   <svg
                     className="h-[1em] opacity-50"
@@ -43,11 +63,18 @@ export default function SignInForm() {
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                     </g>
                   </svg>
-                  <input type="email" placeholder="mail@site.com" required />
+                  <input
+                    type="email"
+                    placeholder="E.g. mail@site.com"
+                    required
+                  />
                 </label>
-
+              </fieldset>
+              <fieldset>
                 {/* Password */}
-                <legend className="fieldset-legend text-sm">Password</legend>
+                <legend className="fieldset-legend text-sm">
+                  Password<span className="text-error">*</span>
+                </legend>
                 <label className="input w-full">
                   <svg
                     className="h-[1em] opacity-50"
@@ -87,21 +114,29 @@ export default function SignInForm() {
                   </label>
                 </label>
               </fieldset>
+
+              <div className="flex flex-row items-center justify-between">
+                <fieldset className="fieldset">
+                  <label className="label text-sm">
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="checkbox checkbox-xs checkbox-info"
+                    />
+                    Remember me
+                  </label>
+                </fieldset>
+
+                <Link to="/auth/forgot-password" className="link-info text-sm">
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             <button type="submit" className="btn btn-soft btn-info w-full">
               Sign In
             </button>
           </form>
-
-          <div className="mt-5">
-            <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-              Don't have an account? {""}
-              <Link to="/signup" className="link link-hover link-info">
-                Sign Up
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>

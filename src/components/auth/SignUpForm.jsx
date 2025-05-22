@@ -42,11 +42,26 @@ export default function SignUpForm() {
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div className="mb-5 sm:mb-8">
           <h1 className="mb-2 font-semibold text-gray-800 dark:text-white/90 text-2xl sm:text-title-md">
-            Hello!
+            Create an account
           </h1>
 
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Register below to enjoy full functionality
+          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+            Already have an account? {""}
+            <Link to="/signin" className="inline-flex items-center link-info gap-x-1">
+              <span className="link link-hover">Sign In</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-4"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.25 3.75H19.5a.75.75 0 0 1 .75.75v11.25a.75.75 0 0 1-1.5 0V6.31L5.03 20.03a.75.75 0 0 1-1.06-1.06L17.69 5.25H8.25a.75.75 0 0 1 0-1.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </Link>
           </p>
         </div>
 
@@ -57,14 +72,14 @@ export default function SignUpForm() {
                 {/* First Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    First Name
+                    First Name<span className="text-error">*</span>
                   </legend>
                   <input
-                    className="input validator"
+                    className="input"
                     name="firstName"
                     type="text"
                     required
-                    placeholder="e.g. John"
+                    placeholder="E.g. John"
                     title="Enter your first name"
                     onChange={handleInput}
                   />
@@ -72,13 +87,15 @@ export default function SignUpForm() {
 
                 {/* Last Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend text-sm">Last Name</legend>
+                  <legend className="fieldset-legend text-sm">
+                    Last Name<span className="text-error">*</span>
+                  </legend>
                   <input
-                    className="input validator"
+                    className="input"
                     name="lastName"
                     type="text"
                     required
-                    placeholder="e.g. Doe"
+                    placeholder="E.g. Doe"
                     title="Enter your last name"
                     onChange={handleInput}
                   />
@@ -87,8 +104,10 @@ export default function SignUpForm() {
 
               {/* E-mail */}
               <fieldset className="fieldset">
-                <legend className="fieldset-legend text-sm">E-mail</legend>
-                <label className="input validator w-full">
+                <legend className="fieldset-legend text-sm">
+                  E-mail<span className="text-error">*</span>
+                </legend>
+                <label className="input w-full">
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +127,7 @@ export default function SignUpForm() {
                   <input
                     name="email"
                     type="email"
-                    placeholder="e.g. mail@site.com"
+                    placeholder="E.g. mail@site.com"
                     title="Enter your e-mail"
                     onChange={handleInput}
                     required
@@ -119,8 +138,10 @@ export default function SignUpForm() {
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* Phone */}
                 <fieldset className="fieldset w-full md:w-[56%]">
-                  <legend className="fieldset-legend text-sm">Phone</legend>
-                  <label className="input validator w-full">
+                  <legend className="fieldset-legend text-sm">
+                    Phone<span className="text-error">*</span>
+                  </legend>
+                  <label className="input w-full">
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -164,12 +185,12 @@ export default function SignUpForm() {
                 {/* Date of Birth */}
                 <fieldset className="fieldset w-full md:w-[40%]">
                   <legend className="fieldset-legend text-sm">
-                    Date of Birth
+                    Date of Birth<span className="text-error">*</span>
                   </legend>
                   <input
                     type="date"
                     name="birthDate"
-                    className="input validator w-full"
+                    className="input w-full"
                     required
                     title="The day you were born"
                     onChange={handleInput}
@@ -183,9 +204,13 @@ export default function SignUpForm() {
                   <legend className="fieldset-legend text-sm">Location</legend>
                   <div className="flex flex-row md:flex-wrap items-center justify-between">
                     <label className="select w-full md:w-[50%]">
-                      <span className="label">Region</span>
+                      <span className="label">
+                        Region<span className="text-error">*</span>
+                      </span>
                       <select name="region" onChange={handleInput}>
-                        <option disabled selected value="">Choose...</option>
+                        <option disabled selected value="">
+                          Choose...
+                        </option>
                         <option>Dar Es Salaam</option>
                       </select>
                     </label>
@@ -193,7 +218,9 @@ export default function SignUpForm() {
                     <label className="select w-full md:w-[46%]">
                       <span className="label">District</span>
                       <select name="district" onChange={handleInput}>
-                        <option disabled selected value="">Choose...</option>
+                        <option disabled selected value="">
+                          Choose...
+                        </option>
                         <option>Ubungo</option>
                       </select>
                     </label>
@@ -205,7 +232,7 @@ export default function SignUpForm() {
                 {/* Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    Your Password
+                    Your Password<span className="text-error">*</span>
                   </legend>
                   <label className="input w-full">
                     <svg
@@ -252,7 +279,7 @@ export default function SignUpForm() {
                 {/* Confirm Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    Confirm Password
+                    Confirm Password<span className="text-error">*</span>
                   </legend>
                   <label className="input w-full">
                     <svg
@@ -304,15 +331,6 @@ export default function SignUpForm() {
               Sign Up
             </button>
           </form>
-
-          <div className="mt-5">
-            <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-              Already have an account? {""}
-              <Link to="/signin" className="link link-hover link-info">
-                Sign In
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>
