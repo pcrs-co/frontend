@@ -1,7 +1,10 @@
-import { Link } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Footer from "../../components/layout/Footer";
+import { ChevronLeftIcon } from "../../assets/icons";
 
 export default function NotFound() {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
@@ -21,12 +24,13 @@ export default function NotFound() {
             We can’t seem to find the page you are looking for!
           </p>
 
-          <Link
-            to="/"
-            className="btn btn-info btn-soft"
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
           >
-            Back to Home Page
-          </Link>
+            <ChevronLeftIcon className="size-5" />
+            <span className="link link-hover">Back to Previous Page</span>
+          </button>
         </div>
       </div>
       <Footer />

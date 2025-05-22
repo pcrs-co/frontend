@@ -94,23 +94,25 @@ export default function SignUpForm() {
                         ></path>
                       </g>
                     </svg>
-                    <PhoneInput
+                    <input
+                      type="tel"
+                      className="tabular-nums"
+                      value={phone}
+                      onChange={setPhone}
+                      required
+                      placeholder="Enter your Phone Number"
+                      pattern="[0-9]*"
+                      minlength="10"
+                      maxlength="10"
+                      title="Must be 10 digits"
+                    />
+
+                    {/* <PhoneInput
                       country={"tz"}
                       value={phone}
                       onChange={setPhone}
                       enableSearch={true}
-                      inputProps={{
-                        name: "phone",
-                        required: true,
-                        placeholder: "Enter phone number",
-                        className: "input input-bordered w-full tabular-nums", // DaisyUI styling
-                      }}
-                      containerClass="flex w-full !border-none"
-                      buttonClass="!bg-base-100 !border-none !px-2"
-                      inputClass="!w-full !pl-12 !pr-4 tabular-nums" // override internal input class
-                      dropdownClass="!bg-base-100 !text-base-content !shadow-md z-50"
-                      // searchClass="input input-sm input-bordered w-full mb-2"
-                    />
+                    /> */}
                   </label>
                 </fieldset>
 
@@ -178,7 +180,7 @@ export default function SignUpForm() {
                     <input
                       type={showPassword ? "text" : "password"}
                       required
-                      placeholder="Enter your Password"
+                      placeholder="Enter new Password"
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -221,7 +223,7 @@ export default function SignUpForm() {
                     <input
                       type={showPassword ? "text" : "password"}
                       required
-                      placeholder="Enter your Password"
+                      placeholder="Repeat Password"
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
