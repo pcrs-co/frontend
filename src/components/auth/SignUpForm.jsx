@@ -12,9 +12,10 @@ export default function SignUpForm() {
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div className="mb-5 sm:mb-8">
-          <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+          <h1 className="mb-2 font-semibold text-gray-800 dark:text-white/90 text-2xl sm:text-title-md">
             Hello!
           </h1>
+
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Register below to enjoy full functionality
           </p>
@@ -26,7 +27,7 @@ export default function SignUpForm() {
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* First Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend">First Name</legend>
+                  <legend className="fieldset-legend text-sm">First Name</legend>
                   <input
                     className="input validator"
                     type="text"
@@ -37,7 +38,7 @@ export default function SignUpForm() {
 
                 {/* Last Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend">Last Name</legend>
+                  <legend className="fieldset-legend text-sm">Last Name</legend>
                   <input
                     className="input validator"
                     type="text"
@@ -49,7 +50,7 @@ export default function SignUpForm() {
 
               {/* E-mail */}
               <fieldset className="fieldset">
-                <legend className="fieldset-legend">E-mail</legend>
+                <legend className="fieldset-legend text-sm">E-mail</legend>
                 <label className="input validator w-full">
                   <svg
                     className="h-[1em] opacity-50"
@@ -74,7 +75,7 @@ export default function SignUpForm() {
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* Phone */}
                 <fieldset className="fieldset w-full md:w-[56%]">
-                  <legend className="fieldset-legend">Phone</legend>
+                  <legend className="fieldset-legend text-sm">Phone</legend>
                   <label className="input validator w-full">
                     <svg
                       className="h-[1em] opacity-50"
@@ -118,7 +119,7 @@ export default function SignUpForm() {
 
                 {/* Date of Birth */}
                 <fieldset className="fieldset w-full md:w-[40%]">
-                  <legend className="fieldset-legend">Date of Birth</legend>
+                  <legend className="fieldset-legend text-sm">Date of Birth</legend>
                   <input
                     type="date"
                     className="input validator w-full"
@@ -130,7 +131,7 @@ export default function SignUpForm() {
               {/* Location */}
               <div>
                 <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Location</legend>
+                  <legend className="fieldset-legend text-sm">Location</legend>
                   <div className="flex flex-row md:flex-wrap items-center justify-between">
                     <label className="select w-full md:w-[48%]">
                       <span className="label">Region</span>
@@ -154,7 +155,7 @@ export default function SignUpForm() {
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend">Your Password</legend>
+                  <legend className="fieldset-legend text-sm">Your Password</legend>
                   <label className="input validator w-full">
                     <svg
                       className="h-[1em] opacity-50"
@@ -197,7 +198,7 @@ export default function SignUpForm() {
 
                 {/* Confirm Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
-                  <legend className="fieldset-legend">Confirm Password</legend>
+                  <legend className="fieldset-legend text-sm">Confirm Password</legend>
                   <label className="input validator w-full">
                     <svg
                       className="h-[1em] opacity-50"

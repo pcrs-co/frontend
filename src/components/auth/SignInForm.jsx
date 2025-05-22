@@ -9,7 +9,7 @@ export default function SignInForm() {
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div className="mb-5 sm:mb-8">
-          <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+          <h1 className="mb-2 font-semibold text-gray-800 text-2xl dark:text-white/90 sm:text-title-md">
             Welcome Back!
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -22,7 +22,7 @@ export default function SignInForm() {
             <div>
               <fieldset className="fieldset">
                 {/* E-mail */}
-                <legend className="fieldset-legend">E-mail</legend>
+                <legend className="fieldset-legend text-sm">E-mail</legend>
                 <label className="input validator w-full">
                   <svg
                     className="h-[1em] opacity-50"
@@ -44,7 +44,7 @@ export default function SignInForm() {
                 </label>
 
                 {/* Password */}
-                <legend className="fieldset-legend">Password</legend>
+                <legend className="fieldset-legend text-sm">Password</legend>
                 <label className="input validator w-full">
                   <svg
                     className="h-[1em] opacity-50"
