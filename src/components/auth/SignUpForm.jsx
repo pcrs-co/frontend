@@ -6,12 +6,11 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState(false);
-
-  const togglePassword = () => {
+  const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const [confirmPassword, setConfirmPassword] = useState(false);
   const toggleConfirmPassword = () => {
     setConfirmPassword(!confirmPassword);
   };
@@ -35,7 +34,7 @@ export default function SignUpForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formData);
+    // Perform form submission logic here
   };
 
   return (
@@ -237,16 +236,19 @@ export default function SignUpForm() {
                       placeholder="Enter new Password"
                       onChange={handleInput}
                     />
-                    <span
-                      onClick={togglePassword}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      )}
-                    </span>
+                    {showPassword ? (
+                      <EyeIcon
+                        onClick={togglePasswordVisibility}
+                        cursor="pointer"
+                        className="fill-gray-500 dark:fill-gray-400 size-5 cursor:pointer"
+                      />
+                    ) : (
+                      <EyeCloseIcon
+                        onClick={togglePasswordVisibility}
+                        cursor="pointer"
+                        className="fill-gray-500 dark:fill-gray-400 size-5 cursor:pointer"
+                      />
+                    )}
                   </label>
                 </fieldset>
 
@@ -284,22 +286,28 @@ export default function SignUpForm() {
                       placeholder="Repeat Password"
                       onChange={handleInput}
                     />
-                    <span
-                      onClick={togglePassword}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-                      )}
-                    </span>
+                    {showPassword ? (
+                      <EyeIcon
+                        onClick={togglePasswordVisibility}
+                        cursor="pointer"
+                        className="fill-gray-500 dark:fill-gray-400 size-5"
+                      />
+                    ) : (
+                      <EyeCloseIcon
+                        onClick={togglePasswordVisibility}
+                        cursor="pointer"
+                        className="fill-gray-500 dark:fill-gray-400 size-5"
+                      />
+                    )}
                   </label>
                 </fieldset>
               </div>
             </div>
 
-            <button onClick={handleSubmit} className="btn btn-soft btn-info w-full">
+            <button
+              onClick={handleSubmit}
+              className="btn btn-soft btn-info w-full"
+            >
               Sign Up
             </button>
           </form>
