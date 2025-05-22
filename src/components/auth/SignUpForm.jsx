@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -182,18 +182,18 @@ export default function SignUpForm() {
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm">Location</legend>
                   <div className="flex flex-row md:flex-wrap items-center justify-between">
-                    <label className="select w-full md:w-[48%]">
+                    <label className="select w-full md:w-[50%]">
                       <span className="label">Region</span>
                       <select name="region" onChange={handleInput}>
-                        <option>Choose...</option>
+                        <option disabled selected value="">Choose...</option>
                         <option>Dar Es Salaam</option>
                       </select>
                     </label>
 
-                    <label className="select w-full md:w-[48%]">
+                    <label className="select w-full md:w-[46%]">
                       <span className="label">District</span>
                       <select name="district" onChange={handleInput}>
-                        <option>Choose...</option>
+                        <option disabled selected value="">Choose...</option>
                         <option>Ubungo</option>
                       </select>
                     </label>
@@ -207,7 +207,7 @@ export default function SignUpForm() {
                   <legend className="fieldset-legend text-sm">
                     Your Password
                   </legend>
-                  <label className="input validator w-full">
+                  <label className="input w-full">
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -229,6 +229,7 @@ export default function SignUpForm() {
                         ></circle>
                       </g>
                     </svg>
+
                     <input
                       type={showPassword ? "text" : "password"}
                       name="newPassword"
@@ -236,19 +237,15 @@ export default function SignUpForm() {
                       placeholder="Enter new Password"
                       onChange={handleInput}
                     />
-                    {showPassword ? (
-                      <EyeIcon
-                        onClick={togglePasswordVisibility}
-                        cursor="pointer"
-                        className="fill-gray-500 dark:fill-gray-400 size-5 cursor:pointer"
+                    <label className="swap">
+                      <input
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={togglePasswordVisibility}
                       />
-                    ) : (
-                      <EyeCloseIcon
-                        onClick={togglePasswordVisibility}
-                        cursor="pointer"
-                        className="fill-gray-500 dark:fill-gray-400 size-5 cursor:pointer"
-                      />
-                    )}
+                      <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
+                      <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
+                    </label>
                   </label>
                 </fieldset>
 
@@ -257,7 +254,7 @@ export default function SignUpForm() {
                   <legend className="fieldset-legend text-sm">
                     Confirm Password
                   </legend>
-                  <label className="input validator w-full">
+                  <label className="input w-full">
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -286,19 +283,15 @@ export default function SignUpForm() {
                       placeholder="Repeat Password"
                       onChange={handleInput}
                     />
-                    {showPassword ? (
-                      <EyeIcon
-                        onClick={togglePasswordVisibility}
-                        cursor="pointer"
-                        className="fill-gray-500 dark:fill-gray-400 size-5"
+                    <label className="swap">
+                      <input
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={togglePasswordVisibility}
                       />
-                    ) : (
-                      <EyeCloseIcon
-                        onClick={togglePasswordVisibility}
-                        cursor="pointer"
-                        className="fill-gray-500 dark:fill-gray-400 size-5"
-                      />
-                    )}
+                      <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
+                      <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
+                    </label>
                   </label>
                 </fieldset>
               </div>

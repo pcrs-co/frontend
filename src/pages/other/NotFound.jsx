@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import Footer from "../../components/layout/Footer";
 import { ChevronLeftIcon } from "../../assets/icons";
 
 export default function NotFound() {
@@ -29,11 +28,10 @@ export default function NotFound() {
             className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
           >
             <ChevronLeftIcon className="size-5" />
-            <span className="link link-hover">Back to Previous Page</span>
+            <span className="link link-hover">Go Back</span>
           </button>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
