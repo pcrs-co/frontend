@@ -1,20 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignUpForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const [confirmPassword, setConfirmPassword] = useState(false);
-  const toggleConfirmPassword = () => {
-    setConfirmPassword(!confirmPassword);
-  };
-
   const [signUpData, setSignUpData] = useState({
     firstName: "",
     lastName: "",
@@ -27,14 +17,62 @@ export default function SignUpForm() {
     repeatPassword: "",
   });
 
-  const handleInput = (event) => {
-    const { name, value } = event.target;
-    setSignUpData((prevState) => ({ ...prevState, [name]: value }));
+  const [consent, setConsent] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      birthDate,
+      region,
+      district,
+      newPassword,
+      repeatPassword,
+    } = signUpData;
+
+    const isValid =
+      firstName &&
+      lastName &&
+      email &&
+      phoneNumber &&
+      birthDate &&
+      region &&
+      district &&
+      newPassword &&
+      repeatPassword &&
+      newPassword === repeatPassword &&
+      consent;
+
+    setDisabled(!isValid);
+  }, [signUpData, consent]);
+
+  const toggleConsent = () => {
+    setConsent(!consent);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(signUpData);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    setSignUpData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Example submission logic
+    setTimeout(() => {
+      console.log(signUpData);
+      setLoading(false);
+    }, 5000);
   };
 
   return (
@@ -85,6 +123,7 @@ export default function SignUpForm() {
                     placeholder="E.g. John"
                     title="Enter your first name"
                     onChange={handleInput}
+                    value={signUpData.firstName}
                   />
                 </fieldset>
 
@@ -101,6 +140,7 @@ export default function SignUpForm() {
                     placeholder="E.g. Doe"
                     title="Enter your last name"
                     onChange={handleInput}
+                    value={signUpData.lastName}
                   />
                 </fieldset>
               </div>
@@ -133,6 +173,7 @@ export default function SignUpForm() {
                     placeholder="E.g. mail@site.com"
                     title="Enter your e-mail"
                     onChange={handleInput}
+                    value={signUpData.email}
                     required
                   />
                 </label>
@@ -170,10 +211,11 @@ export default function SignUpForm() {
                       required
                       placeholder="Enter your Phone Number"
                       pattern="[0-9]*"
-                      minlength="10"
-                      maxlength="10"
+                      minLength="10"
+                      maxLength="10"
                       title="Must be 10 digits"
                       onChange={handleInput}
+                      value={signUpData.phoneNumber}
                     />
 
                     {/* <PhoneInput
@@ -198,6 +240,7 @@ export default function SignUpForm() {
                     required
                     title="The day you were born"
                     onChange={handleInput}
+                    value={signUpData.birthDate}
                   />
                 </fieldset>
               </div>
@@ -211,8 +254,13 @@ export default function SignUpForm() {
                       <span className="label">
                         Region<span className="text-error opacity-60">*</span>
                       </span>
-                      <select name="region" onChange={handleInput}>
-                        <option disabled selected value="">
+                      <select
+                        name="region"
+                        onChange={handleInput}
+                        required
+                        value={signUpData.region}
+                      >
+                        <option disabled value="">
                           Choose...
                         </option>
                         <option>Dar Es Salaam</option>
@@ -221,8 +269,12 @@ export default function SignUpForm() {
 
                     <label className="select w-full md:w-[46%]">
                       <span className="label">District</span>
-                      <select name="district" onChange={handleInput}>
-                        <option disabled selected value="">
+                      <select
+                        name="district"
+                        onChange={handleInput}
+                        value={signUpData.district}
+                      >
+                        <option disabled value="">
                           Choose...
                         </option>
                         <option>Ubungo</option>
@@ -268,6 +320,7 @@ export default function SignUpForm() {
                       required
                       placeholder="Enter your Password"
                       onChange={handleInput}
+                      value={signUpData.newPassword}
                     />
                     <label className="swap">
                       <input
@@ -315,6 +368,7 @@ export default function SignUpForm() {
                       required
                       placeholder="Repeat Password"
                       onChange={handleInput}
+                      value={signUpData.repeatPassword}
                     />
                     <label className="swap">
                       <input
@@ -334,6 +388,7 @@ export default function SignUpForm() {
                   <input
                     type="checkbox"
                     className="checkbox checkbox-xs checkbox-info"
+                    onChange={toggleConsent}
                   />
                   I agree to the platform accessing my{" "}
                   <Link className="link-info link-hover">Information</Link>
@@ -343,8 +398,12 @@ export default function SignUpForm() {
 
             <button
               onClick={handleSubmit}
-              className="btn btn-soft btn-info w-full"
+              disabled={disabled}
+              className="btn btn-info w-full shadow-none"
             >
+              {loading ? (
+                <span className="loading loading-spinner"></span>
+              ) : null}
               Sign Up
             </button>
           </form>
@@ -353,4 +412,3 @@ export default function SignUpForm() {
     </div>
   );
 }
-

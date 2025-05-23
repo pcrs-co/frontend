@@ -1,26 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignInForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   const [signInData, setSignInData] = useState({
     email: "",
     password: "",
   });
 
-  const handleInput = (event) => {
-    const { name, value } = event.target;
-    setSignInData((prevState) => ({ ...prevState, [name]: value }));
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const { email, password } = signInData;
+    const isValid = email && password;
+    setDisabled(!isValid);
+  }, [signInData]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(signInData);
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    setSignInData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    setTimeout(() => {
+      console.log(signInData);
+      setLoading(false);
+    }, 5000);
   };
 
   return (
@@ -61,7 +75,7 @@ export default function SignInForm() {
                 <legend className="fieldset-legend text-sm">
                   E-mail<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className="input validator w-full">
+                <label className="input w-full">
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -84,6 +98,7 @@ export default function SignInForm() {
                     placeholder="E.g. mail@site.com"
                     required
                     onChange={handleInput}
+                    value={signInData.email}
                   />
                 </label>
               </fieldset>
@@ -121,6 +136,7 @@ export default function SignInForm() {
                     placeholder="Enter your Password"
                     name="password"
                     onChange={handleInput}
+                    value={signInData.password}
                   />
                   <label className="swap">
                     <input
@@ -158,8 +174,12 @@ export default function SignInForm() {
 
             <button
               onClick={handleSubmit}
-              className="btn btn-soft btn-info w-full"
+              disabled={disabled}
+              className="btn btn-info w-full shadow-none"
             >
+              {loading ? (
+                <span className="loading loading-spinner"></span>
+              ) : null}
               Sign In
             </button>
           </form>
