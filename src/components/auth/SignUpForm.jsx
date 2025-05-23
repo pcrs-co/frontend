@@ -15,7 +15,7 @@ export default function SignUpForm() {
     setConfirmPassword(!confirmPassword);
   };
 
-  const [formData, setFormData] = useState({
+  const [signUpData, setSignUpData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -29,12 +29,12 @@ export default function SignUpForm() {
 
   const handleInput = (event) => {
     const { name, value } = event.target;
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
+    setSignUpData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formData);
+    console.log(signUpData);
   };
 
   return (
@@ -75,10 +75,10 @@ export default function SignUpForm() {
                 {/* First Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    First Name<span className="text-error">*</span>
+                    First Name<span className="text-error opacity-60">*</span>
                   </legend>
                   <input
-                    className="input focus:placeholder-transparent"
+                    className="input"
                     name="firstName"
                     type="text"
                     required
@@ -91,10 +91,10 @@ export default function SignUpForm() {
                 {/* Last Name */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    Last Name<span className="text-error">*</span>
+                    Last Name<span className="text-error opacity-60">*</span>
                   </legend>
                   <input
-                    className="input focus:placeholder-transparent"
+                    className="input"
                     name="lastName"
                     type="text"
                     required
@@ -108,7 +108,7 @@ export default function SignUpForm() {
               {/* E-mail */}
               <fieldset className="fieldset">
                 <legend className="fieldset-legend text-sm">
-                  E-mail<span className="text-error">*</span>
+                  E-mail<span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input w-full">
                   <svg
@@ -133,7 +133,6 @@ export default function SignUpForm() {
                     placeholder="E.g. mail@site.com"
                     title="Enter your e-mail"
                     onChange={handleInput}
-                    className="focus:placeholder-transparent"
                     required
                   />
                 </label>
@@ -143,7 +142,7 @@ export default function SignUpForm() {
                 {/* Phone */}
                 <fieldset className="fieldset w-full md:w-[56%]">
                   <legend className="fieldset-legend text-sm">
-                    Phone<span className="text-error">*</span>
+                    Phone<span className="text-error opacity-60">*</span>
                   </legend>
                   <label className="input w-full">
                     <svg
@@ -166,7 +165,7 @@ export default function SignUpForm() {
                     </svg>
                     <input
                       type="tel"
-                      className="tabular-nums focus:placeholder-transparent"
+                      className="tabular-nums"
                       name="phoneNumber"
                       required
                       placeholder="Enter your Phone Number"
@@ -189,7 +188,8 @@ export default function SignUpForm() {
                 {/* Date of Birth */}
                 <fieldset className="fieldset w-full md:w-[40%]">
                   <legend className="fieldset-legend text-sm">
-                    Date of Birth<span className="text-error">*</span>
+                    Date of Birth
+                    <span className="text-error opacity-60">*</span>
                   </legend>
                   <input
                     type="date"
@@ -209,7 +209,7 @@ export default function SignUpForm() {
                   <div className="flex flex-row md:flex-wrap items-center justify-between">
                     <label className="select w-full md:w-[50%]">
                       <span className="label">
-                        Region<span className="text-error">*</span>
+                        Region<span className="text-error opacity-60">*</span>
                       </span>
                       <select name="region" onChange={handleInput}>
                         <option disabled selected value="">
@@ -236,7 +236,8 @@ export default function SignUpForm() {
                 {/* Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    Your Password<span className="text-error">*</span>
+                    Your Password
+                    <span className="text-error opacity-60">*</span>
                   </legend>
                   <label className="input w-full">
                     <svg
@@ -267,7 +268,6 @@ export default function SignUpForm() {
                       required
                       placeholder="Enter your Password"
                       onChange={handleInput}
-                      className="focus:placeholder-transparent"
                     />
                     <label className="swap">
                       <input
@@ -284,7 +284,8 @@ export default function SignUpForm() {
                 {/* Confirm Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    Confirm Password<span className="text-error">*</span>
+                    Confirm Password
+                    <span className="text-error opacity-60">*</span>
                   </legend>
                   <label className="input w-full">
                     <svg
@@ -314,7 +315,6 @@ export default function SignUpForm() {
                       required
                       placeholder="Repeat Password"
                       onChange={handleInput}
-                      className="focus:placeholder-transparent"
                     />
                     <label className="swap">
                       <input
@@ -353,3 +353,4 @@ export default function SignUpForm() {
     </div>
   );
 }
+

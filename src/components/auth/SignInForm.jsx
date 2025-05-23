@@ -8,6 +8,21 @@ export default function SignInForm() {
     setShowPassword(!showPassword);
   };
 
+  const [signInData, setSignInData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    setSignInData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(signInData);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -44,7 +59,7 @@ export default function SignInForm() {
               <fieldset className="fieldset">
                 {/* E-mail */}
                 <legend className="fieldset-legend text-sm">
-                  E-mail<span className="text-error">*</span>
+                  E-mail<span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input validator w-full">
                   <svg
@@ -65,16 +80,18 @@ export default function SignInForm() {
                   </svg>
                   <input
                     type="email"
-                    className="focus:placeholder-transparent"
+                    name="email"
                     placeholder="E.g. mail@site.com"
                     required
+                    onChange={handleInput}
                   />
                 </label>
               </fieldset>
+
               <fieldset>
                 {/* Password */}
                 <legend className="fieldset-legend text-sm">
-                  Password<span className="text-error">*</span>
+                  Password<span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input w-full">
                   <svg
@@ -102,7 +119,8 @@ export default function SignInForm() {
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="Enter your Password"
-                    className="focus:placeholder-transparent"
+                    name="password"
+                    onChange={handleInput}
                   />
                   <label className="swap">
                     <input
@@ -138,7 +156,10 @@ export default function SignInForm() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-soft btn-info w-full">
+            <button
+              onClick={handleSubmit}
+              className="btn btn-soft btn-info w-full"
+            >
               Sign In
             </button>
           </form>
