@@ -34,7 +34,7 @@ export default function SignUpForm() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Perform form submission logic here
+    console.log(formData);
   };
 
   return (
@@ -47,7 +47,10 @@ export default function SignUpForm() {
 
           <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
             Already have an account? {""}
-            <Link to="/signin" className="inline-flex items-center link-info gap-x-1">
+            <Link
+              to="/signin"
+              className="inline-flex items-center link-info gap-x-1"
+            >
               <span className="link link-hover">Sign In</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +78,7 @@ export default function SignUpForm() {
                     First Name<span className="text-error">*</span>
                   </legend>
                   <input
-                    className="input"
+                    className="input focus:placeholder-transparent"
                     name="firstName"
                     type="text"
                     required
@@ -91,7 +94,7 @@ export default function SignUpForm() {
                     Last Name<span className="text-error">*</span>
                   </legend>
                   <input
-                    className="input"
+                    className="input focus:placeholder-transparent"
                     name="lastName"
                     type="text"
                     required
@@ -130,6 +133,7 @@ export default function SignUpForm() {
                     placeholder="E.g. mail@site.com"
                     title="Enter your e-mail"
                     onChange={handleInput}
+                    className="focus:placeholder-transparent"
                     required
                   />
                 </label>
@@ -162,7 +166,7 @@ export default function SignUpForm() {
                     </svg>
                     <input
                       type="tel"
-                      className="tabular-nums"
+                      className="tabular-nums focus:placeholder-transparent"
                       name="phoneNumber"
                       required
                       placeholder="Enter your Phone Number"
@@ -261,8 +265,9 @@ export default function SignUpForm() {
                       type={showPassword ? "text" : "password"}
                       name="newPassword"
                       required
-                      placeholder="Enter new Password"
+                      placeholder="Enter your Password"
                       onChange={handleInput}
+                      className="focus:placeholder-transparent"
                     />
                     <label className="swap">
                       <input
@@ -309,6 +314,7 @@ export default function SignUpForm() {
                       required
                       placeholder="Repeat Password"
                       onChange={handleInput}
+                      className="focus:placeholder-transparent"
                     />
                     <label className="swap">
                       <input
@@ -322,6 +328,17 @@ export default function SignUpForm() {
                   </label>
                 </fieldset>
               </div>
+
+              <fieldset className="fieldset">
+                <label className="label text-sm ml-px mt-3">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-xs checkbox-info"
+                  />
+                  I agree to the platform accessing my{" "}
+                  <Link className="link-info link-hover">Information</Link>
+                </label>
+              </fieldset>
             </div>
 
             <button

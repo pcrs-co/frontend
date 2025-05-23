@@ -65,6 +65,7 @@ export default function SignInForm() {
                   </svg>
                   <input
                     type="email"
+                    className="focus:placeholder-transparent"
                     placeholder="E.g. mail@site.com"
                     required
                   />
@@ -101,6 +102,7 @@ export default function SignInForm() {
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="Enter your Password"
+                    className="focus:placeholder-transparent"
                   />
                   <label className="swap">
                     <input
