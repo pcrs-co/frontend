@@ -44,7 +44,7 @@ export default function SignInForm() {
               <fieldset className="fieldset">
                 {/* E-mail */}
                 <legend className="fieldset-legend text-sm">
-                  E-mail<span className="text-error">*</span>
+                  E-mail<span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input validator w-full">
                   <svg
@@ -71,10 +71,11 @@ export default function SignInForm() {
                   />
                 </label>
               </fieldset>
+
               <fieldset>
                 {/* Password */}
                 <legend className="fieldset-legend text-sm">
-                  Password<span className="text-error">*</span>
+                  Password<span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input w-full">
                   <svg
