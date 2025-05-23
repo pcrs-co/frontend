@@ -1,0 +1,8 @@
+{
+  "input": "src/**/*.{js,jsx,ts,tsx}",
+  "output": "src/locales/$LOCALE/$NAMESPACE.json",
+  "locales": ["en", "sw"],
+  "defaultNamespace": "translation",
+  "keySeparator": false,
+  "namespaceSeparator": false
+}
