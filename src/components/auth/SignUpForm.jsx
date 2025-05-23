@@ -64,8 +64,8 @@ export default function SignUpForm() {
     setSignUpData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
     setLoading(true);
 
     // Example submission logic
