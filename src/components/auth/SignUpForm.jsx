@@ -108,9 +108,11 @@ export default function SignUpForm() {
                     First Name<span className="text-error opacity-60">*</span>
                   </legend>
                   <input
-                    className="input"
+                    className="input validator"
                     name="firstName"
                     type="text"
+                    minLength="2"
+                    maxlength="20"
                     required
                     placeholder="E.g. John"
                     title="Enter your first name"
@@ -125,9 +127,11 @@ export default function SignUpForm() {
                     Last Name<span className="text-error opacity-60">*</span>
                   </legend>
                   <input
-                    className="input"
+                    className="input validator"
                     name="lastName"
                     type="text"
+                    minLength="2"
+                    maxlength="20"
                     required
                     placeholder="E.g. Doe"
                     title="Enter your last name"
@@ -181,7 +185,7 @@ export default function SignUpForm() {
                   <legend className="fieldset-legend text-sm">
                     Phone<span className="text-error opacity-60">*</span>
                   </legend>
-                  <label className="input w-full">
+                  <label className="input validator w-full">
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -229,7 +233,7 @@ export default function SignUpForm() {
                 <legend className="fieldset-legend text-sm">
                   E-mail<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className="input w-full">
+                <label className="input validator w-full">
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -265,7 +269,7 @@ export default function SignUpForm() {
                     Password
                     <span className="text-error opacity-60">*</span>
                   </legend>
-                  <label className="input w-full">
+                  <label className={`input w-full ${signUpData.password ? "validator" : ""}`}>
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -292,6 +296,7 @@ export default function SignUpForm() {
                       type={showPassword ? "text" : "password"}
                       name="password"
                       required
+                      pattern=".{8,}"
                       placeholder="Enter your Password"
                       onChange={handleInput}
                       value={signUpData.password}
@@ -314,7 +319,7 @@ export default function SignUpForm() {
                     Confirm Password
                     <span className="text-error opacity-60">*</span>
                   </legend>
-                  <label className="input w-full">
+                  <label className={`input w-full ${signUpData.repeatPassword ? "validator" : ""}`}>
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -340,6 +345,7 @@ export default function SignUpForm() {
                       type={showPassword ? "text" : "password"}
                       name="repeatPassword"
                       required
+                      pattern=".{8,}"
                       placeholder="Repeat Password"
                       onChange={handleInput}
                       value={signUpData.repeatPassword}
