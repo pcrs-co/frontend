@@ -8,11 +8,9 @@ export default function SignUpForm() {
   const [signUpData, setSignUpData] = useState({
     firstName: "",
     lastName: "",
-    email: "",
+    username: "",
     phoneNumber: "",
-    birthDate: "",
-    region: "",
-    district: "",
+    email: "",
     password: "",
   });
 
@@ -25,22 +23,18 @@ export default function SignUpForm() {
     const {
       firstName,
       lastName,
-      email,
+      username,
       phoneNumber,
-      birthDate,
-      region,
-      district,
+      email,
       password,
     } = signUpData;
 
     const isValid =
       firstName &&
       lastName &&
-      email &&
+      username &&
       phoneNumber &&
-      birthDate &&
-      region &&
-      district &&
+      email &&
       password &&
       repeatPassword &&
       password === repeatPassword &&
@@ -85,14 +79,14 @@ export default function SignUpForm() {
             Already have an account? {""}
             <Link
               to="/signin"
-              className="inline-flex items-center link-info gap-x-1"
+              className="inline-flex items-center link-info gap-x-0.5"
             >
               <span className="link link-hover">Sign In</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-4"
+                className="size-4 mt-px"
               >
                 <path
                   fillRule="evenodd"
@@ -143,43 +137,47 @@ export default function SignUpForm() {
                 </fieldset>
               </div>
 
-              {/* E-mail */}
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend text-sm">
-                  E-mail<span className="text-error opacity-60">*</span>
-                </legend>
-                <label className="input w-full">
-                  <svg
-                    className="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                    </g>
-                  </svg>
-                  <input
-                    name="email"
-                    type="email"
-                    placeholder="E.g. mail@site.com"
-                    title="Enter your e-mail"
-                    onChange={handleInput}
-                    value={signUpData.email}
-                    required
-                  />
-                </label>
-              </fieldset>
-
               <div className="flex flex-row md:flex-wrap items-center justify-between">
+                {/* Date of Birth */}
+                <fieldset className="fieldset w-full md:w-[42%]">
+                  <legend className="fieldset-legend text-sm">
+                    Username
+                    <span className="text-error opacity-60">*</span>
+                  </legend>
+                  <label className="input validator">
+                    <svg
+                      className="h-[1em] opacity-50"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <g
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        strokeWidth="2.5"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </g>
+                    </svg>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Username"
+                      pattern="[A-Za-z][A-Za-z0-9\-]*"
+                      minlength="3"
+                      maxlength="30"
+                      title="Only letters, numbers or dash"
+                      name="username"
+                      onChange={handleInput}
+                      value={signUpData.username}
+                    />
+                  </label>
+                </fieldset>
+
                 {/* Phone */}
-                <fieldset className="fieldset w-full md:w-[56%]">
+                <fieldset className="fieldset w-full md:w-[54%]">
                   <legend className="fieldset-legend text-sm">
                     Phone<span className="text-error opacity-60">*</span>
                   </legend>
@@ -224,63 +222,41 @@ export default function SignUpForm() {
                     /> */}
                   </label>
                 </fieldset>
+              </div>
 
-                {/* Date of Birth */}
-                <fieldset className="fieldset w-full md:w-[40%]">
-                  <legend className="fieldset-legend text-sm">
-                    Date of Birth
-                    <span className="text-error opacity-60">*</span>
-                  </legend>
+              {/* E-mail */}
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend text-sm">
+                  E-mail<span className="text-error opacity-60">*</span>
+                </legend>
+                <label className="input w-full">
+                  <svg
+                    className="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      strokeWidth="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                    </g>
+                  </svg>
                   <input
-                    type="date"
-                    name="birthDate"
-                    className="input w-full"
-                    required
-                    title="The day you were born"
+                    name="email"
+                    type="email"
+                    placeholder="E.g. mail@site.com"
+                    title="Enter your e-mail"
                     onChange={handleInput}
-                    value={signUpData.birthDate}
+                    value={signUpData.email}
+                    required
                   />
-                </fieldset>
-              </div>
-
-              {/* Location */}
-              <div>
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend text-sm">Location</legend>
-                  <div className="flex flex-row md:flex-wrap items-center justify-between">
-                    <label className="select w-full md:w-[50%]">
-                      <span className="label">
-                        Region<span className="text-error opacity-60">*</span>
-                      </span>
-                      <select
-                        name="region"
-                        onChange={handleInput}
-                        required
-                        value={signUpData.region}
-                      >
-                        <option disabled value="">
-                          Choose...
-                        </option>
-                        <option>Dar Es Salaam</option>
-                      </select>
-                    </label>
-
-                    <label className="select w-full md:w-[46%]">
-                      <span className="label">District</span>
-                      <select
-                        name="district"
-                        onChange={handleInput}
-                        value={signUpData.district}
-                      >
-                        <option disabled value="">
-                          Choose...
-                        </option>
-                        <option>Ubungo</option>
-                      </select>
-                    </label>
-                  </div>
-                </fieldset>
-              </div>
+                </label>
+              </fieldset>
 
               <div className="flex flex-row md:flex-wrap items-center justify-between">
                 {/* Password */}

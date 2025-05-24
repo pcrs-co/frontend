@@ -48,14 +48,14 @@ export default function SignInForm() {
             Don't have an account? {""}
             <Link
               to="/signup"
-              className="inline-flex items-center link-info gap-x-1"
+              className="inline-flex items-center link-info gap-x-0.5"
             >
               <span className="link link-hover">Sign Up</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-4"
+                className="size-4 mt-px"
               >
                 <path
                   fillRule="evenodd"
@@ -75,7 +75,7 @@ export default function SignInForm() {
                 <legend className="fieldset-legend text-sm">
                   E-mail<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className="input w-full">
+                <label className="input validator w-full">
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
