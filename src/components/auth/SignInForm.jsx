@@ -27,14 +27,24 @@ export default function SignInForm() {
     setSignInData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      console.log(signInData);
+    try {
+      // Simulate async request
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Placeholder "response"
+      console.log("Submitted:", signInData);
+
+      // Reset form
+      setSignInData({ email: "", password: "" });
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setLoading(false);
-    }, 5000);
+    }
   };
 
   return (
@@ -99,6 +109,7 @@ export default function SignInForm() {
                     required
                     onChange={handleInput}
                     value={signInData.email}
+                    disabled={loading}
                   />
                 </label>
               </fieldset>
@@ -141,6 +152,7 @@ export default function SignInForm() {
                     name="password"
                     onChange={handleInput}
                     value={signInData.password}
+                    disabled={loading}
                   />
                   <label className="swap">
                     <input
@@ -162,6 +174,7 @@ export default function SignInForm() {
                       type="checkbox"
                       defaultChecked
                       className="checkbox checkbox-xs checkbox-info"
+                      disabled={loading}
                     />
                     Remember me
                   </label>
