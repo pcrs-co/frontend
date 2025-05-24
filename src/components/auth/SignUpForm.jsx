@@ -13,8 +13,7 @@ export default function SignUpForm() {
     birthDate: "",
     region: "",
     district: "",
-    newPassword: "",
-    repeatPassword: "",
+    password: "",
   });
 
   const [consent, setConsent] = useState(false);
@@ -31,8 +30,7 @@ export default function SignUpForm() {
       birthDate,
       region,
       district,
-      newPassword,
-      repeatPassword,
+      password,
     } = signUpData;
 
     const isValid =
@@ -43,9 +41,9 @@ export default function SignUpForm() {
       birthDate &&
       region &&
       district &&
-      newPassword &&
+      password &&
       repeatPassword &&
-      newPassword === repeatPassword &&
+      password === repeatPassword &&
       consent;
 
     setDisabled(!isValid);
@@ -288,7 +286,7 @@ export default function SignUpForm() {
                 {/* Password */}
                 <fieldset className="fieldset w-full md:w-[48%]">
                   <legend className="fieldset-legend text-sm">
-                    Your Password
+                    Password
                     <span className="text-error opacity-60">*</span>
                   </legend>
                   <label className="input w-full">
@@ -316,11 +314,11 @@ export default function SignUpForm() {
 
                     <input
                       type={showPassword ? "text" : "password"}
-                      name="newPassword"
+                      name="password"
                       required
                       placeholder="Enter your Password"
                       onChange={handleInput}
-                      value={signUpData.newPassword}
+                      value={signUpData.password}
                     />
                     <label className="swap">
                       <input
