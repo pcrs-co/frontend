@@ -58,15 +58,32 @@ export default function SignUpForm() {
     setSignUpData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
 
-    // Example submission logic
-    setTimeout(() => {
-      console.log(signUpData);
+    try {
+      // Simulate async request
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      // Placeholder "response"
+      console.log("Submitted:", signUpData);
+
+      // Reset form
+      setSignUpData({
+        firstName: "",
+        lastName: "",
+        username: "",
+        phoneNumber: "",
+        email: "",
+        password: "",
+        repeatPassword: "",
+      });
+    } catch (error) {
+      console.error("Submission failed:", error);
+    } finally {
       setLoading(false);
-    }, 5000);
+    }
   };
 
   return (
@@ -362,6 +379,11 @@ export default function SignUpForm() {
                       name="repeatPassword"
                       required
                       pattern=".{8,}"
+                      minLength={
+                        signUpData.password === signUpData.repeatPassword
+                          ? 8
+                          : 100
+                      }
                       placeholder="Repeat Password"
                       onChange={handleInput}
                       value={signUpData.repeatPassword}
