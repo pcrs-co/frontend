@@ -108,7 +108,7 @@ export default function SignInForm() {
                 <legend className="fieldset-legend text-sm">
                   Password<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className="input w-full">
+                <label className={`input w-full ${signInData.password ? "validator" : ""}`}>
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
