@@ -120,6 +120,7 @@ export default function SignUpForm() {
                     title="Enter your first name"
                     onChange={handleInput}
                     value={signUpData.firstName}
+                    disabled={loading}
                   />
                 </fieldset>
 
@@ -139,12 +140,13 @@ export default function SignUpForm() {
                     title="Enter your last name"
                     onChange={handleInput}
                     value={signUpData.lastName}
+                    disabled={loading}
                   />
                 </fieldset>
               </div>
 
               <div className="flex flex-row md:flex-wrap items-center justify-between">
-                {/* Date of Birth */}
+                {/* Username */}
                 <fieldset className="fieldset w-full md:w-[42%]">
                   <legend className="fieldset-legend text-sm">
                     Username
@@ -170,7 +172,7 @@ export default function SignUpForm() {
                     <input
                       type="text"
                       required
-                      placeholder="Username"
+                      placeholder="E.g. johndoe"
                       pattern="[A-Za-z][A-Za-z0-9\-]*"
                       minlength="3"
                       maxlength="30"
@@ -178,6 +180,7 @@ export default function SignUpForm() {
                       name="username"
                       onChange={handleInput}
                       value={signUpData.username}
+                      disabled={loading}
                     />
                   </label>
                 </fieldset>
@@ -218,6 +221,7 @@ export default function SignUpForm() {
                       title="Must be 10 digits"
                       onChange={handleInput}
                       value={signUpData.phoneNumber}
+                      disabled={loading}
                     />
 
                     {/* <PhoneInput
@@ -259,6 +263,7 @@ export default function SignUpForm() {
                     title="Enter your e-mail"
                     onChange={handleInput}
                     value={signUpData.email}
+                    disabled={loading}
                     required
                   />
                 </label>
@@ -306,6 +311,7 @@ export default function SignUpForm() {
                       placeholder="Enter your Password"
                       onChange={handleInput}
                       value={signUpData.password}
+                      disabled={loading}
                     />
                     <label className="swap">
                       <input
@@ -359,6 +365,7 @@ export default function SignUpForm() {
                       placeholder="Repeat Password"
                       onChange={handleInput}
                       value={signUpData.repeatPassword}
+                      disabled={loading}
                     />
                     <label className="swap">
                       <input
@@ -379,6 +386,7 @@ export default function SignUpForm() {
                     type="checkbox"
                     className="checkbox checkbox-xs checkbox-info"
                     onChange={toggleConsent}
+                    disabled={loading}
                   />
                   I agree to the platform accessing my{" "}
                   <Link className="link-info link-hover">Information</Link>
