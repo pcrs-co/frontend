@@ -108,7 +108,11 @@ export default function SignInForm() {
                 <legend className="fieldset-legend text-sm">
                   Password<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className={`input w-full ${signInData.password ? "validator" : ""}`}>
+                <label
+                  className={`input w-full ${
+                    signInData.password ? "validator" : ""
+                  }`}
+                >
                   <svg
                     className="h-[1em] opacity-50"
                     xmlns="http://www.w3.org/2000/svg"
@@ -172,16 +176,23 @@ export default function SignInForm() {
               </div>
             </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={disabled}
-              className="btn btn-info w-full shadow-none"
-            >
-              {loading ? (
-                <span className="loading loading-spinner"></span>
-              ) : null}
-              Sign In
-            </button>
+            <div className={loading ? "cursor-wait" : ""}>
+              <button
+                onClick={handleSubmit}
+                disabled={disabled}
+                className={`btn btn-info w-full shadow-none ${
+                  loading ? "btn-soft pointer-events-none" : ""
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner" /> Loading
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>

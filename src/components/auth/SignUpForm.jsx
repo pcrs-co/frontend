@@ -12,6 +12,7 @@ export default function SignUpForm() {
     phoneNumber: "",
     email: "",
     password: "",
+    repeatPassword: "",
   });
 
   const [consent, setConsent] = useState(false);
@@ -27,6 +28,7 @@ export default function SignUpForm() {
       phoneNumber,
       email,
       password,
+      repeatPassword,
     } = signUpData;
 
     const isValid =
@@ -269,7 +271,11 @@ export default function SignUpForm() {
                     Password
                     <span className="text-error opacity-60">*</span>
                   </legend>
-                  <label className={`input w-full ${signUpData.password ? "validator" : ""}`}>
+                  <label
+                    className={`input w-full ${
+                      signUpData.password ? "validator" : ""
+                    }`}
+                  >
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -319,7 +325,11 @@ export default function SignUpForm() {
                     Confirm Password
                     <span className="text-error opacity-60">*</span>
                   </legend>
-                  <label className={`input w-full ${signUpData.repeatPassword ? "validator" : ""}`}>
+                  <label
+                    className={`input w-full ${
+                      signUpData.repeatPassword ? "validator" : ""
+                    }`}
+                  >
                     <svg
                       className="h-[1em] opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
@@ -376,16 +386,23 @@ export default function SignUpForm() {
               </fieldset>
             </div>
 
-            <button
-              onClick={handleSubmit}
-              disabled={disabled}
-              className="btn btn-info w-full shadow-none"
-            >
-              {loading ? (
-                <span className="loading loading-spinner"></span>
-              ) : null}
-              Sign Up
-            </button>
+            <div className={loading ? "cursor-wait" : ""}>
+              <button
+                onClick={handleSubmit}
+                disabled={disabled}
+                className={`btn btn-info w-full shadow-none ${
+                  loading ? "btn-soft pointer-events-none" : ""
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner" /> Loading
+                  </>
+                ) : (
+                  "Sign Up"
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>
