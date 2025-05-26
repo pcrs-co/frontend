@@ -48,8 +48,7 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+    <>
         <div className="mb-5 sm:mb-8">
           <h1 className="mb-2 font-semibold text-gray-800 text-2xl dark:text-white/90 sm:text-title-md">
             Welcome Back!
@@ -208,7 +207,6 @@ export default function SignInForm() {
             </div>
           </form>
         </div>
-      </div>
-    </div>
+    </>
   );
 }
