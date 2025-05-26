@@ -1,11 +1,11 @@
 import SignUpForm from "../../components/auth/SignUpForm";
-import Footer from "../../components/layout/Footer";
+import AuthLayout from "./AuthLayout";
 
 export default function SignUp() {
   return (
-    <>
+    <AuthLayout>
       <SignUpForm />
-      <Footer />
-    </>
+    </AuthLayout>
   );
 }
+

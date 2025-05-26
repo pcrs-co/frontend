@@ -87,8 +87,7 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+    <>
         <div className="mb-5 sm:mb-8">
           <h1 className="mb-2 font-semibold text-gray-800 dark:text-white/90 text-2xl sm:text-title-md">
             Create an account
@@ -435,7 +434,6 @@ export default function SignUpForm() {
             </div>
           </form>
         </div>
-      </div>
-    </div>
+    </>
   );
 }

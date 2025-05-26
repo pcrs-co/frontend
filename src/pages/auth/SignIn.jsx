@@ -1,12 +1,10 @@
+import AuthLayout from "./AuthLayout";
 import SignInForm from "../../components/auth/SignInForm";
-import Footer from "../../components/layout/Footer";
 
 export default function SignIn() {
-
     return (
-        <>
+        <AuthLayout>
             <SignInForm />
-            <Footer />
-        </>
+        </AuthLayout>
     )
 }
