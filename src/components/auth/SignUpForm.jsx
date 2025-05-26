@@ -242,8 +242,8 @@ export default function SignUpForm() {
 
                     {/* <PhoneInput
                       country={"tz"}
-                      value={phone}
-                      onChange={setPhone}
+                      value={signUpData.phoneNumber}
+                      onChange={handleInput}
                       enableSearch={true}
                     /> */}
                   </label>
