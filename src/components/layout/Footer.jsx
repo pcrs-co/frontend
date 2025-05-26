@@ -14,7 +14,10 @@ export default function Footer() {
         <aside className="flex flex-row flex-wrap items-center justify-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {year} -{" "}
-            <Link to="/" className="link link-hover hover:text-gray-300 dark:hover:text-gray-100">
+            <Link
+              to="/"
+              className="link link-hover hover:text-gray-300 dark:hover:text-gray-100"
+            >
               PCRS
             </Link>{" "}
             Tanzania
