@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import api from "../../utils/api";
+import { toast } from "react-toastify";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignInForm() {
@@ -125,8 +127,8 @@ export default function SignInForm() {
                   required
                   placeholder="Enter your Username"
                   pattern="[A-Za-z][A-Za-z0-9\-]*"
-                  minlength="3"
-                  maxlength="30"
+                  minLength="3"
+                  maxLength="30"
                   title="Only letters, numbers or dash"
                   name="username"
                   onChange={handleInput}
