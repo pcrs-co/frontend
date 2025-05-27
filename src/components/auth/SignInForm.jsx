@@ -5,26 +5,32 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
+// SignInForm Component
 export default function SignInForm() {
+  // State for sign-in data
   const [signInData, setSignInData] = useState({
     username: "",
     password: "",
   });
 
+  // State for loading indicator, form disable and password visibility
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Effect to enable/disable the submit button based on input validity
   useEffect(() => {
     const { username, password } = signInData;
     const isValid = username && password;
     setDisabled(!isValid);
   }, [signInData]);
 
+  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  // Handle input changes
   const handleInput = (event) => {
     const { name, value } = event.target;
     setSignInData((prev) => ({ ...prev, [name]: value }));
@@ -32,19 +38,25 @@ export default function SignInForm() {
 
   const { showToast } = useToast();
   const navigate = useNavigate();
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Attempt to sign in
       const response = await api.post("/token/", signInData);
 
+      // Store tokens and user role in localStorage
       localStorage.setItem(ACCESS_TOKEN, response.data.access);
       localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
       localStorage.setItem("userRole", response.data.role);
       localStorage.setItem("username", response.data.username);
 
-      showToast({ message: "Signed In succesfully!", type: "success" });
+      showToast({ message: "Signed In successfully!", type: "success" });
+
+      // Redirect based on user role
       switch (response.data.role) {
         case "admin":
           navigate("/admin/dashboard");
@@ -60,6 +72,7 @@ export default function SignInForm() {
       let toastMessage = "Unexpected error occurred";
       let type = "error";
 
+      // Handle error cases
       if (!error.response) {
         toastMessage = "Server not reachable";
         type = "warning";
@@ -239,3 +252,4 @@ export default function SignInForm() {
     </>
   );
 }
+
