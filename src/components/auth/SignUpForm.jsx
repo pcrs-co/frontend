@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import { useToast } from "../../context/ToastContext";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
@@ -58,6 +59,7 @@ export default function SignUpForm() {
     setSignUpData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const { showToast } = useToast();
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -67,7 +69,9 @@ export default function SignUpForm() {
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
       // Placeholder "response"
-      console.log("Submitted:", signUpData);
+      let toastMessage="Submitted";
+      let type="success";
+      showToast({ message: toastMessage, type});
 
       // Reset form
       setSignUpData({
@@ -130,7 +134,7 @@ export default function SignUpForm() {
                     name="firstName"
                     type="text"
                     minLength="2"
-                    maxlength="20"
+                    maxLength="20"
                     required
                     placeholder="E.g. John"
                     title="Enter your first name"

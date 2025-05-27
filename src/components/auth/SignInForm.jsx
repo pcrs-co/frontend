@@ -42,9 +42,7 @@ export default function SignInForm() {
       localStorage.setItem("userRole", response.data.role);
       localStorage.setItem("username", response.data.username);
 
-      errorMessage = "Login successful!";
-      type = "success";
-
+      showToast({ message: "Signed In succesfully!", type: "success" });
       switch (response.data.role) {
         case "admin":
           navigate("/admin/dashboard");
@@ -57,18 +55,18 @@ export default function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
-      let errorMessage = "Unexpected error occurred!";
+      let toastMessage = "Unexpected error occurred";
       let type = "error";
 
       if (!error.response) {
-        errorMessage = "Server not reachable. Is it running?";
+        toastMessage = "Server not reachable";
         type = "warning";
       } else if (error.response.status === 401) {
-        errorMessage = "Invalid credentials!";
+        toastMessage = "Invalid credentials";
         type = "error";
       }
 
-      showToast({ message: errorMessage, type });
+      showToast({ message: toastMessage, type });
     } finally {
       setLoading(false);
     }
@@ -112,7 +110,7 @@ export default function SignInForm() {
                 Username
                 <span className="text-error opacity-60">*</span>
               </legend>
-              <label className="input w-full validator">
+              <label className="input w-full">
                 <svg
                   className="h-[1em] opacity-50"
                   xmlns="http://www.w3.org/2000/svg"
@@ -150,11 +148,7 @@ export default function SignInForm() {
               <legend className="fieldset-legend text-sm">
                 Password<span className="text-error opacity-60">*</span>
               </legend>
-              <label
-                className={`input w-full ${
-                  signInData.password ? "validator" : ""
-                }`}
-              >
+              <label className="input w-full">
                 <svg
                   className="h-[1em] opacity-50"
                   xmlns="http://www.w3.org/2000/svg"
