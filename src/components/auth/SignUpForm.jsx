@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useToast } from "../../context/ToastContext";
-import api from "../../utils/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import { useToast } from "../../context/ToastContext";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../utils/api";
+
+const navigate = useNavigate()
 
 export default function SignUpForm() {
   // Define state to store form data
@@ -112,9 +114,8 @@ export default function SignUpForm() {
       if (error.response?.data) {
         Object.entries(error.response.data).forEach(([key, value]) => {
           showToast({
-            message: `${key}: ${
-              Array.isArray(value) ? value.join(", ") : value
-            }`,
+            message: `${key}: ${Array.isArray(value) ? value.join(", ") : value
+              }`,
             type: "error",
           });
         });
@@ -329,9 +330,8 @@ export default function SignUpForm() {
                   <span className="text-error opacity-60">*</span>
                 </legend>
                 <label
-                  className={`input w-full ${
-                    signUpData.password ? "validator" : ""
-                  }`}
+                  className={`input w-full ${signUpData.password ? "validator" : ""
+                    }`}
                 >
                   <svg
                     className="h-[1em] opacity-50"
@@ -385,9 +385,8 @@ export default function SignUpForm() {
                   <span className="text-error opacity-60">*</span>
                 </legend>
                 <label
-                  className={`input w-full ${
-                    signUpData.repeatPassword ? "validator" : ""
-                  }`}
+                  className={`input w-full ${signUpData.repeatPassword ? "validator" : ""
+                    }`}
                 >
                   <svg
                     className="h-[1em] opacity-50"
@@ -459,9 +458,8 @@ export default function SignUpForm() {
             <button
               type="submit"
               disabled={disabled}
-              className={`btn btn-info w-full shadow-none ${
-                loading ? "btn-soft pointer-events-none" : ""
-              }`}
+              className={`btn btn-info w-full shadow-none ${loading ? "btn-soft pointer-events-none" : ""
+                }`}
             >
               {loading ? (
                 <>
