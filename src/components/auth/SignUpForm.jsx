@@ -387,7 +387,7 @@ export default function SignUpForm() {
                 </legend>
                 <div
                   className={
-                    signUpData.repeatPassword !== signUpData.password
+                    signUpData.repeatPassword && signUpData.repeatPassword !== signUpData.password
                       ? "tooltip tooltip-open tooltip-error tooltip-right"
                       : null
                   }
