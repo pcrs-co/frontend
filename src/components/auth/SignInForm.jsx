@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
-import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import PassToggle from "./PassToggle";
 
 // SignInForm Component
 export default function SignInForm() {
@@ -195,16 +195,10 @@ export default function SignInForm() {
                   value={signInData.password}
                   disabled={loading}
                 />
-                <label className="swap">
-                  <input
-                    type="checkbox"
-                    checked={showPassword}
-                    onChange={togglePasswordVisibility}
-                    className="hidden"
-                  />
-                  <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                  <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                </label>
+                <PassToggle
+                  checked={showPassword}
+                  onChange={togglePasswordVisibility}
+                />
               </label>
             </fieldset>
 
@@ -252,4 +246,3 @@ export default function SignInForm() {
     </>
   );
 }
-

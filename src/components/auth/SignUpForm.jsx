@@ -1,5 +1,5 @@
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
-import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import PassToggle from "./PassToggle";
 import { useToast } from "../../context/ToastContext";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -23,7 +23,6 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
 
   // Effect to enable/disable the submit button based on form validity
   useEffect(() => {
@@ -367,15 +366,10 @@ export default function SignUpForm() {
                     disabled={loading}
                   />
                   {/* Password visibility toggle */}
-                  <label className="swap">
-                    <input
-                      type="checkbox"
-                      checked={showPassword}
-                      onChange={togglePasswordVisibility}
-                    />
-                    <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                    <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                  </label>
+                  <PassToggle
+                    checked={showPassword}
+                    onChange={togglePasswordVisibility}
+                  />
                 </label>
               </fieldset>
 
@@ -387,8 +381,9 @@ export default function SignUpForm() {
                 </legend>
                 <div
                   className={
-                    signUpData.repeatPassword && signUpData.repeatPassword !== signUpData.password
-                      ? "tooltip tooltip-open tooltip-error tooltip-right"
+                    signUpData.repeatPassword &&
+                    signUpData.repeatPassword !== signUpData.password
+                      ? "tooltip tooltip-open tooltip-error tooltip-bottom md:tooltip-right"
                       : null
                   }
                   data-tip="Passwords do not match"
@@ -435,15 +430,10 @@ export default function SignUpForm() {
                       disabled={loading}
                     />
                     {/* Password visibility toggle */}
-                    <label className="swap">
-                      <input
-                        type="checkbox"
-                        checked={showPassword}
-                        onChange={togglePasswordVisibility}
-                      />
-                      <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                      <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                    </label>
+                    <PassToggle
+                      checked={showPassword}
+                      onChange={togglePasswordVisibility}
+                    />
                   </label>
                 </div>
               </fieldset>
