@@ -118,6 +118,8 @@ export default function SignUpForm() {
             type: "error",
           });
         });
+      } else if (!error.response) {
+        showToast({ message: "Server not reachable!", type: "warning" });
       } else {
         showToast({ message: "Unexpected error occurred!", type: "error" });
       }
