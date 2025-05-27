@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import api from "../../utils/api";
-import { toast } from "react-toastify";
+import { useToast } from "../../context/ToastContext";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
 export default function SignInForm() {
@@ -29,6 +29,7 @@ export default function SignInForm() {
     setSignInData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const { showToast } = useToast();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -41,7 +42,8 @@ export default function SignInForm() {
       localStorage.setItem("userRole", response.data.role);
       localStorage.setItem("username", response.data.username);
 
-      toast.success("Login successful!");
+      errorMessage = "Login successful!";
+      type = "success";
 
       switch (response.data.role) {
         case "admin":
@@ -55,13 +57,18 @@ export default function SignInForm() {
       }
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
+      let errorMessage = "Unexpected error occurred!";
+      let type = "error";
+
       if (!error.response) {
-        toast.error("Server not reachable. Is it running?");
+        errorMessage = "Server not reachable. Is it running?";
+        type = "warning";
       } else if (error.response.status === 401) {
-        toast.error("Invalid credentials!");
-      } else {
-        toast.error("Unexpected error occurred!");
+        errorMessage = "Invalid credentials!";
+        type = "error";
       }
+
+      showToast({ message: errorMessage, type });
     } finally {
       setLoading(false);
     }
@@ -174,6 +181,7 @@ export default function SignInForm() {
                   required
                   placeholder="Enter your Password"
                   name="password"
+                  pattern=".{8,}"
                   onChange={handleInput}
                   value={signInData.password}
                   disabled={loading}
