@@ -13,51 +13,50 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
       if (!token) return setIsAuthorized(false);
 
       try {
-        const { exp, role } = jwtDecode(token);
+        const { exp } = jwtDecode(token);
         const now = Date.now() / 1000;
 
         if (exp < now) {
           await refreshToken();
-        } else if (allowedRoles.length && !allowedRoles.includes(role)) {
-          setIsAuthorized("forbidden");
         } else {
-          setIsAuthorized(true);
+          authorizeByRole();
         }
       } catch {
         setIsAuthorized(false);
       }
     };
 
+    const refreshToken = async () => {
+      const refresh = localStorage.getItem(REFRESH_TOKEN);
+      if (!refresh) return setIsAuthorized(false);
+
+      try {
+        const res = await api.post("/token/refresh", { refresh });
+        const newAccess = res.data.access;
+        localStorage.setItem(ACCESS_TOKEN, newAccess);
+        authorizeByRole();
+      } catch {
+        setIsAuthorized(false);
+      }
+    };
+
+    const authorizeByRole = () => {
+      const userRole = localStorage.getItem("userRole");
+      if (!allowedRoles.length || allowedRoles.includes(userRole)) {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized("forbidden");
+      }
+    };
+
     checkAuth();
   }, []);
 
-  const refreshToken = async () => {
-    const refresh = localStorage.getItem(REFRESH_TOKEN);
-    if (!refresh) return setIsAuthorized(false);
+  if (isAuthorized === null) return <div>Loading...</div>;
+  if (isAuthorized === "forbidden") return <Navigate to="/403" />;
+  if (isAuthorized === false) return <Navigate to="/signin" />;
 
-    try {
-      const res = await api.post("/token/refresh", { refresh });
-      const newAccess = res.data.access;
-      localStorage.setItem(ACCESS_TOKEN, newAccess);
-
-      const { role } = jwtDecode(newAccess);
-      if (allowedRoles.length && !allowedRoles.includes(role)) {
-        setIsAuthorized("forbidden");
-      } else {
-        setIsAuthorized(true);
-      }
-    } catch {
-      setIsAuthorized(false);
-    }
-  };
-
-  if (isAuthorized === true) {
-    return children;
-  } else if (isAuthorized === false) {
-    return <Navigate to="/signin" />;
-  } else if (isAuthorized === "forbidden") {
-    return <Navigate to="/403" />;
-  }
+  return children;
 }
 
 export default ProtectedRoute;
