@@ -1,6 +1,11 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from "../components/common/ToastIcons";
+import {
+  ErrorIcon,
+  InfoIcon,
+  SuccessIcon,
+  WarningIcon,
+} from "../components/common/AlertIcons";
 
 const ToastContext = createContext();
 
@@ -10,9 +15,10 @@ export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
   const showToast = useCallback(
-    ({ message, type = "info", duration = 3000 }) => {
-      const id = Date.now();
+    ({ message, type = "info", duration = 5000 }) => {
+      const id = crypto.randomUUID(); // Ensures uniqueness even in fast loops
       setToasts((prev) => [...prev, { id, message, type }]);
+
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, duration);
@@ -23,13 +29,13 @@ export function ToastProvider({ children }) {
   const getIcon = (type) => {
     switch (type) {
       case "success":
-        return <SuccessIcon />;
+        return <SuccessIcon className="alert-success" />;
       case "warning":
-        return <WarningIcon />;
+        return <WarningIcon className="alert-warning" />;
       case "error":
-        return <ErrorIcon />;
+        return <ErrorIcon className="alert-error" />;
       default:
-        return <InfoIcon />;
+        return <InfoIcon className="alert-info" />;
     }
   };
 
