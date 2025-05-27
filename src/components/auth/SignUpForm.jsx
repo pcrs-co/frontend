@@ -73,15 +73,6 @@ export default function SignUpForm() {
     } else {
       setSignUpData((prev) => ({ ...prev, [name]: value }));
     }
-    // In handleInput for password fields:
-    if (name === "password" || name === "repeatPassword") {
-      setSignUpData((prev) => ({ ...prev, [name]: value }));
-      if (signUpData.password !== signUpData.repeatPassword) {
-        setPasswordError("Passwords do not match");
-      } else {
-        setPasswordError("");
-      }
-    }
   };
 
   const { showToast } = useToast();
@@ -95,13 +86,7 @@ export default function SignUpForm() {
     try {
       // Register the user
       await api.post("/register/", {
-        first_name: signUpData.firstName,
-        last_name: signUpData.lastName,
-        username: signUpData.username,
-        phone_number: `+255${signUpData.phoneNumber}`,
-        email: signUpData.email,
-        password: signUpData.password,
-        password2: signUpData.repeatPassword,
+        ...signUpData,
       });
 
       // Auto-login the user after successful registration
@@ -128,8 +113,9 @@ export default function SignUpForm() {
       if (error.response?.data) {
         Object.entries(error.response.data).forEach(([key, value]) => {
           showToast({
-            message: `${key}: ${Array.isArray(value) ? value.join(", ") : value
-              }`,
+            message: `${key}: ${
+              Array.isArray(value) ? value.join(", ") : value
+            }`,
             type: "error",
           });
         });
@@ -344,8 +330,9 @@ export default function SignUpForm() {
                   <span className="text-error opacity-60">*</span>
                 </legend>
                 <label
-                  className={`input w-full ${signUpData.password ? "validator" : ""
-                    }`}
+                  className={`input w-full ${
+                    signUpData.password ? "validator" : ""
+                  }`}
                 >
                   <svg
                     className="h-[1em] opacity-50"
@@ -398,61 +385,67 @@ export default function SignUpForm() {
                   Confirm Password
                   <span className="text-error opacity-60">*</span>
                 </legend>
-                <label
-                  className={`input w-full ${signUpData.repeatPassword ? "validator" : ""
-                    }`}
+                <div
+                  className={
+                    signUpData.repeatPassword !== signUpData.password
+                      ? "tooltip tooltip-open tooltip-error tooltip-right"
+                      : null
+                  }
+                  data-tip="Passwords do not match"
                 >
-                  <svg
-                    className="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
+                  <label
+                    className={`input w-full ${
+                      signUpData.repeatPassword ? "validator" : ""
+                    }`}
                   >
-                    <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
+                    <svg
+                      className="h-[1em] opacity-50"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
                     >
-                      <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                      <circle
-                        cx="16.5"
-                        cy="7.5"
-                        r=".5"
-                        fill="currentColor"
-                      ></circle>
-                    </g>
-                  </svg>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="repeatPassword"
-                    required
-                    pattern=".{8,}"
-                    minLength={
-                      signUpData.password === signUpData.repeatPassword
-                        ? 8
-                        : 100
-                    }
-                    placeholder="Repeat Password"
-                    onChange={handleInput}
-                    value={signUpData.repeatPassword}
-                    disabled={loading}
-                  />
-                  {/* Password visibility toggle */}
-                  <label className="swap">
+                      <g
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        strokeWidth="2.5"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+                        <circle
+                          cx="16.5"
+                          cy="7.5"
+                          r=".5"
+                          fill="currentColor"
+                        ></circle>
+                      </g>
+                    </svg>
                     <input
-                      type="checkbox"
-                      checked={showPassword}
-                      onChange={togglePasswordVisibility}
+                      type={showPassword ? "text" : "password"}
+                      name="repeatPassword"
+                      required
+                      pattern=".{8,}"
+                      minLength={
+                        signUpData.password === signUpData.repeatPassword
+                          ? 8
+                          : 100
+                      }
+                      placeholder="Repeat Password"
+                      onChange={handleInput}
+                      value={signUpData.repeatPassword}
+                      disabled={loading}
                     />
-                    <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                    <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
+                    {/* Password visibility toggle */}
+                    <label className="swap">
+                      <input
+                        type="checkbox"
+                        checked={showPassword}
+                        onChange={togglePasswordVisibility}
+                      />
+                      <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
+                      <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
+                    </label>
                   </label>
-                </label>
-                {/* In the confirm password fieldset: */}
-                {passwordError && (
-                  <p className="text-error text-xs mt-1">{passwordError}</p>
-                )}
+                </div>
               </fieldset>
             </div>
 
@@ -476,8 +469,9 @@ export default function SignUpForm() {
             <button
               type="submit"
               disabled={disabled}
-              className={`btn btn-info w-full shadow-none ${loading ? "btn-soft pointer-events-none" : ""
-                }`}
+              className={`btn btn-info w-full shadow-none ${
+                loading ? "btn-soft pointer-events-none" : ""
+              }`}
             >
               {loading ? (
                 <>
