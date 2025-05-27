@@ -95,7 +95,13 @@ export default function SignUpForm() {
     try {
       // Register the user
       await api.post("/register/", {
-        ...signUpData,
+        first_name: signUpData.firstName,
+        last_name: signUpData.lastName,
+        username: signUpData.username,
+        phone_number: `+255${signUpData.phoneNumber}`,
+        email: signUpData.email,
+        password: signUpData.password,
+        password2: signUpData.repeatPassword,
       });
 
       // Auto-login the user after successful registration
