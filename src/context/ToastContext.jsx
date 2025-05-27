@@ -1,6 +1,11 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from "../components/common/AlertIcons";
+import {
+  ErrorIcon,
+  InfoIcon,
+  SuccessIcon,
+  WarningIcon,
+} from "../components/common/AlertIcons";
 
 const ToastContext = createContext();
 
@@ -11,8 +16,9 @@ export function ToastProvider({ children }) {
 
   const showToast = useCallback(
     ({ message, type = "info", duration = 5000 }) => {
-      const id = Date.now();
+      const id = crypto.randomUUID(); // Ensures uniqueness even in fast loops
       setToasts((prev) => [...prev, { id, message, type }]);
+
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, duration);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 
@@ -30,12 +31,13 @@ export default function SignInForm() {
   };
 
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await api.post("/api/token/", signInData);
+      const response = await api.post("/token/", signInData);
 
       localStorage.setItem(ACCESS_TOKEN, response.data.access);
       localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
