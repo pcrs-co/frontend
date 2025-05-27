@@ -2,10 +2,8 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
 import { useToast } from "../../context/ToastContext";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../../utils/api";
-
-const navigate = useNavigate()
 
 export default function SignUpForm() {
   // Define state to store form data
@@ -25,6 +23,7 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
   // Effect to enable/disable the submit button based on form validity
   useEffect(() => {
@@ -73,6 +72,15 @@ export default function SignUpForm() {
       setIsValidPhoneNumber(digitsOnly.length === 10); // Only valid if exactly 10 digits
     } else {
       setSignUpData((prev) => ({ ...prev, [name]: value }));
+    }
+    // In handleInput for password fields:
+    if (name === "password" || name === "repeatPassword") {
+      setSignUpData((prev) => ({ ...prev, [name]: value }));
+      if (signUpData.password !== signUpData.repeatPassword) {
+        setPasswordError("Passwords do not match");
+      } else {
+        setPasswordError("");
+      }
     }
   };
 
@@ -435,6 +443,10 @@ export default function SignUpForm() {
                     <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
                   </label>
                 </label>
+                {/* In the confirm password fieldset: */}
+                {passwordError && (
+                  <p className="text-error text-xs mt-1">{passwordError}</p>
+                )}
               </fieldset>
             </div>
 
