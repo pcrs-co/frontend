@@ -137,10 +137,9 @@ export default function SignUpForm() {
     } catch (error) {
       // Handle errors during registration or login
       if (error.response?.data) {
-        Object.entries(error.response.data).forEach(([key, value]) => {
+        Object.values(error.response.data).forEach((value) => {
           showToast({
-            message: `${key}: ${Array.isArray(value) ? value.join(", ") : value
-              }`,
+            message: Array.isArray(value) ? value.join(", ") : value,
             type: "error",
           });
         });
