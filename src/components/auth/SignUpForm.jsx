@@ -1,6 +1,13 @@
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
-import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import PassToggle from "./PassToggle";
 import { useToast } from "../../context/ToastContext";
+import {
+  PersonIcon,
+  KeyIcon,
+  ArrowUpRightIcon,
+  PhoneIcon,
+  LetterIcon,
+} from "../common/MiscIcons";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../utils/api";
@@ -167,18 +174,7 @@ export default function SignUpForm() {
             className="inline-flex items-center link-info gap-x-0.5"
           >
             <span className="link link-hover">Sign In</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-4 mt-px"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.25 3.75H19.5a.75.75 0 0 1 .75.75v11.25a.75.75 0 0 1-1.5 0V6.31L5.03 20.03a.75.75 0 0 1-1.06-1.06L17.69 5.25H8.25a.75.75 0 0 1 0-1.5Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <ArrowUpRightIcon />
           </Link>
         </p>
       </div>
@@ -236,22 +232,7 @@ export default function SignUpForm() {
                   <span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input validator">
-                  <svg
-                    className="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </g>
-                  </svg>
+                  <PersonIcon />
                   <input
                     type="text"
                     required
@@ -274,24 +255,7 @@ export default function SignUpForm() {
                   Phone<span className="text-error opacity-60">*</span>
                 </legend>
                 <label className="input validator w-full">
-                  <svg
-                    className="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 16 16"
-                  >
-                    <g fill="none">
-                      <path
-                        d="M7.25 11.5C6.83579 11.5 6.5 11.8358 6.5 12.25C6.5 12.6642 6.83579 13 7.25 13H8.75C9.16421 13 9.5 12.6642 9.5 12.25C9.5 11.8358 9.16421 11.5 8.75 11.5H7.25Z"
-                        fill="currentColor"
-                      ></path>
-                      <path
-                        fillRule="evenodd"
-                        clipRule="evenodd"
-                        d="M6 1C4.61929 1 3.5 2.11929 3.5 3.5V12.5C3.5 13.8807 4.61929 15 6 15H10C11.3807 15 12.5 13.8807 12.5 12.5V3.5C12.5 2.11929 11.3807 1 10 1H6ZM10 2.5H9.5V3C9.5 3.27614 9.27614 3.5 9 3.5H7C6.72386 3.5 6.5 3.27614 6.5 3V2.5H6C5.44771 2.5 5 2.94772 5 3.5V12.5C5 13.0523 5.44772 13.5 6 13.5H10C10.5523 13.5 11 13.0523 11 12.5V3.5C11 2.94772 10.5523 2.5 10 2.5Z"
-                        fill="currentColor"
-                      ></path>
-                    </g>
-                  </svg>
+                  <PhoneIcon />
                   <input
                     type="tel"
                     inputMode="numeric"
@@ -317,22 +281,7 @@ export default function SignUpForm() {
                 E-mail<span className="text-error opacity-60">*</span>
               </legend>
               <label className="input validator w-full">
-                <svg
-                  className="h-[1em] opacity-50"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <g
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                  </g>
-                </svg>
+                <LetterIcon />
                 <input
                   name="email"
                   type="email"
@@ -357,27 +306,7 @@ export default function SignUpForm() {
                   className={`input w-full ${signUpData.password ? "validator" : ""
                     }`}
                 >
-                  <svg
-                    className="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                      <circle
-                        cx="16.5"
-                        cy="7.5"
-                        r=".5"
-                        fill="currentColor"
-                      ></circle>
-                    </g>
-                  </svg>
+                  <KeyIcon />
 
                   <input
                     type={showPassword ? "text" : "password"}
@@ -390,15 +319,10 @@ export default function SignUpForm() {
                     disabled={loading}
                   />
                   {/* Password visibility toggle */}
-                  <label className="swap">
-                    <input
-                      type="checkbox"
-                      checked={showPassword}
-                      onChange={togglePasswordVisibility}
-                    />
-                    <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                    <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                  </label>
+                  <PassToggle
+                    checked={showPassword}
+                    onChange={togglePasswordVisibility}
+                  />
                 </label>
               </fieldset>
 
@@ -410,8 +334,9 @@ export default function SignUpForm() {
                 </legend>
                 <div
                   className={
-                    signUpData.repeatPassword && signUpData.repeatPassword !== signUpData.password
-                      ? "tooltip tooltip-open tooltip-error tooltip-right"
+                    signUpData.repeatPassword &&
+                    signUpData.repeatPassword !== signUpData.password
+                      ? "tooltip tooltip-open tooltip-error tooltip-bottom md:tooltip-right"
                       : null
                   }
                   data-tip="Passwords do not match"
@@ -420,27 +345,7 @@ export default function SignUpForm() {
                     className={`input w-full ${signUpData.repeatPassword ? "validator" : ""
                       }`}
                   >
-                    <svg
-                      className="h-[1em] opacity-50"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                    >
-                      <g
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        strokeWidth="2.5"
-                        fill="none"
-                        stroke="currentColor"
-                      >
-                        <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                        <circle
-                          cx="16.5"
-                          cy="7.5"
-                          r=".5"
-                          fill="currentColor"
-                        ></circle>
-                      </g>
-                    </svg>
+                    <KeyIcon />
                     <input
                       type={showPassword ? "text" : "password"}
                       name="repeatPassword"
@@ -457,15 +362,10 @@ export default function SignUpForm() {
                       disabled={loading}
                     />
                     {/* Password visibility toggle */}
-                    <label className="swap">
-                      <input
-                        type="checkbox"
-                        checked={showPassword}
-                        onChange={togglePasswordVisibility}
-                      />
-                      <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                      <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                    </label>
+                    <PassToggle
+                      checked={showPassword}
+                      onChange={togglePasswordVisibility}
+                    />
                   </label>
                 </div>
               </fieldset>

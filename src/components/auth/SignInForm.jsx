@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
-import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import { PersonIcon, KeyIcon, ArrowUpRightIcon } from "../common/MiscIcons";
+import PassToggle from "./PassToggle";
 
 // SignInForm Component
 export default function SignInForm() {
@@ -100,18 +101,7 @@ export default function SignInForm() {
             className="inline-flex items-center link-info gap-x-0.5"
           >
             <span className="link link-hover">Sign Up</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-4 mt-px"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.25 3.75H19.5a.75.75 0 0 1 .75.75v11.25a.75.75 0 0 1-1.5 0V6.31L5.03 20.03a.75.75 0 0 1-1.06-1.06L17.69 5.25H8.25a.75.75 0 0 1 0-1.5Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <ArrowUpRightIcon />
           </Link>
         </p>
       </div>
@@ -126,22 +116,7 @@ export default function SignInForm() {
                 <span className="text-error opacity-60">*</span>
               </legend>
               <label className="input w-full">
-                <svg
-                  className="h-[1em] opacity-50"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <g
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </g>
-                </svg>
+                <PersonIcon />
                 <input
                   type="text"
                   required
@@ -164,27 +139,7 @@ export default function SignInForm() {
                 Password<span className="text-error opacity-60">*</span>
               </legend>
               <label className="input w-full">
-                <svg
-                  className="h-[1em] opacity-50"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <g
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                    <circle
-                      cx="16.5"
-                      cy="7.5"
-                      r=".5"
-                      fill="currentColor"
-                    ></circle>
-                  </g>
-                </svg>
+                <KeyIcon />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
@@ -195,16 +150,10 @@ export default function SignInForm() {
                   value={signInData.password}
                   disabled={loading}
                 />
-                <label className="swap">
-                  <input
-                    type="checkbox"
-                    checked={showPassword}
-                    onChange={togglePasswordVisibility}
-                    className="hidden"
-                  />
-                  <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                  <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                </label>
+                <PassToggle
+                  checked={showPassword}
+                  onChange={togglePasswordVisibility}
+                />
               </label>
             </fieldset>
 
@@ -252,4 +201,3 @@ export default function SignInForm() {
     </>
   );
 }
-
