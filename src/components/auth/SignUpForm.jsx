@@ -12,7 +12,10 @@ export default function SignUpForm() {
     lastName: "",
     username: "",
     phoneNumber: "",
+    region: "",       // Added region field
+    district: "",      // Added district field
     email: "",
+    DOB: "",
     password: "",
     repeatPassword: "",
   });
@@ -23,7 +26,6 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
-  const [passwordError, setPasswordError] = useState("");
 
   // Effect to enable/disable the submit button based on form validity
   useEffect(() => {
@@ -84,10 +86,25 @@ export default function SignUpForm() {
     setLoading(true); // Set loading state
 
     try {
+      const registrationData = {
+        first_name: signUpData.firstName,
+        last_name: signUpData.lastName,
+        username: signUpData.username,
+        phone_number: `+255${signUpData.phoneNumber.substring(1)}`,
+        email: signUpData.email,
+        password: signUpData.password,
+        password2: signUpData.repeatPassword,
+        // Optional fields - only include if they have values
+        ...(signUpData.dateOfBirth && { date_of_birth: signUpData.dateOfBirth }),
+        ...(signUpData.region && { region: signUpData.region }),
+        ...(signUpData.district && { district: signUpData.district }),
+      };
+
+      console.log("Submitting:", registrationData); // Debug log
+
       // Register the user
-      await api.post("/register/", {
-        ...signUpData,
-      });
+      const registerResponse = await api.post("/register/", registrationData);
+      console.log("Registration response:", registerResponse.data); // Debug log
 
       // Auto-login the user after successful registration
       const loginResponse = await api.post("/token/", {
@@ -113,16 +130,23 @@ export default function SignUpForm() {
       if (error.response?.data) {
         Object.entries(error.response.data).forEach(([key, value]) => {
           showToast({
-            message: `${key}: ${
-              Array.isArray(value) ? value.join(", ") : value
-            }`,
+            message: `${key}: ${Array.isArray(value) ? value.join(", ") : value
+              }`,
             type: "error",
           });
         });
-      } else if (!error.response) {
-        showToast({ message: "Server not reachable!", type: "warning" });
+      } else if (error.response) {
+        // Request was made but no response received
+        showToast({
+          message: "Server not reachable. Please check your connection.",
+          type: "error"
+        });
       } else {
-        showToast({ message: "Unexpected error occurred!", type: "error" });
+        // Other errors
+        showToast({
+          message: error.message || "An unexpected error occurred",
+          type: "error"
+        });
       }
     } finally {
       setLoading(false); // Reset loading state
@@ -330,9 +354,8 @@ export default function SignUpForm() {
                   <span className="text-error opacity-60">*</span>
                 </legend>
                 <label
-                  className={`input w-full ${
-                    signUpData.password ? "validator" : ""
-                  }`}
+                  className={`input w-full ${signUpData.password ? "validator" : ""
+                    }`}
                 >
                   <svg
                     className="h-[1em] opacity-50"
@@ -394,9 +417,8 @@ export default function SignUpForm() {
                   data-tip="Passwords do not match"
                 >
                   <label
-                    className={`input w-full ${
-                      signUpData.repeatPassword ? "validator" : ""
-                    }`}
+                    className={`input w-full ${signUpData.repeatPassword ? "validator" : ""
+                      }`}
                   >
                     <svg
                       className="h-[1em] opacity-50"
@@ -469,9 +491,8 @@ export default function SignUpForm() {
             <button
               type="submit"
               disabled={disabled}
-              className={`btn btn-info w-full shadow-none ${
-                loading ? "btn-soft pointer-events-none" : ""
-              }`}
+              className={`btn btn-info w-full shadow-none ${loading ? "btn-soft pointer-events-none" : ""
+                }`}
             >
               {loading ? (
                 <>
