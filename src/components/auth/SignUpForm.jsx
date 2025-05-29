@@ -20,8 +20,8 @@ export default function SignUpForm() {
     lastName: "",
     username: "",
     phoneNumber: "",
-    region: "",       // Added region field
-    district: "",      // Added district field
+    region: "",       
+    district: "",      
     email: "",
     DOB: "",
     password: "",
