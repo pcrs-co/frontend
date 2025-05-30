@@ -1,3 +1,4 @@
+import { useForm } from "react-hook-form";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import PassToggle from "./PassToggle";
 import { useToast } from "../../context/ToastContext";
@@ -8,120 +9,65 @@ import {
   PhoneIcon,
   LetterIcon,
 } from "../common/MiscIcons";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 import api from "../../utils/api";
 
 export default function SignUpForm() {
-  // Define state to store form data
-  const [signUpData, setSignUpData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    phoneNumber: "",
-    region: "",       
-    district: "",      
-    email: "",
-    DOB: "",
-    password: "",
-    repeatPassword: "",
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      username: "",
+      phoneNumber: "",
+      region: "",
+      district: "",
+      email: "",
+      DOB: "",
+      password: "",
+      repeatPassword: "",
+      consent: false,
+    },
   });
-
-  // Other state variables for form control
-  const [consent, setConsent] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
-
-  // Effect to enable/disable the submit button based on form validity
-  useEffect(() => {
-    const {
-      firstName,
-      lastName,
-      username,
-      phoneNumber,
-      email,
-      password,
-      repeatPassword,
-    } = signUpData;
-
-    // Check if all required fields are filled and passwords match
-    const isValid =
-      firstName &&
-      lastName &&
-      username &&
-      isValidPhoneNumber &&
-      email &&
-      password &&
-      repeatPassword &&
-      password === repeatPassword &&
-      consent;
-
-    setDisabled(!isValid);
-  }, [signUpData, consent]);
-
-  // Toggle consent state
-  const toggleConsent = () => {
-    setConsent((prevConsent) => !prevConsent);
-  };
-
-  // Toggle password visibility
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShow) => !prevShow);
-  };
-
-  // Handle input changes
-  const handleInput = (e) => {
-    const { name, value } = e.target;
-    if (name === "phoneNumber") {
-      // Only store digits for phone number
-      const digitsOnly = value.replace(/\D/g, "");
-      setSignUpData((prev) => ({ ...prev, [name]: digitsOnly }));
-      setIsValidPhoneNumber(digitsOnly.length === 10); // Only valid if exactly 10 digits
-    } else {
-      setSignUpData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
 
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    setLoading(true); // Set loading state
+  const password = watch("password");
+  const consent = watch("consent");
 
+  const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const registrationData = {
-        first_name: signUpData.firstName,
-        last_name: signUpData.lastName,
-        username: signUpData.username,
-        phone_number: `+255${signUpData.phoneNumber.substring(1)}`,
-        email: signUpData.email,
-        password: signUpData.password,
-        password2: signUpData.repeatPassword,
-        // Optional fields - only include if they have values
-        ...(signUpData.dateOfBirth && { date_of_birth: signUpData.dateOfBirth }),
-        ...(signUpData.region && { region: signUpData.region }),
-        ...(signUpData.district && { district: signUpData.district }),
+        first_name: data.firstName,
+        last_name: data.lastName,
+        username: data.username,
+        phone_number: `+255${data.phoneNumber.substring(1)}`,
+        email: data.email,
+        password: data.password,
+        password2: data.repeatPassword,
+        ...(data.DOB && { date_of_birth: data.DOB }),
+        ...(data.region && { region: data.region }),
+        ...(data.district && { district: data.district }),
       };
 
-      console.log("Submitting:", registrationData); // Debug log
-
-      // Register the user
       const registerResponse = await api.post("/register/", registrationData);
-      console.log("Registration response:", registerResponse.data); // Debug log
 
-      // Auto-login the user after successful registration
       const loginResponse = await api.post("/token/", {
-        username: signUpData.username,
-        password: signUpData.password,
+        username: data.username,
+        password: data.password,
       });
 
-      // Store tokens and user role in localStorage
       localStorage.setItem(ACCESS_TOKEN, loginResponse.data.access);
       localStorage.setItem(REFRESH_TOKEN, loginResponse.data.refresh);
       localStorage.setItem("userRole", loginResponse.data.role);
@@ -132,39 +78,30 @@ export default function SignUpForm() {
         type: "success",
       });
 
-      // Redirect to homepage
       navigate("/");
     } catch (error) {
-      // Handle errors during registration or login
-      if (error.response?.data) {
-        Object.values(error.response.data).forEach((value) => {
+      const errData = error.response?.data;
+      if (errData) {
+        Object.values(errData).forEach((value) => {
           showToast({
             message: Array.isArray(value) ? value.join(", ") : value,
             type: "error",
           });
         });
-      } else if (error.response) {
-        // Request was made but no response received
-        showToast({
-          message: "Server not reachable. Please check your connection.",
-          type: "error"
-        });
       } else {
-        // Other errors
         showToast({
           message: error.message || "An unexpected error occurred",
-          type: "error"
+          type: "error",
         });
       }
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
   return (
     <>
       <div className="mb-5 sm:mb-8">
-        {/* Form header */}
         <h1 className="mb-2 font-semibold text-gray-800 dark:text-white/90 text-2xl sm:text-title-md">
           Create an account
         </h1>
@@ -181,209 +118,236 @@ export default function SignUpForm() {
       </div>
 
       <div>
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <div className="flex flex-row md:flex-wrap items-center justify-between">
-              {/* First Name Input */}
+              {/* First Name */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
                   First Name<span className="text-error opacity-60">*</span>
                 </legend>
-                <input
-                  className="input validator"
-                  name="firstName"
-                  type="text"
-                  minLength="2"
-                  maxLength="20"
-                  required
-                  placeholder="E.g. John"
-                  title="Enter your first name"
-                  onChange={handleInput}
-                  value={signUpData.firstName}
-                  disabled={loading}
-                />
+                <div
+                  className={`${
+                    watch("firstName") && errors.firstName
+                      ? "tooltip tooltip-error"
+                      : ""
+                  }`}
+                  data-tip={errors.firstName?.message}
+                >
+                  <input
+                    className="input validator"
+                    {...register("firstName", {
+                      required: "First name is required",
+                      minLength: { value: 2, message: "Min 2 characters" },
+                      maxLength: 20,
+                    })}
+                    disabled={loading}
+                    placeholder="E.g. John"
+                    title="Enter your first name"
+                  />
+                </div>
               </fieldset>
 
-              {/* Last Name Input */}
+              {/* Last Name */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
                   Last Name<span className="text-error opacity-60">*</span>
                 </legend>
-                <input
-                  className="input validator"
-                  name="lastName"
-                  type="text"
-                  minLength="2"
-                  maxLength="20"
-                  required
-                  placeholder="E.g. Doe"
-                  title="Enter your last name"
-                  onChange={handleInput}
-                  value={signUpData.lastName}
-                  disabled={loading}
-                />
+                <div
+                  className={`${
+                    watch("lastName") && errors.lastName
+                      ? "tooltip tooltip-error"
+                      : ""
+                  }`}
+                  data-tip={errors.lastName?.message}
+                >
+                  <input
+                    className="input validator w-full"
+                    {...register("lastName", {
+                      required: "Last name is required",
+                      minLength: { value: 2, message: "Min 2 characters" },
+                      maxLength: 20,
+                    })}
+                    disabled={loading}
+                    placeholder="E.g. Doe"
+                    title="Enter your last name"
+                  />
+                </div>
               </fieldset>
             </div>
 
             <div className="flex flex-row md:flex-wrap items-center justify-between">
-              {/* Username Input */}
+              {/* Username */}
               <fieldset className="fieldset w-full md:w-[42%]">
                 <legend className="fieldset-legend text-sm">
-                  Username
-                  <span className="text-error opacity-60">*</span>
+                  Username<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className="input validator">
+                <label
+                  className={`input w-full validator ${
+                    watch("username") && errors.username
+                      ? "tooltip tooltip-error"
+                      : ""
+                  }`}
+                  data-tip={errors.username?.message}
+                >
                   <PersonIcon />
                   <input
-                    type="text"
-                    required
+                    {...register("username", {
+                      required: "Username is required",
+                      pattern: {
+                        value: /^[A-Za-z][A-Za-z0-9\-]*$/,
+                        message: "Only letters, numbers or dash",
+                      },
+                      minLength: 3,
+                      maxLength: 30,
+                    })}
                     placeholder="E.g. johndoe"
-                    pattern="[A-Za-z][A-Za-z0-9\-]*"
-                    minLength="3"
-                    maxLength="30"
                     title="Only letters, numbers or dash"
-                    name="username"
-                    onChange={handleInput}
-                    value={signUpData.username}
                     disabled={loading}
                   />
                 </label>
               </fieldset>
 
-              {/* Phone Number Input */}
+              {/* Phone Number */}
               <fieldset className="fieldset w-full md:w-[54%]">
                 <legend className="fieldset-legend text-sm">
                   Phone<span className="text-error opacity-60">*</span>
                 </legend>
-                <label className="input validator w-full">
+                <label
+                  className={`input w-full validator ${
+                    watch("phoneNumber") && errors.phoneNumber
+                      ? "tooltip tooltip-error"
+                      : ""
+                  }`}
+                  data-tip={errors.phoneNumber?.message}
+                >
                   <PhoneIcon />
                   <input
                     type="tel"
-                    inputMode="numeric"
                     className="tabular-nums"
-                    name="phoneNumber"
-                    required
+                    inputMode="numeric"
+                    {...register("phoneNumber", {
+                      required: "Phone number is required",
+                      pattern: {
+                        value: /^[0-9]{10}$/,
+                        message: "Must be 10 digits",
+                      },
+                    })}
                     placeholder="Enter your Phone Number"
-                    pattern="[0-9]*"
-                    minLength="10"
-                    maxLength="10"
                     title="Must be 10 digits"
-                    onChange={handleInput}
-                    value={signUpData.phoneNumber}
                     disabled={loading}
                   />
                 </label>
               </fieldset>
             </div>
 
-            {/* Email Input */}
+            {/* Email */}
             <fieldset className="fieldset">
               <legend className="fieldset-legend text-sm">
                 E-mail<span className="text-error opacity-60">*</span>
               </legend>
-              <label className="input validator w-full">
+              <label
+                className={`input w-full validator ${
+                  watch("email") && errors.email ? "tooltip tooltip-error" : ""
+                }`}
+                data-tip={errors.email?.message}
+              >
                 <LetterIcon />
                 <input
-                  name="email"
                   type="email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Invalid email format",
+                    },
+                  })}
                   placeholder="E.g. mail@site.com"
                   title="Enter your e-mail"
-                  onChange={handleInput}
-                  value={signUpData.email}
                   disabled={loading}
-                  required
                 />
               </label>
             </fieldset>
 
             <div className="flex flex-row md:flex-wrap items-center justify-between">
-              {/* Password Input */}
+              {/* Password */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
-                  Password
-                  <span className="text-error opacity-60">*</span>
+                  Password<span className="text-error opacity-60">*</span>
                 </legend>
                 <label
-                  className={`input w-full ${signUpData.password ? "validator" : ""
-                    }`}
+                  className={`input w-full validator ${
+                    watch("password") && errors.password
+                      ? "tooltip tooltip-error"
+                      : ""
+                  }`}
+                  data-tip={errors.password?.message}
                 >
                   <KeyIcon />
-
                   <input
                     type={showPassword ? "text" : "password"}
-                    name="password"
-                    required
-                    pattern=".{8,}"
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: { value: 8, message: "Min 8 characters" },
+                    })}
                     placeholder="Enter your Password"
-                    onChange={handleInput}
-                    value={signUpData.password}
                     disabled={loading}
                   />
-                  {/* Password visibility toggle */}
                   <PassToggle
                     checked={showPassword}
-                    onChange={togglePasswordVisibility}
+                    onChange={() => setShowPassword(!showPassword)}
                   />
                 </label>
               </fieldset>
 
-              {/* Confirm Password Input */}
+              {/* Confirm Password */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
                   Confirm Password
                   <span className="text-error opacity-60">*</span>
                 </legend>
-                <div
-                  className={
-                    signUpData.repeatPassword &&
-                    signUpData.repeatPassword !== signUpData.password
-                      ? "tooltip tooltip-open tooltip-error tooltip-bottom md:tooltip-right"
-                      : null
-                  }
-                  data-tip="Passwords do not match"
+                <label
+                  className={`input w-full validator ${
+                    watch("repeatPassword") !== password
+                      ? "tooltip tooltip-error tooltip-open"
+                      : ""
+                  }`}
+                  data-tip={errors.repeatPassword?.message}
                 >
-                  <label
-                    className={`input w-full ${signUpData.repeatPassword ? "validator" : ""
-                      }`}
-                  >
-                    <KeyIcon />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="repeatPassword"
-                      required
-                      pattern=".{8,}"
-                      minLength={
-                        signUpData.password === signUpData.repeatPassword
-                          ? 8
-                          : 100
-                      }
-                      placeholder="Repeat Password"
-                      onChange={handleInput}
-                      value={signUpData.repeatPassword}
-                      disabled={loading}
-                    />
-                    {/* Password visibility toggle */}
-                    <PassToggle
-                      checked={showPassword}
-                      onChange={togglePasswordVisibility}
-                    />
-                  </label>
-                </div>
+                  <KeyIcon />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    {...register("repeatPassword", {
+                      required: "Confirm your password",
+                      validate: (value) =>
+                        value === password || "Passwords do not match",
+                    })}
+                    placeholder="Repeat Password"
+                    disabled={loading}
+                  />
+                  <PassToggle
+                    checked={showPassword}
+                    onChange={() => setShowPassword(!showPassword)}
+                  />
+                </label>
               </fieldset>
             </div>
 
-            {/* Consent Checkbox */}
+            {/* Consent */}
             <fieldset className="fieldset">
               <label className="label text-sm ml-px mt-3">
                 <input
                   type="checkbox"
                   className="checkbox checkbox-xs checkbox-info"
-                  onChange={toggleConsent}
+                  {...register("consent", { required: true })}
                   disabled={loading}
                 />
                 I agree to the platform accessing my{" "}
                 <Link className="link-info link-hover">Information</Link>
               </label>
+              {errors.consent && (
+                <p className="text-error">You must agree before signing up</p>
+              )}
             </fieldset>
           </div>
 
@@ -391,9 +355,10 @@ export default function SignUpForm() {
           <div className={loading ? "cursor-wait" : ""}>
             <button
               type="submit"
-              disabled={disabled}
-              className={`btn btn-info w-full shadow-none ${loading ? "btn-soft pointer-events-none" : ""
-                }`}
+              className={`btn btn-info w-full shadow-none ${
+                loading ? "btn-soft pointer-events-none" : ""
+              }`}
+              disabled={!isValid || !consent}
             >
               {loading ? (
                 <>
