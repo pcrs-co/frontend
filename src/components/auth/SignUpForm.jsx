@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import clsx from "clsx";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import PassToggle from "./PassToggle";
 import { useToast } from "../../context/ToastContext";
@@ -116,6 +117,11 @@ export default function SignUpForm() {
           </Link>
         </p>
       </div>
+      {isValid && consent ? null : (
+        <p className="text-sm font-normal text-right text-gray-700 dark:text-gray-400 sm:text-start">
+          <span className="text-error">*</span> Required fields
+        </p>
+      )}
 
       <div>
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -124,7 +130,10 @@ export default function SignUpForm() {
               {/* First Name */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
-                  First Name<span className="text-error opacity-60">*</span>
+                  First Name{" "}
+                  {errors.firstName || !watch("firstName") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
                 </legend>
                 <div
                   className={`${
@@ -135,12 +144,15 @@ export default function SignUpForm() {
                   data-tip={errors.firstName?.message}
                 >
                   <input
-                    className="input validator"
+                    className={`input w-full ${
+                      watch("firstName") ? "validator" : ""
+                    }`}
                     {...register("firstName", {
                       required: "First name is required",
                       minLength: { value: 2, message: "Min 2 characters" },
                       maxLength: 20,
                     })}
+                    minLength={errors.firstName ? 500 : 2}
                     disabled={loading}
                     placeholder="E.g. John"
                     title="Enter your first name"
@@ -151,7 +163,10 @@ export default function SignUpForm() {
               {/* Last Name */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
-                  Last Name<span className="text-error opacity-60">*</span>
+                  Last Name{" "}
+                  {errors.lastName || !watch("lastName") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
                 </legend>
                 <div
                   className={`${
@@ -162,12 +177,15 @@ export default function SignUpForm() {
                   data-tip={errors.lastName?.message}
                 >
                   <input
-                    className="input validator w-full"
+                    className={`input w-full ${
+                      watch("lastName") ? "validator" : ""
+                    }`}
                     {...register("lastName", {
                       required: "Last name is required",
                       minLength: { value: 2, message: "Min 2 characters" },
                       maxLength: 20,
                     })}
+                    minLength={errors.lastName ? 500 : 2}
                     disabled={loading}
                     placeholder="E.g. Doe"
                     title="Enter your last name"
@@ -180,14 +198,16 @@ export default function SignUpForm() {
               {/* Username */}
               <fieldset className="fieldset w-full md:w-[42%]">
                 <legend className="fieldset-legend text-sm">
-                  Username<span className="text-error opacity-60">*</span>
+                  Username{" "}
+                  {errors.username || !watch("username") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
                 </legend>
                 <label
-                  className={`input w-full validator ${
-                    watch("username") && errors.username
-                      ? "tooltip tooltip-error"
-                      : ""
-                  }`}
+                  className={clsx("input w-full", {
+                    validator: watch("username"),
+                    "tooltip tooltip-error": Boolean(errors.username?.message),
+                  })}
                   data-tip={errors.username?.message}
                 >
                   <PersonIcon />
@@ -198,9 +218,10 @@ export default function SignUpForm() {
                         value: /^[A-Za-z][A-Za-z0-9\-]*$/,
                         message: "Only letters, numbers or dash",
                       },
-                      minLength: 3,
+                      minLength: { value: 3, message: "Min 3 characters" },
                       maxLength: 30,
                     })}
+                    minLength={errors.username ? 500 : 3}
                     placeholder="E.g. johndoe"
                     title="Only letters, numbers or dash"
                     disabled={loading}
@@ -211,14 +232,18 @@ export default function SignUpForm() {
               {/* Phone Number */}
               <fieldset className="fieldset w-full md:w-[54%]">
                 <legend className="fieldset-legend text-sm">
-                  Phone<span className="text-error opacity-60">*</span>
+                  Phone{" "}
+                  {errors.phoneNumber || !watch("phoneNumber") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
                 </legend>
                 <label
-                  className={`input w-full validator ${
-                    watch("phoneNumber") && errors.phoneNumber
-                      ? "tooltip tooltip-error"
-                      : ""
-                  }`}
+                  className={clsx("input w-full", {
+                    validator: watch("phoneNumber"),
+                    "tooltip tooltip-error": Boolean(
+                      errors.phoneNumber?.message
+                    ),
+                  })}
                   data-tip={errors.phoneNumber?.message}
                 >
                   <PhoneIcon />
@@ -233,6 +258,9 @@ export default function SignUpForm() {
                         message: "Must be 10 digits",
                       },
                     })}
+                    minLength={errors.username ? 500 : 10}
+                    maxLength={errors.username ? 500 : 10}
+                    pattern={"^[0-9]{10}$"}
                     placeholder="Enter your Phone Number"
                     title="Must be 10 digits"
                     disabled={loading}
@@ -244,12 +272,16 @@ export default function SignUpForm() {
             {/* Email */}
             <fieldset className="fieldset">
               <legend className="fieldset-legend text-sm">
-                E-mail<span className="text-error opacity-60">*</span>
+                E-mail{" "}
+                  {errors.email || !watch("email") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
               </legend>
               <label
-                className={`input w-full validator ${
-                  watch("email") && errors.email ? "tooltip tooltip-error" : ""
-                }`}
+                className={clsx("input w-full", {
+                  validator: watch("email"),
+                  "tooltip tooltip-error": Boolean(errors.email?.message),
+                })}
                 data-tip={errors.email?.message}
               >
                 <LetterIcon />
@@ -262,6 +294,7 @@ export default function SignUpForm() {
                       message: "Invalid email format",
                     },
                   })}
+                  minLength={errors.email ? 500 : null}
                   placeholder="E.g. mail@site.com"
                   title="Enter your e-mail"
                   disabled={loading}
@@ -273,14 +306,16 @@ export default function SignUpForm() {
               {/* Password */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
-                  Password<span className="text-error opacity-60">*</span>
+                  Password{" "}
+                  {errors.password || !watch("password") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
                 </legend>
                 <label
-                  className={`input w-full validator ${
-                    watch("password") && errors.password
-                      ? "tooltip tooltip-error"
-                      : ""
-                  }`}
+                  className={clsx("input w-full", {
+                    validator: watch("password"),
+                    "tooltip tooltip-error": Boolean(errors.password?.message),
+                  })}
                   data-tip={errors.password?.message}
                 >
                   <KeyIcon />
@@ -290,6 +325,7 @@ export default function SignUpForm() {
                       required: "Password is required",
                       minLength: { value: 8, message: "Min 8 characters" },
                     })}
+                    minLength={errors.password ? 500 : 8}
                     placeholder="Enter your Password"
                     disabled={loading}
                   />
@@ -303,15 +339,18 @@ export default function SignUpForm() {
               {/* Confirm Password */}
               <fieldset className="fieldset w-full md:w-[48%]">
                 <legend className="fieldset-legend text-sm">
-                  Confirm Password
-                  <span className="text-error opacity-60">*</span>
+                  Confirm Password{" "}
+                  {errors.repeatPassword || !watch("repeatPassword") ? (
+                    <span className="text-error">*</span>
+                  ) : null}
                 </legend>
                 <label
-                  className={`input w-full validator ${
-                    watch("repeatPassword") !== password
-                      ? "tooltip tooltip-error tooltip-open"
-                      : ""
-                  }`}
+                  className={clsx("input w-full", {
+                    validator: watch("repeatPassword"),
+                    "tooltip tooltip-error": Boolean(
+                      errors.repeatPassword?.message
+                    ),
+                  })}
                   data-tip={errors.repeatPassword?.message}
                 >
                   <KeyIcon />
@@ -343,11 +382,11 @@ export default function SignUpForm() {
                   disabled={loading}
                 />
                 I agree to the platform accessing my{" "}
-                <Link className="link-info link-hover">Information</Link>
+                <Link className="link-info link-hover">Information</Link>{" "}
+                  {!consent ? (
+                    <span className="text-error">*</span>
+                  ) : null}
               </label>
-              {errors.consent && (
-                <p className="text-error">You must agree before signing up</p>
-              )}
             </fieldset>
           </div>
 
