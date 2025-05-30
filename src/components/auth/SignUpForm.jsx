@@ -102,7 +102,7 @@ export default function SignUpForm() {
 
   return (
     <>
-      <div className="mb-5 sm:mb-8">
+      <div className="mb-4 sm:mb-6">
         <h1 className="mb-2 font-semibold text-gray-800 dark:text-white/90 text-2xl sm:text-title-md">
           Create an account
         </h1>
