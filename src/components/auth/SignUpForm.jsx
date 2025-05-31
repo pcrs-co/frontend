@@ -11,7 +11,7 @@ import {
   LetterIcon,
 } from "../common/MiscIcons";
 import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../../utils/api";
 
 export default function SignUpForm() {
@@ -19,6 +19,7 @@ export default function SignUpForm() {
     register,
     handleSubmit,
     watch,
+    trigger,
     formState: { errors, isValid },
   } = useForm({
     mode: "onChange",
@@ -44,6 +45,9 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const password = watch("password");
+  useEffect(() => {
+    trigger("repeatPassword"); // Re-validate when password changes
+  }, [password, trigger]);
   const consent = watch("consent");
 
   const onSubmit = async (data) => {
@@ -117,86 +121,77 @@ export default function SignUpForm() {
           </Link>
         </p>
       </div>
-      {isValid && consent ? null : (
-        <p className="text-sm font-normal text-right text-gray-700 dark:text-gray-400 sm:text-start">
-          <span className="text-error">*</span> Required fields
-        </p>
-      )}
 
-      <div>
+      <div className="relative">
+        {isValid && consent ? null : (
+          <p className="absolute right-0 bottom-full text-xs font-normal text-right text-gray-700 dark:text-gray-400 sm:text-start">
+            <span className="text-error">*</span> Required fields
+          </p>
+        )}
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <div className="flex flex-row md:flex-wrap items-center justify-between">
               {/* First Name */}
-              <fieldset className="fieldset w-full md:w-[48%]">
+              <fieldset className="fieldset w-full md:w-[48%] relative">
                 <legend className="fieldset-legend text-sm">
                   First Name{" "}
                   {errors.firstName || !watch("firstName") ? (
                     <span className="text-error">*</span>
                   ) : null}
                 </legend>
-                <div
-                  className={`${
-                    watch("firstName") && errors.firstName
-                      ? "tooltip tooltip-error"
-                      : ""
-                  }`}
-                  data-tip={errors.firstName?.message}
-                >
-                  <input
-                    className={`input w-full ${
-                      watch("firstName") ? "validator" : ""
-                    }`}
-                    {...register("firstName", {
-                      required: "First name is required",
-                      minLength: { value: 2, message: "Min 2 characters" },
-                      maxLength: 20,
-                    })}
-                    minLength={errors.firstName ? 500 : 2}
-                    disabled={loading}
-                    placeholder="E.g. John"
-                    title="Enter your first name"
-                  />
-                </div>
+                <input
+                  className={clsx("input w-full", {
+                    "input-error": errors.firstName,
+                  })}
+                  {...register("firstName", {
+                    required: "First name is required",
+                    minLength: { value: 2, message: "Min 2 characters" },
+                    maxLength: 20,
+                  })}
+                  disabled={loading}
+                  placeholder="E.g. John"
+                  title="Enter your first name"
+                />
+                {errors.firstName && (
+                  <p className="absolute right-0 top-full text-xs text-error">
+                    {errors.firstName.message}
+                  </p>
+                )}
               </fieldset>
 
               {/* Last Name */}
-              <fieldset className="fieldset w-full md:w-[48%]">
+              <fieldset className="fieldset w-full md:w-[48%] relative">
                 <legend className="fieldset-legend text-sm">
                   Last Name{" "}
                   {errors.lastName || !watch("lastName") ? (
                     <span className="text-error">*</span>
                   ) : null}
                 </legend>
-                <div
-                  className={`${
-                    watch("lastName") && errors.lastName
-                      ? "tooltip tooltip-error"
-                      : ""
-                  }`}
-                  data-tip={errors.lastName?.message}
-                >
-                  <input
-                    className={`input w-full ${
-                      watch("lastName") ? "validator" : ""
-                    }`}
-                    {...register("lastName", {
-                      required: "Last name is required",
-                      minLength: { value: 2, message: "Min 2 characters" },
-                      maxLength: 20,
-                    })}
-                    minLength={errors.lastName ? 500 : 2}
-                    disabled={loading}
-                    placeholder="E.g. Doe"
-                    title="Enter your last name"
-                  />
-                </div>
+                <input
+                  className={clsx("input w-full", {
+                    "input-error": errors.lastName,
+                  })}
+                  {...register("lastName", {
+                    required: "Last name is required",
+                    minLength: { value: 2, message: "Min 2 characters" },
+                    maxLength: 20,
+                  })}
+                  minLength={errors.lastName ? 500 : 2}
+                  disabled={loading}
+                  placeholder="E.g. Doe"
+                  title="Enter your last name"
+                />
+                {errors.lastName && (
+                  <p className="absolute right-0 top-full text-xs text-error">
+                    {errors.lastName.message}
+                  </p>
+                )}
               </fieldset>
             </div>
 
             <div className="flex flex-row md:flex-wrap items-center justify-between">
               {/* Username */}
-              <fieldset className="fieldset w-full md:w-[42%]">
+              <fieldset className="fieldset w-full md:w-[42%] relative">
                 <legend className="fieldset-legend text-sm">
                   Username{" "}
                   {errors.username || !watch("username") ? (
@@ -205,10 +200,8 @@ export default function SignUpForm() {
                 </legend>
                 <label
                   className={clsx("input w-full", {
-                    validator: watch("username"),
-                    "tooltip tooltip-error": Boolean(errors.username?.message),
+                    "input-error": errors.username,
                   })}
-                  data-tip={errors.username?.message}
                 >
                   <PersonIcon />
                   <input
@@ -227,10 +220,15 @@ export default function SignUpForm() {
                     disabled={loading}
                   />
                 </label>
+                {errors.username && (
+                  <p className="absolute right-0 top-full text-xs text-error">
+                    {errors.username.message}
+                  </p>
+                )}
               </fieldset>
 
               {/* Phone Number */}
-              <fieldset className="fieldset w-full md:w-[54%]">
+              <fieldset className="fieldset w-full md:w-[54%] relative">
                 <legend className="fieldset-legend text-sm">
                   Phone{" "}
                   {errors.phoneNumber || !watch("phoneNumber") ? (
@@ -239,12 +237,8 @@ export default function SignUpForm() {
                 </legend>
                 <label
                   className={clsx("input w-full", {
-                    validator: watch("phoneNumber"),
-                    "tooltip tooltip-error": Boolean(
-                      errors.phoneNumber?.message
-                    ),
+                    "input-error": errors.phoneNumber,
                   })}
-                  data-tip={errors.phoneNumber?.message}
                 >
                   <PhoneIcon />
                   <input
@@ -258,31 +252,31 @@ export default function SignUpForm() {
                         message: "Must be 10 digits",
                       },
                     })}
-                    minLength={errors.username ? 500 : 10}
-                    maxLength={errors.username ? 500 : 10}
-                    pattern={"^[0-9]{10}$"}
                     placeholder="Enter your Phone Number"
                     title="Must be 10 digits"
                     disabled={loading}
                   />
                 </label>
+                {errors.phoneNumber && (
+                  <p className="absolute right-0 top-full text-xs text-error">
+                    {errors.phoneNumber.message}
+                  </p>
+                )}
               </fieldset>
             </div>
 
             {/* Email */}
-            <fieldset className="fieldset">
+            <fieldset className="fieldset relative">
               <legend className="fieldset-legend text-sm">
                 E-mail{" "}
-                  {errors.email || !watch("email") ? (
-                    <span className="text-error">*</span>
-                  ) : null}
+                {errors.email || !watch("email") ? (
+                  <span className="text-error">*</span>
+                ) : null}
               </legend>
               <label
                 className={clsx("input w-full", {
-                  validator: watch("email"),
-                  "tooltip tooltip-error": Boolean(errors.email?.message),
+                  "input-error": errors.email,
                 })}
-                data-tip={errors.email?.message}
               >
                 <LetterIcon />
                 <input
@@ -294,17 +288,21 @@ export default function SignUpForm() {
                       message: "Invalid email format",
                     },
                   })}
-                  minLength={errors.email ? 500 : null}
                   placeholder="E.g. mail@site.com"
                   title="Enter your e-mail"
                   disabled={loading}
                 />
               </label>
+              {errors.email && (
+                <p className="absolute right-55 top-full text-xs text-error">
+                  {errors.email.message}
+                </p>
+              )}
             </fieldset>
 
             <div className="flex flex-row md:flex-wrap items-center justify-between">
               {/* Password */}
-              <fieldset className="fieldset w-full md:w-[48%]">
+              <fieldset className="fieldset w-full md:w-[48%] relative">
                 <legend className="fieldset-legend text-sm">
                   Password{" "}
                   {errors.password || !watch("password") ? (
@@ -313,10 +311,8 @@ export default function SignUpForm() {
                 </legend>
                 <label
                   className={clsx("input w-full", {
-                    validator: watch("password"),
-                    "tooltip tooltip-error": Boolean(errors.password?.message),
+                    "input-error": errors.password,
                   })}
-                  data-tip={errors.password?.message}
                 >
                   <KeyIcon />
                   <input
@@ -325,7 +321,6 @@ export default function SignUpForm() {
                       required: "Password is required",
                       minLength: { value: 8, message: "Min 8 characters" },
                     })}
-                    minLength={errors.password ? 500 : 8}
                     placeholder="Enter your Password"
                     disabled={loading}
                   />
@@ -334,10 +329,15 @@ export default function SignUpForm() {
                     onChange={() => setShowPassword(!showPassword)}
                   />
                 </label>
+                {errors.password && (
+                  <p className="absolute right-0 top-full text-xs text-error">
+                    {errors.password.message}
+                  </p>
+                )}
               </fieldset>
 
               {/* Confirm Password */}
-              <fieldset className="fieldset w-full md:w-[48%]">
+              <fieldset className="fieldset w-full md:w-[48%] relative">
                 <legend className="fieldset-legend text-sm">
                   Confirm Password{" "}
                   {errors.repeatPassword || !watch("repeatPassword") ? (
@@ -346,12 +346,8 @@ export default function SignUpForm() {
                 </legend>
                 <label
                   className={clsx("input w-full", {
-                    validator: watch("repeatPassword"),
-                    "tooltip tooltip-error": Boolean(
-                      errors.repeatPassword?.message
-                    ),
+                    "input-error": errors.repeatPassword,
                   })}
-                  data-tip={errors.repeatPassword?.message}
                 >
                   <KeyIcon />
                   <input
@@ -369,6 +365,11 @@ export default function SignUpForm() {
                     onChange={() => setShowPassword(!showPassword)}
                   />
                 </label>
+                {errors.repeatPassword && (
+                  <p className="absolute right-0 top-full text-xs text-error">
+                    {errors.repeatPassword.message}
+                  </p>
+                )}
               </fieldset>
             </div>
 
@@ -383,9 +384,7 @@ export default function SignUpForm() {
                 />
                 I agree to the platform accessing my{" "}
                 <Link className="link-info link-hover">Information</Link>{" "}
-                  {!consent ? (
-                    <span className="text-error">*</span>
-                  ) : null}
+                {!consent ? <span className="text-error">*</span> : null}
               </label>
             </fieldset>
           </div>
