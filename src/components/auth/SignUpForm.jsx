@@ -46,7 +46,9 @@ export default function SignUpForm() {
 
   const password = watch("password");
   useEffect(() => {
-    trigger("repeatPassword"); // Re-validate when password changes
+    if (password) {
+      trigger("repeatPassword");
+    }
   }, [password, trigger]);
   const consent = watch("consent");
 
