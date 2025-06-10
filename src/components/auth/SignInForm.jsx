@@ -1,82 +1,53 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import clsx from "clsx";
 import api from "../../utils/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
-import { EyeCloseIcon, EyeIcon } from "../../assets/icons";
+import { PersonIcon, KeyIcon, ArrowUpRightIcon } from "../common/MiscIcons";
+import PassToggle from "./PassToggle";
 
-// SignInForm Component
 export default function SignInForm() {
-  // State for sign-in data
-  const [signInData, setSignInData] = useState({
-    username: "",
-    password: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({ mode: "onChange" });
 
-  // State for loading indicator, form disable and password visibility
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-
-  // Effect to enable/disable the submit button based on input validity
-  useEffect(() => {
-    const { username, password } = signInData;
-    const isValid = username && password;
-    setDisabled(!isValid);
-  }, [signInData]);
-
-  // Toggle password visibility
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  // Handle input changes
-  const handleInput = (event) => {
-    const { name, value } = event.target;
-    setSignInData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (formData) => {
     setLoading(true);
-
     try {
-      // Attempt to sign in
-      const response = await api.post("/token/", signInData);
+      const { data } = await api.post("/token/", formData);
 
-      // Store tokens and user role in localStorage
-      localStorage.setItem(ACCESS_TOKEN, response.data.access);
-      localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-      localStorage.setItem("userRole", response.data.role);
-      localStorage.setItem("username", response.data.username);
+      localStorage.setItem(ACCESS_TOKEN, data.access);
+      localStorage.setItem(REFRESH_TOKEN, data.refresh);
+      localStorage.setItem("userRole", data.role);
+      localStorage.setItem("username", data.username);
 
       showToast({ message: "Signed In successfully!", type: "success" });
 
-      // Redirect based on user role
-      switch (response.data.role) {
-        case "admin":
-          navigate("/admin/dashboard");
-          break;
-        case "vendor":
-          navigate("/vendor/dashboard");
-          break;
-        default:
-          navigate("/");
-      }
+      const routeMap = {
+        admin: "/admin/dashboard",
+        vendor: "/vendor/dashboard",
+      };
+
+      navigate(routeMap[data.role] || "/");
     } catch (error) {
-      console.error("Login error:", error.response?.data || error.message);
+      const res = error.response;
       let toastMessage = "Unexpected error occurred";
       let type = "error";
 
-      // Handle error cases
-      if (!error.response) {
+      if (!res) {
         toastMessage = "Server not reachable";
         type = "warning";
-      } else if (error.response.status === 401) {
+      } else if (res.status === 401) {
         toastMessage = "Invalid credentials";
         type = "error";
       }
@@ -89,167 +60,126 @@ export default function SignInForm() {
 
   return (
     <>
-      <div className="mb-5 sm:mb-8">
+      <div className="mb-4 sm:mb-6">
         <h1 className="mb-2 font-semibold text-gray-800 text-2xl dark:text-white/90 sm:text-title-md">
           Welcome Back!
         </h1>
         <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-          Don't have an account? {""}
+          Don't have an account?{" "}
           <Link
             to="/signup"
             className="inline-flex items-center link-info gap-x-0.5"
           >
             <span className="link link-hover">Sign Up</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-4 mt-px"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.25 3.75H19.5a.75.75 0 0 1 .75.75v11.25a.75.75 0 0 1-1.5 0V6.31L5.03 20.03a.75.75 0 0 1-1.06-1.06L17.69 5.25H8.25a.75.75 0 0 1 0-1.5Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <ArrowUpRightIcon />
           </Link>
         </p>
       </div>
 
-      <div>
-        <form className="space-y-6">
-          <div className="space-y-3">
-            <fieldset>
-              {/* Username */}
-              <legend className="fieldset-legend text-sm">
-                Username
-                <span className="text-error opacity-60">*</span>
-              </legend>
-              <label className="input w-full">
-                <svg
-                  className="h-[1em] opacity-50"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <g
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </g>
-                </svg>
-                <input
-                  type="text"
-                  required
-                  placeholder="Enter your Username"
-                  pattern="[A-Za-z][A-Za-z0-9\-]*"
-                  minLength="3"
-                  maxLength="30"
-                  title="Only letters, numbers or dash"
-                  name="username"
-                  onChange={handleInput}
-                  value={signInData.username}
-                  disabled={loading}
-                />
-              </label>
-            </fieldset>
-
-            <fieldset>
-              {/* Password */}
-              <legend className="fieldset-legend text-sm">
-                Password<span className="text-error opacity-60">*</span>
-              </legend>
-              <label className="input w-full">
-                <svg
-                  className="h-[1em] opacity-50"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <g
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    strokeWidth="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
-                    <circle
-                      cx="16.5"
-                      cy="7.5"
-                      r=".5"
-                      fill="currentColor"
-                    ></circle>
-                  </g>
-                </svg>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Enter your Password"
-                  name="password"
-                  pattern=".{8,}"
-                  onChange={handleInput}
-                  value={signInData.password}
-                  disabled={loading}
-                />
-                <label className="swap">
-                  <input
-                    type="checkbox"
-                    checked={showPassword}
-                    onChange={togglePasswordVisibility}
-                    className="hidden"
-                  />
-                  <EyeIcon className="swap-on fill-gray-500 dark:fill-gray-400 size-full" />
-                  <EyeCloseIcon className="swap-off fill-gray-500 dark:fill-gray-400 size-full" />
-                </label>
-              </label>
-            </fieldset>
-
-            <div className="flex flex-row items-center justify-between">
-              <fieldset className="fieldset">
-                <label className="label text-sm ml-px">
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    className="checkbox checkbox-xs checkbox-info"
-                    disabled={loading}
-                  />
-                  Remember me
-                </label>
-              </fieldset>
-
-              <Link
-                to="/auth/forgot-password"
-                className="link-info text-sm mr-px"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-          </div>
-
-          <div className={loading ? "cursor-wait" : ""}>
-            <button
-              onClick={handleSubmit}
-              disabled={disabled}
-              className={`btn btn-info w-full shadow-none ${
-                loading ? "btn-soft pointer-events-none" : ""
-              }`}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="space-y-3">
+          <fieldset className="relative">
+            <legend className="fieldset-legend text-sm">Username</legend>
+            <label
+              className={clsx("input w-full", {
+                "input-error": errors.username,
+              })}
             >
-              {loading ? (
-                <>
-                  <span className="loading loading-spinner" /> Loading
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </button>
+              <PersonIcon />
+              <input
+                type="text"
+                placeholder="Enter your Username"
+                {...register("username", {
+                  required: "Username is required",
+                  pattern: {
+                    value: /^[A-Za-z][A-Za-z0-9\-]*$/,
+                    message: "Only letters, numbers or dash",
+                  },
+                  minLength: { value: 3, message: "Minimum 3 characters" },
+                  maxLength: { value: 30, message: "Maximum 30 characters" },
+                })}
+                disabled={loading}
+              />
+            </label>
+            {errors.username && (
+              <p className="absolute right-0 top-10 text-xs text-error mt-1">
+                {errors.username.message}
+              </p>
+            )}
+          </fieldset>
+
+          <fieldset className="relative">
+            <legend className="fieldset-legend text-sm">Password</legend>
+            <label
+              className={clsx("input w-full", {
+                "input-error": errors.password,
+              })}
+            >
+              <KeyIcon />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your Password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 8,
+                    message: "Minimum 8 characters required",
+                  },
+                })}
+                disabled={loading}
+              />
+              <PassToggle
+                checked={showPassword}
+                onChange={() => setShowPassword((v) => !v)}
+              />
+            </label>
+            {errors.password && (
+              <p className="absolute right-0 top-10 text-xs text-error mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </fieldset>
+
+          <div className="flex flex-row items-center justify-between mt-5">
+            <fieldset className="fieldset">
+              <label className="label text-sm ml-px">
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="checkbox checkbox-xs checkbox-info"
+                  disabled={loading}
+                />
+                Remember me
+              </label>
+            </fieldset>
+            <Link
+              to="/auth/forgot-password"
+              className="link-info text-sm mr-px"
+            >
+              Forgot Password?
+            </Link>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div className={clsx({ "cursor-wait": loading })}>
+          <button
+            type="submit"
+            disabled={!isValid}
+            className={clsx(
+              "btn btn-info w-full shadow-none",
+              loading && "btn-soft pointer-events-none"
+            )}
+          >
+            {loading ? (
+              <>
+                <span className="loading loading-spinner" /> Loading
+              </>
+            ) : (
+              "Sign In"
+            )}
+          </button>
+        </div>
+      </form>
     </>
   );
 }
-

@@ -13,6 +13,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
     "axios": "^1.9.0",
+    "clsx": "^2.1.1",
     "daisyui": "^5.0.35",
     "i18next": "^25.2.0",
     "i18next-browser-languagedetector": "^8.1.0",
@@ -23,6 +24,7 @@
     "react": "^19.1.0",
     "react-admin": "^5.8.2",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.4",
     "react-i18next": "^15.5.2",
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^7.6.0",
