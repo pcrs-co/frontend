@@ -11,6 +11,8 @@ In the project root, run this to install all required packages:
 pnpm install
 ```
 
+Note: If prompted to run 'pnpm approve-builds' for scripts, do so.
+
 This will install all the necessary dependencies for the frontend.
 
 ---
