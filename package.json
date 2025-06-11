@@ -25,6 +25,7 @@
     "react": "^19.1.0",
     "react-admin": "^5.8.2",
     "react-dom": "^19.1.0",
+    "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.56.4",
     "react-i18next": "^15.5.2",
     "react-phone-input-2": "^2.15.1",
