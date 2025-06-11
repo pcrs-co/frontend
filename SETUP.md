@@ -1,16 +1,14 @@
 # PCRS Frontend Setup
 
-> **Note:** Make sure Node.js and npm are installed on your system.
+> **Note:** Make sure Node.js and pnpm are installed on your system.
 
 ---
 
 ## Step 1: Install Project Dependencies
-
-Navigate to the frontend folder and install all required packages:
+In the project root, run this to install all required packages:
 
 ```bash
-cd frontend
-npm install
+pnpm install
 ```
 
 This will install all the necessary dependencies for the frontend.
@@ -22,7 +20,7 @@ This will install all the necessary dependencies for the frontend.
 Start the development server by running:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 After the server starts, the application will be available at:
