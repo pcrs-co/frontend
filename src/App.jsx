@@ -4,6 +4,7 @@ import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import NotFound from "./pages/errors/NotFound";
 import ForbiddenPage from "./pages/errors/Forbidden";
+import HomePage from "./pages/HomePage";
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard"; 
 import VendorDashboard from "./pages/vendor/Dashboard";
@@ -21,6 +22,7 @@ function App() {
 
           {/* Public + Fallback */}
           <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<HomePage />} />
 
 
           {/* Protected Routes */}
