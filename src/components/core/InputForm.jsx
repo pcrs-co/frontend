@@ -12,11 +12,11 @@ export default function InputForm() {
             <option>Office Work</option>
             <option>Creatives / Design</option>
             <option>Software Development</option>
-            <option>Student</option>
+            <option>Studying</option>
             <option>Casual Use</option>
           </select>
         </label>
-        <div className="flex flex-col w-full max-w-xs">
+        <div className="flex flex-col w-full">
           <input
             type="range"
             min={0}
@@ -31,10 +31,12 @@ export default function InputForm() {
         </div>
         <div className="flex flex-row items-center justify-between">
           <select className="select w-[58%]">
-            <option>Gaming</option>
-            <option>Office</option>
-            <option>Creatives</option>
-            <option>Development</option>
+            <option value="" disabled>
+              -- Level --
+            </option>
+            <option>Basic</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
           </select>
 
           <button className="btn btn-info w-[40%]">Submit</button>
