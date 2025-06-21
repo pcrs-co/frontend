@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import { useToast } from "../../context/ToastContext";
 
-export default function InputForm() {
+export default function LandingForm() {
   const {
     register,
     handleSubmit,

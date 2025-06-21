@@ -1,7 +1,7 @@
-import InputForm from "../components/core/InputForm"
+import LandingForm from "../components/core/LandingForm"
 
 export default function HomePage() {
     return (
-        <InputForm />
+        <LandingForm />
     )
 }

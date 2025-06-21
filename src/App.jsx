@@ -13,7 +13,6 @@ import VendorListPage from "./pages/admin/vendors/VendorListPage";
 import RegisterVendorPage from "./pages/admin/vendors/RegisterVendorPage";
 
 import Layout from "./components/layout/Layout";
-import ResultsPage from './pages/ResultsPage';
 import "./App.css";
 
 function App() {
@@ -27,7 +26,7 @@ function App() {
 
           {/* Public + Fallback */}
           <Route path="*" element={<NotFound />} />
-          <Route path="/" element={<Layout><Routes><Route index element={<HomePage />} /><Route path="results" element={<ResultsPage />} /></Routes></Layout>} />
+          <Route path="/" element={<Layout><Routes><Route index element={<HomePage />} /></Routes></Layout>} />
 
 
           {/* Protected Routes */}
