@@ -7,7 +7,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
 import { PersonIcon, KeyIcon, ArrowUpRightIcon } from "../common/MiscIcons";
 import PassToggle from "./PassToggle";
-import LoadingIcon from "../../components/common/AlertIcons";
+import { LoadingIcon } from "../../components/common/AlertIcons";
 
 export default function LogInForm() {
   const {

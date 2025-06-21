@@ -10,7 +10,7 @@ import {
   PhoneIcon,
   LetterIcon,
 } from "../common/MiscIcons";
-import LoadingIcon from "../../components/common/AlertIcons";
+import { LoadingIcon } from "../../components/common/AlertIcons";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";

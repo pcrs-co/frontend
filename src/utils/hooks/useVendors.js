@@ -1,37 +1,32 @@
-// src/utils/hooks/useVendors.js
+// src/utils/hooks/useVendors.js (The Query Hook)
 import { useEffect, useState } from "react";
 import * as vendorApi from "../api/vendors";
 
 export const useVendors = () => {
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fetchVendors = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const response = await vendorApi.getVendors();
-            const data = Array.isArray(response) ? response : response.results; // ✅ this line
+            // This check for paginated vs non-paginated response is smart.
+            const data = Array.isArray(response) ? response : response.results;
             setVendors(data);
-        } catch (error) {
-            console.error("Error fetching vendors", error);
+        } catch (err) {
+            console.error("Error fetching vendors", err);
+            setError(err);
         } finally {
             setLoading(false);
         }
-    };
-
-    const removeVendor = async (id) => {
-        await vendorApi.deleteVendor(id);
-        await fetchVendors();
     };
 
     useEffect(() => {
         fetchVendors();
     }, []);
 
-    return {
-        vendors,
-        loading,
-        fetchVendors,
-        removeVendor,
-        ...vendorApi, // includes createVendor, updateVendor, getVendor
-    };
+    // This hook is now focused only on the list
+    return { vendors, loading, error, refetch: fetchVendors };
 };
