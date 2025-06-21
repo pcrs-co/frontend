@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import SignIn from "./pages/auth/SignIn";
+import LogIn from "./pages/auth/LogIn";
 import SignUp from "./pages/auth/SignUp";
 import NotFound from "./pages/errors/NotFound";
 import ForbiddenPage from "./pages/errors/Forbidden";
@@ -12,6 +12,8 @@ import VendorLayout from "./components/layout/VendorLayout";
 import VendorListPage from "./pages/admin/vendors/VendorListPage";
 import RegisterVendorPage from "./pages/admin/vendors/RegisterVendorPage";
 
+import Layout from "./components/layout/Layout";
+import ResultsPage from './pages/ResultsPage';
 import "./App.css";
 
 function App() {
@@ -20,12 +22,12 @@ function App() {
       <Router>
         <Routes>
           {/* Auth Pages */}
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* Public + Fallback */}
           <Route path="*" element={<NotFound />} />
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<Layout><Routes><Route index element={<HomePage />} /><Route path="results" element={<ResultsPage />} /></Routes></Layout>} />
 
 
           {/* Protected Routes */}

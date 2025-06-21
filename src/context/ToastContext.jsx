@@ -5,6 +5,7 @@ import {
   InfoIcon,
   SuccessIcon,
   WarningIcon,
+  LoadingIcon,
 } from "../components/common/AlertIcons";
 
 const ToastContext = createContext();
@@ -34,6 +35,8 @@ export function ToastProvider({ children }) {
         return <WarningIcon className="alert-warning" />;
       case "error":
         return <ErrorIcon className="alert-error" />;
+      case "loading":
+        return <LoadingIcon className="alert-info" />;
       default:
         return <InfoIcon className="alert-info" />;
     }
