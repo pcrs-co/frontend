@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import VendorDashboard from "./pages/vendor/Dashboard";
 import VendorLayout from "./components/layout/VendorLayout";
 import VendorListPage from "./pages/admin/vendors/VendorListPage";
+import RegisterVendorPage from "./pages/admin/vendors/RegisterVendorPage";
 
 import "./App.css";
 
@@ -41,6 +42,7 @@ function App() {
           >
             <Route path="vendors">
               <Route index element={<VendorListPage />} />
+              <Route path="register" element={<RegisterVendorPage />} />
             </Route>
             <Route path="dashboard" element={<AdminDashboard />} />
           </Route>
