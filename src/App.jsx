@@ -6,9 +6,11 @@ import NotFound from "./pages/errors/NotFound";
 import ForbiddenPage from "./pages/errors/Forbidden";
 import HomePage from "./pages/HomePage";
 import AdminLayout from "./components/layout/AdminLayout";
-import AdminDashboard from "./pages/admin/Dashboard"; 
+import AdminDashboard from "./pages/admin/Dashboard";
 import VendorDashboard from "./pages/vendor/Dashboard";
 import VendorLayout from "./components/layout/VendorLayout";
+import VendorListPage from "./pages/admin/vendors/VendorListPage";
+
 import "./App.css";
 
 function App() {
@@ -37,6 +39,9 @@ function App() {
               </ProtectedRoute>
             }
           >
+            <Route path="vendors">
+              <Route index element={<VendorListPage />} />
+            </Route>
             <Route path="dashboard" element={<AdminDashboard />} />
           </Route>
 
