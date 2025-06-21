@@ -10,6 +10,7 @@ import {
   PhoneIcon,
   LetterIcon,
 } from "../common/MiscIcons";
+import LoadingIcon from "../../components/common/AlertIcons";
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../../utils/api";
@@ -81,7 +82,7 @@ export default function SignUpForm() {
       localStorage.setItem("username", loginResponse.data.username);
 
       showToast({
-        message: "Registered and signed in successfully!",
+        message: "Registered and logged in successfully!",
         type: "success",
       });
 
@@ -112,18 +113,24 @@ export default function SignUpForm() {
         <h1 className="mb-2 font-semibold text-gray-800 dark:text-white/90 text-2xl sm:text-title-md">
           Create an account
         </h1>
-        <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-          Already have an account?{" "}
-          <Link
-            to="/signin"
-            className="inline-flex items-center link-info gap-x-0.5"
-          >
-            <span className="link link-hover">Sign In</span>
-            <ArrowUpRightIcon />
+        <div className="flex flex-row justify-between">
+          <Link to="/">
+            <span className="flex-1 link link-hover">Home</span>
           </Link>
-        </p>
-      </div>
 
+          <p className="flex-none text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="inline-flex items-center link-info gap-x-0.5"
+            >
+              <span className="link link-hover">Log In</span>
+              <ArrowUpRightIcon />
+            </Link>
+          </p>
+        </div>
+      </div>
+S
       <div className="relative">
         {isValid && consent ? null : (
           <p className="absolute right-0 bottom-full text-xs font-normal text-right text-gray-700 dark:text-gray-400 sm:text-start">
@@ -402,7 +409,7 @@ export default function SignUpForm() {
             >
               {loading ? (
                 <>
-                  <span className="loading loading-spinner" /> Loading
+                  <LoadingIcon /> Loading
                 </>
               ) : (
                 "Sign Up"

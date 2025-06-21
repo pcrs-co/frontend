@@ -63,3 +63,7 @@ export const ErrorIcon = () => (
     />
   </svg>
 );
+
+export const LoadingIcon = () => (
+  <span className="loading loading-spinner"></span>
+);
