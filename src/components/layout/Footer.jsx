@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ChevronUpIcon, ChevronDownIcon } from "../../assets/icons";
+import { ChevronUpIcon } from "../../assets/icons";
 import { useState } from "react";
 
 export default function Footer() {
@@ -10,7 +10,16 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="footer sm:footer-horizontal footer-center p-4">
+      <footer
+        style={{
+          position: "fixed",
+          left: 0,
+          bottom: 0,
+          width: "100%",
+          marginTop: "auto",
+        }}
+        className="footer sm:footer-horizontal footer-center p-4"
+      >
         <aside className="flex flex-row flex-wrap items-center justify-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {year} -{" "}
@@ -54,3 +63,4 @@ export default function Footer() {
     </>
   );
 }
+
