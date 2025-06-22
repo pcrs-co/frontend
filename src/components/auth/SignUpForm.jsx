@@ -114,9 +114,6 @@ export default function SignUpForm() {
           Create an account
         </h1>
         <div className="flex flex-row justify-between">
-          <Link to="/">
-            <span className="flex-1 link link-hover">Home</span>
-          </Link>
 
           <p className="flex-none text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
             Already have an account?{" "}
@@ -130,7 +127,7 @@ export default function SignUpForm() {
           </p>
         </div>
       </div>
-S
+
       <div className="relative">
         {isValid && consent ? null : (
           <p className="absolute right-0 bottom-full text-xs font-normal text-right text-gray-700 dark:text-gray-400 sm:text-start">
