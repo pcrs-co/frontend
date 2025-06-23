@@ -11,6 +11,11 @@ import VendorDashboard from "./pages/vendor/Dashboard";
 import VendorLayout from "./components/layout/VendorLayout";
 import VendorListPage from "./pages/admin/vendors/VendorListPage";
 import RegisterVendorPage from "./pages/admin/vendors/RegisterVendorPage";
+import ProductsPage from "./pages/admin/products/ProductsPage"; // <-- NEW
+import OrdersPage from "./pages/admin/orders/OrdersPage";     // <-- NEW
+import CustomersPage from "./pages/admin/users/CustomersPage"; // <-- NEW
+import CPUBenchmarksPage from "./pages/admin/benchmarks/CPUBenchmarksPage"; // <-- RENAMED
+import GPUBenchmarksPage from "./pages/admin/benchmarks/GPUBenchmarksPage"; // <-- NEW
 
 import Layout from "./components/layout/Layout";
 import "./App.css";
@@ -45,6 +50,18 @@ function App() {
               <Route index element={<VendorListPage />} />
               <Route path="register" element={<RegisterVendorPage />} />
             </Route>
+
+            {/* New Routes */}
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="users" element={<CustomersPage />} />
+            <Route path="benchmarks">
+              <Route path="cpu" element={<CPUBenchmarksPage />} />
+              <Route path="gpu" element={<GPUBenchmarksPage />} />
+            </Route>
+
+            {/* This makes the dashboard the default page for "/admin" */}
+            <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
           </Route>
 
