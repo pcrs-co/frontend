@@ -17,7 +17,8 @@ import CustomersPage from "./pages/admin/users/CustomersPage"; // <-- NEW
 import CPUBenchmarksPage from "./pages/admin/benchmarks/CPUBenchmarksPage"; // <-- RENAMED
 import GPUBenchmarksPage from "./pages/admin/benchmarks/GPUBenchmarksPage"; // <-- NEW
 
-import Layout from "./components/layout/Layout";
+import Results from "./pages/Results"
+import Layout from "./Layout";
 import "./App.css";
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           {/* Public + Fallback */}
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Layout><Routes><Route index element={<HomePage />} /></Routes></Layout>} />
+          <Route path="/results" element={<Layout><Routes><Route index element={<Results />} /></Routes></Layout>} />
 
 
           {/* Protected Routes */}
