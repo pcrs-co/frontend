@@ -1,4 +1,3 @@
-// src/components/AdminDashboardLayout.jsx
 import { Link, Outlet } from "react-router-dom";
 
 export default function AdminDashboardLayout() {

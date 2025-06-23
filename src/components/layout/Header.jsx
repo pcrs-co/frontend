@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <>
-      <div className="navbar bg-base-100 shadow-sm">
+      <div className="navbar bg-base-100">
         <div className="flex-1 ml-2">
           <Link to='/'>
             <img src="/PCRS.svg" alt="PCRS Logo" className="h-5 md:h-7" />

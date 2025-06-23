@@ -11,8 +11,8 @@ import VendorDashboard from "./pages/vendor/Dashboard";
 import VendorLayout from "./components/layout/VendorLayout";
 import VendorListPage from "./pages/admin/vendors/VendorListPage";
 import RegisterVendorPage from "./pages/admin/vendors/RegisterVendorPage";
-
-import Layout from "./components/layout/Layout";
+import Results from "./pages/Results"
+import Layout from "./Layout";
 import "./App.css";
 
 function App() {
@@ -27,6 +27,7 @@ function App() {
           {/* Public + Fallback */}
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Layout><Routes><Route index element={<HomePage />} /></Routes></Layout>} />
+          <Route path="/results" element={<Layout><Routes><Route index element={<Results />} /></Routes></Layout>} />
 
 
           {/* Protected Routes */}
