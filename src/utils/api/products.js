@@ -92,5 +92,17 @@ export const uploadAdminProducts = async ({ vendorId, file }) => {
     return data;
 };
 
+export const getAdminProductsForVendor = async ({ vendorId, page = 1, perPage = 3 }) => {
+    // We pass the vendorId as a query parameter
+    const { data } = await api.get(`/admin/products/`, {
+        params: {
+            vendor_id: vendorId,
+            page: page,
+            per_page: perPage
+        }
+    });
+    return data; // Returns the paginated response { count, next, previous, results }
+};
+
 // Note: Admin create/update functions for products can be added here if needed,
 // following the pattern of `createAdminProduct` from the previous response.
