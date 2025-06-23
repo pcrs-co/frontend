@@ -1,60 +1,58 @@
 // src/utils/hooks/useVendorProducts.js
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     getVendorProducts,
     createVendorProduct,
     updateVendorProduct,
     deleteVendorProduct,
     uploadVendorProducts
-} from '../api/products'; // Uses the new vendor-specific API functions
+} from '../api/products';
+
+const VENDOR_PRODUCTS_QUERY_KEY = 'vendorProducts';
 
 export const useVendorProducts = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const queryClient = useQueryClient();
 
-    const fetchProducts = async () => {
-        setLoading(true);
-        try {
-            const data = await getVendorProducts();
-            setProducts(data);
-        } catch (err) {
-            console.error("Failed to fetch vendor products:", err);
-        } finally {
-            setLoading(false);
-        }
+    // A function to invalidate the cache and force a refetch
+    const invalidate = () => {
+        queryClient.invalidateQueries({ queryKey: [VENDOR_PRODUCTS_QUERY_KEY] });
     };
 
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+    // Fetching data with useQuery
+    const { data: products, isLoading, isError, error } = useQuery({
+        queryKey: [VENDOR_PRODUCTS_QUERY_KEY],
+        queryFn: getVendorProducts,
+    });
 
-    const addProduct = async (productData) => {
-        await createVendorProduct(productData);
-        fetchProducts(); // Refetch list after adding
-    };
+    // Mutations for CUD and upload actions
+    const { mutate: addProduct, isPending: isAdding } = useMutation({
+        mutationFn: createVendorProduct,
+        onSuccess: invalidate,
+    });
 
-    const editProduct = async (id, payload) => {
-        await updateVendorProduct({ id, payload });
-        fetchProducts(); // Refetch list after updating
-    };
+    const { mutate: editProduct, isPending: isEditing } = useMutation({
+        mutationFn: ({ id, payload }) => updateVendorProduct({ id, payload }),
+        onSuccess: invalidate,
+    });
 
-    const removeProduct = async (id) => {
-        await deleteVendorProduct(id);
-        fetchProducts(); // Refetch list after deleting
-    };
+    const { mutate: removeProduct, isPending: isRemoving } = useMutation({
+        mutationFn: deleteVendorProduct,
+        onSuccess: invalidate,
+    });
 
-    const uploadFile = async (file) => {
-        await uploadVendorProducts({ file });
-        fetchProducts(); // Refetch list after upload
-    };
+    const { mutate: uploadFile, isPending: isUploading } = useMutation({
+        mutationFn: ({ file }) => uploadVendorProducts({ file }),
+        onSuccess: invalidate,
+    });
 
     return {
         products,
-        loading,
-        addProduct,
-        editProduct,
-        removeProduct,
-        uploadFile,
-        refetch: fetchProducts,
+        isLoading,
+        isError,
+        error,
+        addProduct, isAdding,
+        editProduct, isEditing,
+        removeProduct, isRemoving,
+        uploadFile, isUploading,
     };
 };

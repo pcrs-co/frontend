@@ -16,6 +16,10 @@ import OrdersPage from "./pages/admin/orders/OrdersPage";     // <-- NEW
 import CustomersPage from "./pages/admin/users/CustomersPage"; // <-- NEW
 import CPUBenchmarksPage from "./pages/admin/benchmarks/CPUBenchmarksPage"; // <-- RENAMED
 import GPUBenchmarksPage from "./pages/admin/benchmarks/GPUBenchmarksPage"; // <-- NEW
+import VendorDetailPage from "./pages/admin/vendors/VendorDetailPage"; // <-- NEW
+import ProductDetailPage from "./pages/admin/products/ProductDetailPage"; // <-- NEW
+import OrderDetailPage from "./pages/admin/orders/OrderDetailPage"; // <-- NEW
+import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage"; // <-- NEW
 
 import Results from "./pages/Results"
 import Layout from "./Layout";
@@ -51,12 +55,25 @@ function App() {
             <Route path="vendors">
               <Route index element={<VendorListPage />} />
               <Route path="register" element={<RegisterVendorPage />} />
+              <Route path=":vendorId" element={<VendorDetailPage />} /> {/* <-- NEW */}
             </Route>
 
             {/* New Routes */}
-            <Route path="products" element={<ProductsPage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="users" element={<CustomersPage />} />
+            <Route path="products">
+              <Route index element={<ProductsPage />} />
+              <Route path=":productId" element={<ProductDetailPage />} /> {/* <-- NEW */}
+            </Route>
+
+            <Route path="orders">
+              <Route index element={<OrdersPage />} />
+              <Route path=":orderId" element={<OrderDetailPage />} /> {/* <-- NEW */}
+            </Route>
+
+            <Route path="users">
+              <Route index element={<CustomersPage />} />
+              <Route path=":userId" element={<CustomerDetailPage />} /> {/* <-- NEW ROUTE */}
+            </Route>
+
             <Route path="benchmarks">
               <Route path="cpu" element={<CPUBenchmarksPage />} />
               <Route path="gpu" element={<GPUBenchmarksPage />} />

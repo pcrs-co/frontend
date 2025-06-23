@@ -1,12 +1,12 @@
+// src/utils/hooks/useAdminResourceList.js
 import { useQuery } from '@tanstack/react-query';
 import { fetchAdminResource } from '../api/admin';
 
-// This one hook can fetch ANY admin resource list.
-export const useAdminResourceList = (resource) => {
+export const useAdminResourceList = (resource, page = 1) => {
     return useQuery({
-        // The key is now dynamic, e.g., ['admin', 'cpu-benchmarks']
-        queryKey: ['admin', resource],
-        queryFn: () => fetchAdminResource(resource),
-        enabled: !!resource, // The query will not run until a resource name is provided
+        queryKey: ['admin', resource, page],
+        queryFn: () => fetchAdminResource(resource, { page }), // Pass params as an object
+        enabled: !!resource,
+        keepPreviousData: true,
     });
 };

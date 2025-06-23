@@ -14,8 +14,8 @@ export const updateVendor = (id, data) => api.put(`/admin/vendors/${id}/`, data)
 // DELETE
 export const deleteVendor = (id) => api.delete(`/admin/vendors/${id}/`).then(res => res.data);
 
-//Profile
-export const getVendorProfile = (id) => api.get(`/vendor/profile/${id}/`).then(res => res.data);
+// A vendor fetches THEIR OWN profile. No ID needed.
+export const getVendorProfile = () => api.get(`/vendor/profile/`).then(res => res.data);
 
-export const updateVendorProfile = (id, data) => api.put(`/vendor/profile/${id}/`, data).then(res => res.data);
-
+// A vendor updates THEIR OWN profile. No ID needed.
+export const updateVendorProfile = (data) => api.put(`/vendor/profile/`, data).then(res => res.data);

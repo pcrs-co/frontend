@@ -1,7 +1,7 @@
 // src/pages/admin/vendors/RegisterVendorPage.jsx
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useVendorAction } from "../../../utils/hooks/useVendorAction";
+import { useVendorActions } from "../../../utils/hooks/useVendors";
 
 // Import the Google Maps components
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
@@ -11,7 +11,7 @@ const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY; // Access the
 
 export default function RegisterVendorPage() {
     const navigate = useNavigate();
-    const { createVendor, isCreating, createError } = useVendorAction();
+    const { createVendor, isCreating, createError } = useVendorActions();
 
     const [formData, setFormData] = useState({
         username: "",

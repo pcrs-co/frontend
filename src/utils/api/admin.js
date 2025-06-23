@@ -3,8 +3,10 @@ import api from "../api";
 const getResourceUrl = (resource) => `admin/${resource}`;
 
 // Generic GET all items for a resource
-export const fetchAdminResource = async (resource) => {
-    const { data } = await api.get(`/${getResourceUrl(resource)}/`);
+export const fetchAdminResource = async (resource, params = {}) => {
+    // resource is just "customers", "vendors", etc.
+    // params is an object like { page: 1 }
+    const { data } = await api.get(`/admin/${resource}/`, { params });
     return data;
 };
 
@@ -43,3 +45,4 @@ export const uploadAdminResourceFile = async ({ resource, file }) => {
     );
     return data;
 }
+
