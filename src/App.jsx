@@ -20,6 +20,7 @@ import VendorDetailPage from "./pages/admin/vendors/VendorDetailPage"; // <-- NE
 import ProductDetailPage from "./pages/admin/products/ProductDetailPage"; // <-- NEW
 import OrderDetailPage from "./pages/admin/orders/OrderDetailPage"; // <-- NEW
 import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage"; // <-- NEW
+import UserProfilePage from "./pages/UserProfilePage";
 
 import Results from "./pages/Results"
 import Layout from "./Layout";
@@ -42,6 +43,18 @@ function App() {
 
           {/* Protected Routes */}
           <Route path="/403" element={<ForbiddenPage />} />
+
+          {/* --- Protected Profile Route --- */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <UserProfilePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin route group */}
           <Route

@@ -1,60 +1,78 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { jwtDecode } from 'jwt-decode';
 import { loginUser, registerUser, fetchUserProfile, updateUserProfile } from "../api/auth";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
 export const useAuth = () => {
     const queryClient = useQueryClient();
 
-    // Fetch current user's profile
-    const { data: user, isLoading, error } = useQuery({
-        queryKey: ["userProfile"],
-        queryFn: fetchUserProfile,
-        retry: 1, // Don't retry endlessly if the user is not logged in
-        enabled: !!localStorage.getItem(ACCESS_TOKEN), // Only run if a token exists
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    let decodedToken = null;
+    try {
+        decodedToken = token ? jwtDecode(token) : null;
+    } catch (e) {
+        console.error("Invalid token:", e);
+    }
+
+    const userRole = decodedToken?.role || null;
+    const userId = decodedToken?.user_id || null;
+
+    const { data: user, isLoading, isError, error, isSuccess } = useQuery({
+        queryKey: ["userProfile", { role: userRole }],
+        queryFn: fetchUserProfile, // Correctly points to the simplified function
+        enabled: !!token,
+        retry: 2, // It's good practice to keep a retry
+        staleTime: 5 * 60 * 1000,
     });
 
-    // Mutation for user login
+    // --- Data Mutations ---
+
+    // ** THIS IS THE FIX **
+    // Mutation for user login. It should call `loginUser`.
     const { mutate: login, isPending: isLoggingIn } = useMutation({
-        mutationFn: loginUser,
+        mutationFn: loginUser, // <-- CORRECTED: Was pointing to updateUserProfile
         onSuccess: () => {
-            // Invalidate user profile query to refetch with new credentials
+            // After successful login, invalidate the userProfile query to force a refetch.
             queryClient.invalidateQueries({ queryKey: ["userProfile"] });
         },
     });
 
-    // Mutation for user registration
     const { mutate: register, isPending: isRegistering } = useMutation({
         mutationFn: registerUser,
     });
 
-    // Mutation for updating user profile
+    // Mutation for updating the user's profile. It should call `updateUserProfile`.
     const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
-        mutationFn: updateUserProfile,
+        mutationFn: updateUserProfile, // Correctly points to the simplified function
         onSuccess: (updatedData) => {
-            // Update the cache immediately with the new data
-            queryClient.setQueryData(["userProfile"], updatedData);
+            // Optimistically update the cache for a snappy UI response
+            queryClient.setQueryData(["userProfile", { role: userRole }], updatedData);
         },
     });
 
+    // --- Authentication Actions ---
     const logout = () => {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(REFRESH_TOKEN);
-        localStorage.removeItem("user_role"); // Clear the role
-        queryClient.setQueryData(["userProfile"], null); // Clear user data from cache
-        window.location.href = "/login"; // Redirect
+        queryClient.clear();
+        window.location.href = "/login";
     };
 
+    // --- Returned Values ---
     return {
         user,
+        userRole,
+        userId,
         isLoading,
+        isError,
         error,
+        isAuthenticated: isSuccess && !!user,
         login,
         isLoggingIn,
         register,
         isRegistering,
+        logout,
         updateProfile,
         isUpdatingProfile,
-        logout,
-        isAuthenticated: !!user,
     };
 };

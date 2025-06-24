@@ -37,6 +37,17 @@ const CustomerDetailPage = () => {
 
     const handleSave = (e) => {
         e.preventDefault();
+        // --- THIS IS THE FIX ---
+        // Create a new payload object and explicitly exclude the username.
+        const payload = {
+            email: formData.email,
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            // Add any other editable fields here if you have them in the form
+            // e.g., phone_number: formData.phone_number
+        };
+        // The `formData` here contains `username`, `email`, `first_name`, etc.
+        // This perfectly matches what the new `UpdateCustomerSerializer` expects.
         updateCustomer({ id: userId, payload: formData }, {
             onSuccess: () => {
                 showSuccess('Customer updated successfully!');

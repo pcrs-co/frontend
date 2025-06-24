@@ -13,18 +13,17 @@ export const registerUser = async (userData) => {
     return data;
 };
 
+// --- THIS IS THE MAIN CHANGE ---
+// This function no longer needs the 'role' parameter because the endpoint is the same for everyone.
 export const fetchUserProfile = async () => {
-    // Assuming a role is stored somewhere to decide which profile to fetch
-    // This logic can be improved based on your app's state management
-    const userRole = localStorage.getItem("user_role"); // Example
-    const endpoint = userRole === 'vendor' ? "/vendor/profile/" : "/user/profile/";
-    const { data } = await api.get(endpoint);
+    // Always call the single, unified profile endpoint.
+    const { data } = await api.get("/profile/");
     return data;
 };
 
+// This function also no longer needs the 'role' parameter.
 export const updateUserProfile = async (profileData) => {
-    const userRole = localStorage.getItem("user_role"); // Example
-    const endpoint = userRole === 'vendor' ? "/vendor/profile/" : "/user/profile/";
-    const { data } = await api.put(endpoint, profileData);
+    // Always send updates to the single, unified profile endpoint.
+    const { data } = await api.put("/profile/", profileData);
     return data;
 };
