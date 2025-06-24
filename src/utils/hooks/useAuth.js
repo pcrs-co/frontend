@@ -41,7 +41,7 @@ export const useAuth = () => {
         localStorage.removeItem(REFRESH_TOKEN);
         localStorage.removeItem("user_role"); // Clear the role
         queryClient.setQueryData(["userProfile"], null); // Clear user data from cache
-        window.location.href = "/signin"; // Redirect
+        window.location.href = "/login"; // Redirect
     };
 
     return {
