@@ -55,7 +55,7 @@ export const useAuth = () => {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(REFRESH_TOKEN);
         queryClient.clear();
-        window.location.href = "/login";
+        window.location.href = "/";
     };
 
     // --- Returned Values ---

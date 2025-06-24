@@ -2,33 +2,46 @@ import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import LoginForm from "../auth/LogInForm";
 import SignUpForm from "../auth/SignUpForm";
+import { useAuth } from "../../utils/hooks/useAuth";
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [profileName, setProfileName] = useState('');
-
-  useEffect(() => {
-    // Simulate fetching user login status and profile name
-    const token = localStorage.getItem('access_token');
-    const isUserLoggedIn = !!token;
-    const fetchedProfileName = localStorage.getItem('profile_name') || '';
-
-    setIsLoggedIn(isUserLoggedIn);
-    setProfileName(fetchedProfileName);
-  }, []);
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <>
       <div className="navbar bg-base-100">
         <div className="flex-1 ml-2">
-          <Link to='/'>
+          <Link to='/' className="w-20">
             <img src="/PCRS.svg" alt="PCRS Logo" className="h-5 md:h-7" />
           </Link>
         </div>
 
         <div className="flex-none ml-2">
-          {isLoggedIn ? (
-            <span className="text-sm font-medium">{profileName}</span>
+          {isAuthenticated ? (
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full">
+                  <img
+                    alt="User Avatar"
+                    src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.username || 'A'}&background=random`}
+                  />
+                </div>
+              </div>
+              <ul
+                tabIndex={0}
+                className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-52"
+              >
+                <li className="menu-title">
+                  <span>Logged in as @{user?.username}</span>
+                </li>
+                <li>
+                  <Link to="/profile">Profile</Link> {/* Use Link for internal routes */}
+                </li>
+                <li>
+                  <button onClick={logout}>Logout</button>
+                </li>
+              </ul>
+            </div>
           ) : (
             <div className="flex space-x-2">
               <div>
