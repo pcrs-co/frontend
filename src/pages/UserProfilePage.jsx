@@ -3,14 +3,20 @@ import { useAuth } from '../utils/hooks/useAuth';
 import { useToast } from '../context/ToastContext';
 
 const UserProfilePage = () => {
-    const { showSuccess, showError } = useToast();
-    // The useAuth hook doesn't need to change, as it just fetches whatever the API returns.
+    const { showToast } = useToast();
     const { user, isLoading, error, updateProfile, isUpdatingProfile } = useAuth();
 
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({});
 
-    // The user's role now comes directly from the API response!
+    // FIX: Initialize formData with a default structure to prevent the uncontrolled input warning.
+    const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        company_name: '',
+        location: '',
+    });
+
     const userRole = user?.role;
     const isVendor = userRole === 'vendor';
 
@@ -36,36 +42,30 @@ const UserProfilePage = () => {
     const handleSave = (e) => {
         e.preventDefault();
 
-        let payload = {};
+        let payload = {
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+        };
 
         if (isVendor) {
             // ** THIS IS THE FIX **
             // The payload key must match the `write_only=True` field in the serializer.
-            payload = {
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                // The key is `vendor_profile_write`
-                vendor_profile_write: {
-                    company_name: formData.company_name,
-                    location: formData.location,
-                }
+            payload.vendor_profile_write = {
+                company_name: formData.company_name,
+                location: formData.location,
             };
         } else { // Customer or Admin
-            payload = {
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                email: formData.email,
-            };
+            payload.email = formData.email;
         }
 
         updateProfile(payload, {
             onSuccess: () => {
-                showSuccess('Profile updated successfully!');
+                showToast({ message: 'Profile updated successfully!', type: 'success' });
                 setIsEditing(false);
             },
             onError: (err) => {
                 const errorMessage = err.response?.data?.detail || err.message;
-                showError(`Update failed: ${errorMessage}`);
+                showToast({ message: `Update failed: ${errorMessage}`, type: 'error' });
             }
         });
     };

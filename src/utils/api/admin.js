@@ -18,7 +18,7 @@ export const createAdminResource = async ({ resource, payload }) => {
 
 // Generic UPDATE an item for a resource
 export const updateAdminResource = async ({ resource, id, payload }) => {
-    const { data } = await api.put(`/${getResourceUrl(resource)}/${id}/`, payload);
+    const { data } = await api.patch(`/${getResourceUrl(resource)}/${id}/`, payload);
     return data;
 };
 

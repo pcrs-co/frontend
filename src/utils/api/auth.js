@@ -24,6 +24,6 @@ export const fetchUserProfile = async () => {
 // This function also no longer needs the 'role' parameter.
 export const updateUserProfile = async (profileData) => {
     // Always send updates to the single, unified profile endpoint.
-    const { data } = await api.put("/profile/", profileData);
+    const { data } = await api.patch("/profile/", profileData);
     return data;
 };

@@ -6,7 +6,7 @@ import { useToast } from '../../../context/ToastContext';
 
 const VendorDetailPage = () => {
     const { vendorId } = useParams();
-    const { showSuccess, showError } = useToast();
+    const { showToast } = useToast();
 
     // State for toggling between view and edit mode
     const [isEditing, setIsEditing] = useState(false);
@@ -42,10 +42,13 @@ const VendorDetailPage = () => {
         e.preventDefault();
         updateVendor({ id: vendorId, data: formData }, {
             onSuccess: () => {
-                showSuccess('Vendor updated successfully!');
+                showToast({ message: 'Vendor updated successfully!', type: 'success' });
                 setIsEditing(false);
             },
-            onError: (err) => showError(`Update failed: ${err.message}`)
+            onError: (err) => {
+                const errorMessage = err.response?.data?.detail || JSON.stringify(err.response?.data) || err.message;
+                showToast({ message: `Update failed: ${errorMessage}`, type: 'error' });
+            }
         });
     };
 

@@ -1,22 +1,34 @@
 import React, { useState, useEffect } from 'react';
+// --- CHANGE START ---
+// FIX: We need hooks for customers, orders, and toasts.
 import { useParams, Link } from 'react-router-dom';
-import { useCustomerDetails, useCustomerActions } from '../../../utils/hooks/useCustomers';
-import { useAdminCustomerOrders } from '../../../utils/hooks/useOrders'; // New hook for orders
+import { useAdminResourceList } from '../../../utils/hooks/useAdminResourceList';
+import { useAdminResourceActions } from '../../../utils/hooks/useAdminResourceActions';
+import { useOrdersList } from '../../../utils/hooks/useOrders';
 import { useToast } from '../../../context/ToastContext';
+// --- CHANGE END ---
 
 const CustomerDetailPage = () => {
     const { userId } = useParams();
-    const { showSuccess, showError } = useToast();
+    const { showToast } = useToast();
 
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState(null);
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        first_name: '',
+        last_name: '',
+    });
 
-    // Fetching data
-    const { data: customer, isLoading: isLoadingCustomer, error: customerError } = useCustomerDetails(userId);
-    const { data: ordersResponse, isLoading: isLoadingOrders, error: ordersError } = useAdminCustomerOrders(userId);
-
-    // Actions
-    const { updateCustomer, isUpdating } = useCustomerActions();
+    // --- CHANGE START ---
+    // FIX: Use generic hooks for fetching data. This is more consistent.
+    // The backend for 'customers/{id}' now uses the rich UserDetailSerializer.
+    const { data: customer, isLoading: isLoadingCustomer, error: customerError } = useAdminResourceList(`customers/${userId}`);
+    // FIX: Use the unified useOrdersList hook and pass the user_id as a filter parameter.
+    const { data: ordersResponse, isLoading: isLoadingOrders, error: ordersError } = useOrdersList({ user_id: userId });
+    // FIX: Use the generic action hook.
+    const { updateItem: updateCustomer, isPending: isUpdating } = useAdminResourceActions('customers');
+    // --- CHANGE END ---
 
     useEffect(() => {
         if (customer) {
@@ -37,23 +49,21 @@ const CustomerDetailPage = () => {
 
     const handleSave = (e) => {
         e.preventDefault();
-        // --- THIS IS THE FIX ---
-        // Create a new payload object and explicitly exclude the username.
-        const payload = {
-            email: formData.email,
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            // Add any other editable fields here if you have them in the form
-            // e.g., phone_number: formData.phone_number
-        };
         // The `formData` here contains `username`, `email`, `first_name`, etc.
         // This perfectly matches what the new `UpdateCustomerSerializer` expects.
         updateCustomer({ id: userId, payload: formData }, {
             onSuccess: () => {
-                showSuccess('Customer updated successfully!');
+                // This will now fire correctly because the backend validation is fixed.
+                showToast({ message: 'Customer updated successfully!', type: 'success' });
                 setIsEditing(false);
             },
-            onError: (err) => showError(`Update failed: ${err.message}`)
+            onError: (err) => {
+                const errorData = err.response?.data;
+                const errorMessage = errorData
+                    ? Object.values(errorData).flat().join(' ')
+                    : err.message;
+                showToast({ message: `Update failed: ${errorMessage}`, type: 'error' });
+            }
         });
     };
 
@@ -148,7 +158,7 @@ const CustomerDetailPage = () => {
                             {recentOrders.length > 0 ? recentOrders.map(order => (
                                 <tr key={order.id} className="hover">
                                     <td>#{order.id}</td>
-                                    <td>{order.product_name}</td>
+                                    <td>{order.product?.name || 'N/A'}</td>
                                     <td><span className={`badge badge-ghost badge-sm`}>{order.status}</span></td>
                                     <td>{new Date(order.created_at).toLocaleDateString()}</td>
                                     <td className="text-right">

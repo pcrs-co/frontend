@@ -1,88 +1,76 @@
 // src/utils/hooks/useOrders.js
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as orderApi from '../api/orders';
+// --- CHANGE START ---
+// FIX: Import the new, streamlined API functions from our updated orders.js file.
+import {
+    createOrder,
+    getOrdersList,
+    updateOrderWithAction,
+    deleteOrder,
+} from '../api/orders';
+// --- CHANGE END ---
+
+// A single, consistent query key for all order lists.
+const ORDERS_QUERY_KEY = ['orders'];
 
 // ======================================================
-// --- HOOKS FOR CUSTOMERS ---
+// --- HOOK FOR CREATING AN ORDER (FOR CUSTOMERS) ---
 // ======================================================
 
 /**
  * Hook for a customer to create a new order.
- * Typically used on a product detail page.
  */
 export const useCreateOrder = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: orderApi.createOrder,
+        mutationFn: createOrder,
         onSuccess: () => {
-            alert('Order placed successfully! The vendor has been notified.');
-            // Optionally, invalidate customer's own order list
-            queryClient.invalidateQueries({ queryKey: ['customerOrders'] });
+            // After creating an order, refresh all order lists.
+            queryClient.invalidateQueries({ queryKey: ORDERS_QUERY_KEY });
         },
-        onError: (error) => {
-            alert(`Failed to place order: ${error.response?.data?.detail || error.message}`);
-        }
+        // You should add onError handling here to show a toast message on failure.
     });
 };
-
-/**
- * Hook to fetch the authenticated customer's order history.
- */
-export const useCustomerOrdersList = () => {
-    return useQuery({
-        queryKey: ['customerOrders'],
-        queryFn: orderApi.getCustomerOrders,
-    });
-};
-
 
 // ======================================================
-// --- HOOKS FOR ADMINS ---
+// --- HOOKS FOR VIEWING & MANAGING ORDERS (FOR ALL ROLES) ---
 // ======================================================
-const adminOrdersKey = 'adminOrders';
 
 /**
- * Hook for admins to get the list of ALL orders.
+ * Hook to fetch the list of orders.
+ * The backend automatically filters by role (customer, vendor, or admin).
+ * This one hook replaces useCustomerOrdersList and useAdminOrdersList.
  */
-export const useAdminOrdersList = () => {
+export const useOrdersList = () => {
+    // --- CHANGE START ---
     return useQuery({
-        queryKey: [adminOrdersKey],
-        queryFn: orderApi.getAdminOrders,
+        queryKey: ORDERS_QUERY_KEY,
+        queryFn: getOrdersList,
     });
+    // --- CHANGE END ---
 };
 
 /**
- * Hook for admins to perform actions (update, delete) on orders.
+ * Hook for performing actions (confirm, cancel, delete) on orders.
+ * This one hook can be used by both Admins and Vendors on their dashboards.
  */
-export const useAdminOrderActions = () => {
+export const useOrderActions = () => {
+    // --- CHANGE START ---
     const queryClient = useQueryClient();
-    const invalidate = () => queryClient.invalidateQueries({ queryKey: [adminOrdersKey] });
+    const invalidateOrderList = () => queryClient.invalidateQueries({ queryKey: ORDERS_QUERY_KEY });
 
-    // Mutation for deleting an order
-    const { mutate: deleteOrder, isPending: isDeleting } = useMutation({
-        mutationFn: orderApi.deleteAdminOrder,
-        onSuccess: invalidate,
-    });
-
-    // Mutation for updating an order
+    // FIX: Mutation for updating an order via an action.
     const { mutate: updateOrder, isPending: isUpdating } = useMutation({
-        mutationFn: orderApi.updateAdminOrder,
-        onSuccess: invalidate,
+        mutationFn: updateOrderWithAction, // Expects an object like { orderId: 1, action: 'confirm' }
+        onSuccess: invalidateOrderList,
     });
 
-    return { deleteOrder, isDeleting, updateOrder, isUpdating };
-};
-
-/**
- * Hook to fetch orders for a specific customer, for use in the admin panel.
- * @param {string} customerId - The ID of the customer.
- */
-export const useAdminCustomerOrders = (customerId) => {
-    return useQuery({
-        // A unique query key that includes the customerId
-        queryKey: ['adminOrders', 'customer', customerId],
-        // Your API function needs to support filtering by user_id
-        queryFn: () => orderApi.getAdminOrders({ customerId, perPage: 3 }),
-        enabled: !!customerId, // Only run if customerId is present
+    // FIX: Mutation for deleting an order.
+    const { mutate: removeOrder, isPending: isDeleting } = useMutation({
+        mutationFn: deleteOrder, // Expects just the orderId
+        onSuccess: invalidateOrderList,
     });
+
+    return { updateOrder, isUpdating, removeOrder, isDeleting };
+    // --- CHANGE END ---
 };
