@@ -1,8 +1,8 @@
-// src/components/admin/AdminHeader.jsx
 import React from 'react';
-import { useAuth } from '../../utils/hooks/useAuth'; // Assuming you have this hook
+import { Link } from 'react-router-dom'; // <-- 1. Import the Link component
+import { useAuth } from '../../utils/hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'; // Example icons
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 
 export default function AdminHeader() {
     const { user, logout } = useAuth();
@@ -11,7 +11,10 @@ export default function AdminHeader() {
     return (
         <header className="navbar bg-base-100 border-b border-base-300 px-4">
             <div className="flex-1">
-                {/* Can add breadcrumbs or a search bar here later */}
+                {/* 2. Add the logo linked to the admin dashboard */}
+                <Link to="/admin/dashboard" className="btn btn-ghost text-xl normal-case">
+                    <img src="/PCRS.svg" alt="PCRS Logo" className="h-5 md:h-7" />
+                </Link>
             </div>
             <div className="flex-none gap-2">
                 {/* Theme Toggle */}
@@ -39,7 +42,7 @@ export default function AdminHeader() {
                             <span>Logged in as @{user?.username}</span>
                         </li>
                         <li>
-                            <a href="/profile">Profile</a> {/* Link to a future profile page */}
+                            <Link to="/profile">Profile</Link> {/* Use Link for internal routes */}
                         </li>
                         <li>
                             <button onClick={logout}>Logout</button>

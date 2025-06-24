@@ -72,3 +72,17 @@ export const useAdminOrderActions = () => {
 
     return { deleteOrder, isDeleting, updateOrder, isUpdating };
 };
+
+/**
+ * Hook to fetch orders for a specific customer, for use in the admin panel.
+ * @param {string} customerId - The ID of the customer.
+ */
+export const useAdminCustomerOrders = (customerId) => {
+    return useQuery({
+        // A unique query key that includes the customerId
+        queryKey: ['adminOrders', 'customer', customerId],
+        // Your API function needs to support filtering by user_id
+        queryFn: () => orderApi.getAdminOrders({ customerId, perPage: 3 }),
+        enabled: !!customerId, // Only run if customerId is present
+    });
+};
