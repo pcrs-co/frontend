@@ -1,74 +1,114 @@
-import DeviceList from "../components/core/DeviceList";
+// src/pages/Results.jsx
+
+import React from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchRecommendedProducts } from '../utils/api/recommender';
+import { Link, useNavigate } from 'react-router-dom';
+import ProductCard from '../components/products/ProductCard'; // Assuming you have this styled component
+
+const SpecSidebarDisplay = ({ title, specs, isRecommended = false }) => (
+    <div className={`card shadow-md ${isRecommended ? 'bg-primary text-primary-content' : 'bg-base-300'}`}>
+        <div className="card-body p-4">
+            <h4 className="card-title text-lg">{title}</h4>
+            <div className="divider my-1"></div>
+            <ul className="space-y-1 text-sm">
+                <li className="flex justify-between"><span>CPU:</span> <strong>{specs?.cpu || 'N/A'}</strong></li>
+                <li className="flex justify-between"><span>GPU:</span> <strong>{specs?.gpu || 'N/A'}</strong></li>
+                {/* ++ FIX: Match the backend serializer's output ++ */}
+                <li className="flex justify-between"><span>RAM:</span> <strong>{specs?.ram_gb ? `${specs.ram_gb} GB` : 'N/A'}</strong></li>
+                <li className="flex justify-between"><span>Storage:</span> <strong>{specs?.storage_gb ? `${specs.storage_gb} GB ${specs.storage_type}` : 'N/A'}</strong></li>
+            </ul>
+        </div>
+    </div>
+);
 
 export default function Results() {
-    return (
-        <div className="space-y-6">
-            <div className="drawer lg:drawer-open">
-                <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-                <div className="drawer-content">
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-bold ml-4">Available Devices</h2>
+    // Instantly get the specs that were cached by the useRecommender hook
+    const specData = queryClient.getQueryData(['generatedSpecs']);
+
+    // This query will only run when `enabled` is true
+    const { data: productData, isLoading, isError, refetch } = useQuery({
+        queryKey: ['recommendedProducts'],
+        queryFn: fetchRecommendedProducts,
+        enabled: false, // Don't run on page load
+        retry: 1,
+    });
+
+    if (!specData) {
+        // This handles cases where the user navigates directly to /results
+        return (
+            <div className="hero min-h-[calc(100vh-200px)]">
+                <div className="hero-content text-center">
+                    <div className="max-w-md">
+                        <h1 className="text-4xl font-bold">Let's Find Your PC!</h1>
+                        <p className="py-6">It looks like you landed here directly. Please start from the homepage to get a personalized recommendation.</p>
+                        <Link to="/" className="btn btn-primary">Back to Home</Link>
                     </div>
-
-                    <div className="overflow-x-auto bg-base-100 rounded-xl">
-                        <table className="table w-full">
-                            {/* head */}
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Brand</th>
-                                    <th className="text-right">Vendor</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="hover:bg-base-300 hover:cursor-pointer" onClick={() => document.getElementById('my_modal_2').showModal()}>
-                                    <td>
-                                        <div className="flex items-center gap-3">
-                                            <div className="avatar">
-                                                <div className="mask mask-squircle w-12 h-12">
-                                                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" alt="John Doe's avatar" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div className="font-bold">HP Acer</div>
-                                                <div className="text-sm opacity-50">@johndoe</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>1000</td>
-                                    <td>HP</td>
-                                    <td className="text-right">Acme Inc.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <dialog id="my_modal_2" className="modal">
-                            <div className="modal-box">
-                                <h3 className="font-bold text-lg">Hello!</h3>
-                                <p className="py-4">Press ESC key or click outside to close</p>
-                            </div>
-                            <form method="dialog" className="modal-backdrop">
-                                <button>close</button>
-                            </form>
-                        </dialog>
-                    </div>
-                </div>
-                <div className="drawer-side">
-                    <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
-                    <ul className="menu text-base-content min-h-full w-100 p-4">
-                        {/* Sidebar content here */}
-                        <div className="tabs tabs-border">
-                            <input type="radio" name="my_tabs_2" className="tab" aria-label="Minimum" />
-                            <div className="tab-content border-base-300 bg-base-100 p-10">Tab content 1</div>
-
-                            <input type="radio" name="my_tabs_2" className="tab" aria-label="Recommended" defaultChecked />
-                            <div className="tab-content border-base-300 bg-base-100 p-10">Tab content 2</div>
-                        </div>
-                    </ul>
                 </div>
             </div>
+        );
+    }
+
+    const products = productData?.results || [];
+
+    return (
+        <div className="drawer lg:drawer-open">
+            <input id="results-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content flex flex-col p-4 md:p-6 bg-base-200">
+                {/* Main Content Area */}
+                <div className="text-center p-4">
+                    <h1 className="text-3xl font-bold">Your Custom PC Blueprint</h1>
+                    <p className="text-base-content/70 mt-2">Based on your needs, we recommend the following hardware. Click below to find matching products.</p>
+                </div>
+
+                <div className="text-center my-6">
+                    <button className="btn btn-success btn-lg" onClick={() => refetch()} disabled={isLoading}>
+                        {isLoading ? <>
+                            <span className="loading loading-spinner"></span>
+                            Searching...
+                        </> : 'Show Matching PCs'}
+                    </button>
+                </div>
+
+                {/* Product Display Area */}
+                {productData && !isLoading && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                        {products.map(product => <ProductCard key={product.id} product={product} />)}
+                    </div>
+                )}
+                {productData && products.length === 0 && !isLoading && (
+                    <div className="card bg-base-100 shadow-xl mt-6">
+                        <div className="card-body items-center text-center">
+                            <span className="text-5xl">😞</span>
+                            <h2 className="card-title text-2xl mt-4">No Products Found In Stock</h2>
+                            <p>We couldn't find any PCs in our current inventory that match your recommended specs. You can still use these specs to search elsewhere!</p>
+                        </div>
+                    </div>
+                )}
+                {isError && (
+                    <div className="alert alert-error shadow-lg">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>Error fetching products. Please try again.</span>
+                        </div>
+                    </div>
+                )}
+
+            </div>
+            <aside className="drawer-side" style={{ scrollbarWidth: 'none' }}>
+                <label htmlFor="results-drawer" className="drawer-overlay"></label>
+                <div className="menu p-4 w-80 bg-base-300 text-base-content overflow-y-auto">
+                    <h3 className="text-xl font-bold p-2">Your Specifications</h3>
+                    <div className="divider mt-0"></div>
+                    <div className="p-2 space-y-4">
+                        <SpecSidebarDisplay title="Recommended" specs={specData.recommended_specs} isRecommended={true} />
+                        <SpecSidebarDisplay title="Minimum" specs={specData.minimum_specs} />
+                    </div>
+                </div>
+            </aside>
         </div>
     );
 }

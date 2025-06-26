@@ -21,7 +21,7 @@ import ProductDetailPage from "./pages/admin/products/ProductDetailPage"; // <--
 import OrderDetailPage from "./pages/admin/orders/OrderDetailPage"; // <-- NEW
 import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage"; // <-- NEW
 import UserProfilePage from "./pages/UserProfilePage";
-
+import RecommenderPage from "./pages/RecommenderPage"; // <-- 1. IMPORT THE NEW PAGE
 import Results from "./pages/Results"
 import Layout from "./Layout";
 import "./App.css";

@@ -1,120 +1,110 @@
-import { useState } from "react";
+// src/components/core/LandingForm.jsx
+
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
-import { useToast } from "../../context/ToastContext";
+import { useRecommender } from "../../utils/hooks/useRecommender";
+import { suggestionDB } from '../../data/suggestionDB';
+import AutocompleteInput from '../common/AutocompleteInput';
 
 export default function LandingForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-  } = useForm({ mode: "onChange" });
-
-  const [loading, setLoading] = useState(false);
-  const { showToast } = useToast();
-
-  const onSubmit = async (formData) => {
-    setLoading(true);
-    try {
-      console.log("Form Data:", formData);
-      showToast({ message: "Redirecting to tailored questions...", type: "success" });
-
-      setTimeout(() => {
-        navigate(`/results`, { state: formData });
-      }, 500);
-      
-    } catch (error) {
-      showToast({ message: "An error occurred", type: "error" });
-    } finally {
-      setLoading(false);
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      main_activity: "",
+      other_activities: "",
+      main_application: "",
+      other_applications: "",
     }
+  });
+
+  // Our new hook provides everything we need in one line!
+  const { startRecommendation, isPending } = useRecommender();
+
+  const onSubmit = (formData) => {
+    const allActivities = [
+      formData.main_activity,
+      ...formData.other_activities.split(',')
+    ].map(s => s.trim()).filter(Boolean);
+
+    const allApplications = [
+      formData.main_application,
+      ...formData.other_applications.split(',')
+    ].map(s => s.trim()).filter(Boolean);
+
+    // The payload that matches the backend UserPreferenceSerializer
+    const preferences = {
+      activities: allActivities,
+      applications: allApplications,
+    };
+
+    // Start the entire multi-step process!
+    startRecommendation(preferences);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      {/* Purpose Select */}
-      <label className="select w-full">
-        <span className="label">What do you do primarily?</span>
-        <select
-          {...register("purpose", { required: "Select a purpose" })}
-          disabled={loading}
-          className={clsx({ "select-error": errors.purpose })}
-        >
-          <option value="" disabled>
-            Select your primary purpose
-          </option>
-          <option value="gaming">Gaming</option>
-          <option value="office">Office Work</option>
-          <option value="content">Content Creation</option>
-          <option value="software">Software Development</option>
-          <option value="student">Student Use</option>
-          <option value="casual">Casual Use</option>
-        </select>
-        {errors.purpose && (
-          <p className="text-xs text-error mt-1">{errors.purpose.message}</p>
-        )}
-      </label>
-
-      {/* Budget Range */}
-      <fieldset className="fieldset flex flex-col w-full">
-        <legend className="fieldset-legend text-sm">
-          Select your budget range
-        </legend>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          className="range range-xs w-full"
-          disabled={loading}
-          {...register("budget")}
-        />
-        <div className="flex justify-between mt-2 text-xs label">
-          <span>Budget</span>
-          <span>Balanced</span>
-          <span>Performance</span>
+    <div className="hero min-h-[calc(100vh-200px)] bg-base-200">
+      <div className="hero-content flex-col lg:flex-row-reverse">
+        <div className="text-center lg:text-left lg:pl-10">
+          <h1 className="text-5xl font-bold">Your Perfect PC Awaits.</h1>
+          <p className="py-6">Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact hardware you need. No jargon, just results.</p>
         </div>
-      </fieldset>
+        <div className="card flex-shrink-0 w-full max-w-lg shadow-2xl bg-base-100">
+          <form onSubmit={handleSubmit(onSubmit)} className="card-body">
 
-      {/* Skill Level + Submit */}
-      <div className="flex flex-col space-y-2">
-        <div className="flex flex-row items-center justify-between">
-          <select
-            className={clsx("select w-[58%]", {
-              "select-error": errors.skill,
-            })}
-            {...register("skill", { required: "Select your skill level" })}
-            disabled={loading}
-          >
-            <option value="" disabled>
-              Select your computer skill level
-            </option>
-            <option value="basic">Basic</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
+            <AutocompleteInput
+              name="main_activity"
+              label="What is your MAIN activity?"
+              register={register}
+              placeholder="e.g., Gaming"
+              suggestions={suggestionDB.activities}
+              error={errors.main_activity}
+              required={true}
+              disabled={isPending}
+            />
 
-          <button
-            type="submit"
-            disabled={!isValid || loading}
-            className={clsx(
-              "btn btn-info w-[40%]",
-              loading && "btn-soft pointer-events-none cursor-wait"
-            )}
-          >
-            {loading ? (
-              <>
-                <span className="loading loading-spinner" /> Loading
-              </>
-            ) : (
-              "Continue"
-            )}
-          </button>
+            <AutocompleteInput
+              name="other_activities"
+              label="List other activities (comma-separated)"
+              register={register}
+              placeholder="e.g., Video Editing, Streaming"
+              suggestions={suggestionDB.activities}
+              disabled={isPending}
+            />
+
+            <div className="divider"></div>
+
+            <AutocompleteInput
+              name="main_application"
+              label="What is your MAIN application?"
+              register={register}
+              placeholder="e.g., Cyberpunk 2077"
+              suggestions={suggestionDB.applications}
+              error={errors.main_application}
+              required={true}
+              disabled={isPending}
+            />
+
+            <AutocompleteInput
+              name="other_applications"
+              label="List other applications (comma-separated)"
+              register={register}
+              placeholder="e.g., Adobe Premiere Pro, Blender"
+              suggestions={suggestionDB.applications}
+              disabled={isPending}
+            />
+
+            <div className="form-control mt-6">
+              <button
+                type="submit"
+                disabled={isPending}
+                className={clsx("btn btn-primary", isPending && "loading")}
+              >
+                {isPending ? "Analyzing..." : "Calculate My Specs"}
+              </button>
+            </div>
+          </form>
         </div>
-
-
-        <p className="label text-xs">Your level of computer knowledge</p>
       </div>
-
-    </form>
+    </div>
   );
 }

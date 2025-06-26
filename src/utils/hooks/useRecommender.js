@@ -1,43 +1,43 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// src/utils/hooks/useRecommender.js
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 import {
     submitUserPreferences,
-    generateRecommendations,
-    fetchRecommendedProducts,
+    generateAndFetchSpecs
 } from "../api/recommender";
 
-export const useRecommendations = () => {
+export const useRecommender = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const { showToast } = useToast();
 
-    // Fetch final recommendations
-    const { data: recommendations, isLoading: isLoadingRecommendations } = useQuery({
-        queryKey: ["recommendations"],
-        queryFn: fetchRecommendedProducts,
-        enabled: false, // Initially disabled, only run when triggered
-    });
-
-    // Mutation to submit preferences
-    const { mutate: submitPreferences, isPending: isSubmitting } = useMutation({
-        mutationFn: submitUserPreferences,
-        onSuccess: () => {
-            // After submitting, trigger the generation
-            generate();
-        }
-    });
-
-    // Mutation to trigger the generation process
-    const { mutate: generate, isPending: isGenerating } = useMutation({
-        mutationFn: generateRecommendations,
-        onSuccess: () => {
-            // After generation is triggered, invalidate the recommendations query to fetch them
-            queryClient.invalidateQueries({ queryKey: ["recommendations"] });
+    const { mutate: startRecommendation, isPending } = useMutation({
+        // This mutation function will perform all steps in sequence!
+        mutationFn: async (preferences) => {
+            // Step 1: Submit preferences
+            await submitUserPreferences(preferences);
+            
+            // Step 2: Generate and fetch the specs
+            // We return this data to the onSuccess callback
+            const specData = await generateAndFetchSpecs();
+            return specData;
+        },
+        onSuccess: (specData) => {
+            // This runs after the entire mutationFn succeeds
+            showToast({ message: "Specifications generated successfully!", type: "success" });
+            
+            // Cache the spec data so the results page can access it immediately
+            queryClient.setQueryData(['generatedSpecs'], specData);
+            
+            // Navigate the user to the results page
+            navigate('/results');
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.error || error.message || "An unknown error occurred.";
+            showToast({ message: `Analysis failed: ${errorMessage}`, type: "error" });
         },
     });
 
-    return {
-        recommendations,
-        isLoadingRecommendations,
-        submitPreferences,
-        isSubmitting,
-        isGenerating,
-    };
+    return { startRecommendation, isPending };
 };
