@@ -27,35 +27,4 @@ export const suggestionDB = {
         "Music Production",
         "Photography"
     ],
-    applications: [
-        "Fortnite",
-        "Valorant",
-        "Cyberpunk 2077",
-        "Call of Duty: Warzone",
-        "Minecraft",
-        "League of Legends",
-        "Adobe Premiere Pro",
-        "Final Cut Pro",
-        "DaVinci Resolve",
-        "Blender",
-        "Adobe Photoshop",
-        "Illustrator",
-        "Autodesk Maya",
-        "AutoCAD",
-        "Visual Studio Code",
-        "Docker",
-        "IntelliJ IDEA",
-        "PyCharm",
-        "Jupyter Notebook",
-        "Microsoft Excel",
-        "Microsoft Word",
-        "Google Chrome",
-        "Slack",
-        "Zoom",
-        "Microsoft Teams",
-        "Netflix",
-        "Spotify",
-        "FL Studio",
-        "Ableton Live"
-    ]
-};
+}

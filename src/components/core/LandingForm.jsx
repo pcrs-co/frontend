@@ -3,43 +3,36 @@
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import { useRecommender } from "../../utils/hooks/useRecommender";
-import { suggestionDB } from '../../data/suggestionDB';
+import { useSuggestions } from "../../utils/hooks/useSuggestions";
 import AutocompleteInput from '../common/AutocompleteInput';
 
 export default function LandingForm() {
   const { register, handleSubmit, formState: { errors } } = useForm({
     mode: "onChange",
     defaultValues: {
-      main_activity: "",
-      other_activities: "",
-      main_application: "",
-      other_applications: "",
+      primary_activity: "",
+      secondary_activities: "",
     }
   });
 
-  // Our new hook provides everything we need in one line!
-  const { startRecommendation, isPending } = useRecommender();
+  const { startRecommendation, isPending: isRecommending } = useRecommender();
+
+  // Here is the magic! One line to get dynamic, cached suggestions.
+  const { suggestions, isLoading: isLoadingSuggestions } = useSuggestions();
 
   const onSubmit = (formData) => {
-    const allActivities = [
-      formData.main_activity,
-      ...formData.other_activities.split(',')
-    ].map(s => s.trim()).filter(Boolean);
-
-    const allApplications = [
-      formData.main_application,
-      ...formData.other_applications.split(',')
-    ].map(s => s.trim()).filter(Boolean);
-
-    // The payload that matches the backend UserPreferenceSerializer
-    const preferences = {
-      activities: allActivities,
-      applications: allApplications,
+    const payload = {
+      primary_activity: formData.primary_activity,
+      secondary_activities: formData.secondary_activities
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
     };
-
-    // Start the entire multi-step process!
-    startRecommendation(preferences);
+    startRecommendation(payload);
   };
+
+  // The form is disabled while the recommender is working OR while fetching suggestions.
+  const isDisabled = isRecommending || isLoadingSuggestions;
 
   return (
     <div className="hero min-h-[calc(100vh-200px)] bg-base-200">
@@ -50,56 +43,33 @@ export default function LandingForm() {
         </div>
         <div className="card flex-shrink-0 w-full max-w-lg shadow-2xl bg-base-100">
           <form onSubmit={handleSubmit(onSubmit)} className="card-body">
-
             <AutocompleteInput
-              name="main_activity"
+              name="primary_activity"
               label="What is your MAIN activity?"
               register={register}
-              placeholder="e.g., Gaming"
-              suggestions={suggestionDB.activities}
-              error={errors.main_activity}
+              placeholder={isLoadingSuggestions ? "Loading activities..." : "e.g., Gaming"}
+              suggestions={suggestions.activities} // <-- USE DYNAMIC DATA FROM THE HOOK
+              error={errors.primary_activity}
               required={true}
-              disabled={isPending}
+              disabled={isDisabled}
             />
 
             <AutocompleteInput
-              name="other_activities"
-              label="List other activities (comma-separated)"
+              name="secondary_activities"
+              label="List any other activities (comma-separated)"
               register={register}
-              placeholder="e.g., Video Editing, Streaming"
-              suggestions={suggestionDB.activities}
-              disabled={isPending}
-            />
-
-            <div className="divider"></div>
-
-            <AutocompleteInput
-              name="main_application"
-              label="What is your MAIN application?"
-              register={register}
-              placeholder="e.g., Cyberpunk 2077"
-              suggestions={suggestionDB.applications}
-              error={errors.main_application}
-              required={true}
-              disabled={isPending}
-            />
-
-            <AutocompleteInput
-              name="other_applications"
-              label="List other applications (comma-separated)"
-              register={register}
-              placeholder="e.g., Adobe Premiere Pro, Blender"
-              suggestions={suggestionDB.applications}
-              disabled={isPending}
+              placeholder="e.g., Live Streaming"
+              suggestions={suggestions.activities} // <-- USE DYNAMIC DATA FROM THE HOOK
+              disabled={isDisabled}
             />
 
             <div className="form-control mt-6">
               <button
                 type="submit"
-                disabled={isPending}
-                className={clsx("btn btn-primary", isPending && "loading")}
+                disabled={isDisabled}
+                className={clsx("btn btn-primary", isRecommending && "loading")}
               >
-                {isPending ? "Analyzing..." : "Calculate My Specs"}
+                {isRecommending ? "Analyzing..." : "Calculate My Specs"}
               </button>
             </div>
           </form>
