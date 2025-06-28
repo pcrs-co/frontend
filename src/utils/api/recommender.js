@@ -37,3 +37,13 @@ export const fetchRecommendedProducts = async () => {
     const { data } = await api.get(`/recommend_product/${queryParams}`);
     return data;
 };
+
+// ++ ADD THIS NEW FUNCTION ++
+export const fetchLatestRecommendation = async () => {
+    const sessionId = localStorage.getItem('recommender_session_id');
+    const queryParams = sessionId ? `?session_id=${sessionId}` : '';
+
+    // The backend prioritizes the user from the auth token if available
+    const { data } = await api.get(`/recommend/latest/${queryParams}`);
+    return data;
+};

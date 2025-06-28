@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchRecommendedProducts } from '../utils/api/recommender';
+import { fetchRecommendedProducts, fetchLatestRecommendation } from '../utils/api/recommender';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductCard from '../components/products/ProductCard'; // Assuming you have this styled component
 
@@ -26,9 +26,21 @@ export default function Results() {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
-    // Instantly get the specs that were cached by the useRecommender hook
-    const specData = queryClient.getQueryData(['generatedSpecs']);
+    // --- LOGIC CHANGE START ---
+    // 1. Try to get specs instantly from the cache (from the previous page).
+    const cachedSpecData = queryClient.getQueryData(['generatedSpecs']);
 
+    // 2. If the cache is empty (e.g., page was reloaded), fetch the latest recommendation.
+    const { data: fetchedSpecData, isLoading: isLoadingSpecs, isError: isErrorSpecs } = useQuery({
+        queryKey: ['latestRecommendation'],
+        queryFn: fetchLatestRecommendation,
+        // ONLY run this query if the cached data does NOT exist.
+        enabled: !cachedSpecData,
+    });
+
+    // 3. Determine the final spec data to display. Prioritize the fresh cache.
+    const specData = cachedSpecData || fetchedSpecData;
+    // --- LOGIC CHANGE END ---
     // This query will only run when `enabled` is true
     const { data: productData, isLoading, isError, refetch } = useQuery({
         queryKey: ['recommendedProducts'],
