@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import LogIn from "./pages/auth/LogIn";
@@ -11,19 +13,28 @@ import VendorDashboard from "./pages/vendor/Dashboard";
 import VendorLayout from "./components/layout/VendorLayout";
 import VendorListPage from "./pages/admin/vendors/VendorListPage";
 import RegisterVendorPage from "./pages/admin/vendors/RegisterVendorPage";
-import ProductsPage from "./pages/admin/products/ProductsPage"; // <-- NEW
-import OrdersPage from "./pages/admin/orders/OrdersPage";     // <-- NEW
-import CustomersPage from "./pages/admin/users/CustomersPage"; // <-- NEW
-import CPUBenchmarksPage from "./pages/admin/benchmarks/CPUBenchmarksPage"; // <-- RENAMED
-import GPUBenchmarksPage from "./pages/admin/benchmarks/GPUBenchmarksPage"; // <-- NEW
-import VendorDetailPage from "./pages/admin/vendors/VendorDetailPage"; // <-- NEW
-import ProductDetailPage from "./pages/admin/products/ProductDetailPage"; // <-- NEW
-import OrderDetailPage from "./pages/admin/orders/OrderDetailPage"; // <-- NEW
-import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage"; // <-- NEW
+import ProductsPage from "./pages/admin/products/ProductsPage";
+import OrdersPage from "./pages/admin/orders/OrdersPage";
+import CustomersPage from "./pages/admin/users/CustomersPage";
+import CPUBenchmarksPage from "./pages/admin/benchmarks/CPUBenchmarksPage";
+import GPUBenchmarksPage from "./pages/admin/benchmarks/GPUBenchmarksPage";
+import VendorDetailPage from "./pages/admin/vendors/VendorDetailPage";
+import ProductDetailPage from "./pages/admin/products/ProductDetailPage";
+import OrderDetailPage from "./pages/admin/orders/OrderDetailPage";
+import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import RecommenderPage from "./pages/RecommenderPage"; // <-- 1. IMPORT THE NEW PAGE
-import Results from "./pages/Results"
+import RecommenderPage from "./pages/RecommenderPage";
+import Results from "./pages/Results";
 import Layout from "./Layout";
+
+// +++ 1. IMPORT THE NEW VENDOR PAGES +++
+// Make sure you have created these files:
+// - src/pages/vendor/ProductsPage.jsx
+// - src/pages/vendor/OrdersPage.jsx
+import VendorProductsPage from "./pages/vendor/ProductsPage";
+import VendorOrdersPage from "./pages/vendor/OrdersPage";
+// +++ END OF NEW IMPORTS +++
+
 import "./App.css";
 
 function App() {
@@ -68,36 +79,29 @@ function App() {
             <Route path="vendors">
               <Route index element={<VendorListPage />} />
               <Route path="register" element={<RegisterVendorPage />} />
-              <Route path=":vendorId" element={<VendorDetailPage />} /> {/* <-- NEW */}
+              <Route path=":vendorId" element={<VendorDetailPage />} />
             </Route>
-
-            {/* New Routes */}
             <Route path="products">
               <Route index element={<ProductsPage />} />
-              <Route path=":productId" element={<ProductDetailPage />} /> {/* <-- NEW */}
+              <Route path=":productId" element={<ProductDetailPage />} />
             </Route>
-
             <Route path="orders">
               <Route index element={<OrdersPage />} />
-              <Route path=":orderId" element={<OrderDetailPage />} /> {/* <-- NEW */}
+              <Route path=":orderId" element={<OrderDetailPage />} />
             </Route>
-
             <Route path="users">
               <Route index element={<CustomersPage />} />
-              <Route path=":userId" element={<CustomerDetailPage />} /> {/* <-- NEW ROUTE */}
+              <Route path=":userId" element={<CustomerDetailPage />} />
             </Route>
-
             <Route path="benchmarks">
               <Route path="cpu" element={<CPUBenchmarksPage />} />
               <Route path="gpu" element={<GPUBenchmarksPage />} />
             </Route>
-
-            {/* This makes the dashboard the default page for "/admin" */}
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
           </Route>
 
-          {/* Vendor route group */}
+          {/* +++ 2. UPDATE THE VENDOR ROUTE GROUP +++ */}
           <Route
             path="/vendor"
             element={
@@ -106,8 +110,15 @@ function App() {
               </ProtectedRoute>
             }
           >
+            {/* The index route makes /vendor load the dashboard by default */}
+            <Route index element={<VendorDashboard />} />
             <Route path="dashboard" element={<VendorDashboard />} />
+            {/* These are the new routes for the vendor's own pages */}
+            <Route path="products" element={<VendorProductsPage />} />
+            <Route path="orders" element={<VendorOrdersPage />} />
           </Route>
+          {/* +++ END OF VENDOR ROUTE GROUP UPDATE +++ */}
+
         </Routes>
       </Router>
     </>
