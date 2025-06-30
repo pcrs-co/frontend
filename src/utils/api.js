@@ -60,7 +60,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem(ACCESS_TOKEN);
         localStorage.removeItem(REFRESH_TOKEN);
-        window.location.href = "/signin";
+        window.location.href = "/login"; // Redirect to login page
         return Promise.reject(refreshError);
       }
     }

@@ -2,16 +2,19 @@
 import React from 'react';
 import { useVendorProducts } from '../../utils/hooks/useVendorProducts';
 import { useOrdersList } from '../../utils/hooks/useOrders';
-import StatCard from '../../components/admin/dashboard/StatCard'; // We can reuse this!
+import { useAuth } from '../../utils/hooks/useAuth'; // <-- 1. IMPORT useAuth
+import StatCard from '../../components/admin/dashboard/StatCard';
 import { ShoppingBagIcon, InboxIcon, CurrencyDollarIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
 export default function VendorDashboard() {
+    // --- Data Hooks ---
+    const { user, isLoading: isLoadingUser } = useAuth(); // <-- 2. GET USER DATA
     const { products, isLoading: isLoadingProducts } = useVendorProducts();
     const { data: ordersResponse, isLoading: isLoadingOrders } = useOrdersList();
     
+    // --- Data Processing ---
     const allOrders = ordersResponse?.results || ordersResponse || [];
-
     const productCount = products?.length || 0;
     const pendingOrders = allOrders.filter(o => o.status === 'pending');
     const confirmedOrders = allOrders.filter(o => o.status === 'confirmed');
@@ -21,11 +24,40 @@ export default function VendorDashboard() {
         return sum + (order.quantity * price);
     }, 0);
 
+    // --- Display Name & Avatar Logic ---
+    const displayName = user?.vendor_profile?.company_name || user?.username || 'Vendor';
+    const avatarName = displayName.replace(/\s/g, "+");
+
+    // Show a single loading spinner if the main user profile is still fetching
+    if (isLoadingUser) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <span className="loading loading-spinner loading-lg"></span>
+            </div>
+        );
+    }
+
     return (
-        <div className="space-y-6">
-            <h1 className="text-4xl font-bold">My Dashboard</h1>
+        <div className="space-y-8">
+            {/* --- 3. ADDED PROFILE HEADER --- */}
+            <div className="flex items-center gap-4">
+                <div className="avatar">
+                    <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                        {/* Use the logo from vendor_profile if it exists, otherwise use the generated avatar */}
+                        <img src={user?.vendor_profile?.logo || `https://ui-avatars.com/api/?name=${avatarName}&background=random&size=128`} alt="Company Logo or Avatar" />
+                    </div>
+                </div>
+                <div>
+                    <h1 className="text-4xl font-bold">{displayName}</h1>
+                    <p className="text-lg text-neutral-content">@{user?.username}</p>
+                    <Link to="/profile" className="btn btn-sm btn-outline btn-primary mt-2">
+                        View Profile
+                    </Link>
+                </div>
+            </div>
+            {/* --- END OF PROFILE HEADER --- */}
             
-            {/* --- Stat Cards --- */}
+            {/* --- Stat Cards (Existing Code) --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard 
                     icon={<ShoppingBagIcon className="h-8 w-8" />}
@@ -59,7 +91,7 @@ export default function VendorDashboard() {
                 />
             </div>
             
-            {/* --- Recent Pending Orders Table --- */}
+            {/* --- Recent Pending Orders Table (Existing Code) --- */}
             <div className="card bg-base-100 shadow-xl">
                 <div className="card-body">
                     <div className="flex justify-between items-center">
@@ -85,8 +117,11 @@ export default function VendorDashboard() {
                                         <td>{new Date(order.created_at).toLocaleDateString()}</td>
                                     </tr>
                                 ))}
-                                {pendingOrders.length === 0 && (
+                                {pendingOrders.length === 0 && !isLoadingOrders && (
                                     <tr><td colSpan="4" className="text-center py-4">No pending orders. Great job!</td></tr>
+                                )}
+                                {isLoadingOrders && (
+                                    <tr><td colSpan="4" className="text-center py-4"><span className="loading loading-dots"></span></td></tr>
                                 )}
                             </tbody>
                         </table>
