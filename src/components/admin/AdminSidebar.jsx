@@ -34,6 +34,7 @@ export default function AdminSidebar() {
                     <div className="collapse-content flex flex-col gap-2 !p-0">
                         <NavLink to="/admin/benchmarks/cpu" className={navLinkClasses}>CPU Benchmarks</NavLink>
                         <NavLink to="/admin/benchmarks/gpu" className={navLinkClasses}>GPU Benchmarks</NavLink>
+                        <NavLink to="/admin/benchmarks/disk" className={navLinkClasses}>Disk Benchmarks</NavLink>
                     </div>
                 </div>
             </nav>

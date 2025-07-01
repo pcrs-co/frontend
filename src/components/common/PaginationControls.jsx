@@ -1,53 +1,58 @@
-// src/components/common/PaginationControls.jsx
 import React from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'; // Using heroicons for nice arrows
 
-const PaginationControls = ({ responseData, onPageChange }) => {
-    // Don't render anything if there's only one page or no data
-    if (!responseData?.count || responseData.count <= 10) { // Assumes default page size of 10
+const PaginationControls = ({ currentPage, totalCount, onPageChange, pageSize = 10 }) => {
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    // Don't render the controls if there's only one page or no data
+    if (totalPages <= 1) {
         return null;
     }
 
-    const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
-    const totalPages = Math.ceil(responseData.count / 10); // Calculate total pages
+    const handlePrevious = () => {
+        // Go to the previous page, but not below 1
+        onPageChange(Math.max(currentPage - 1, 1));
+    };
 
     const handleNext = () => {
-        const nextUrl = responseData.next;
-        if (nextUrl) {
-            const pageNumber = new URL(nextUrl).searchParams.get('page');
-            onPageChange(Number(pageNumber));
-        }
+        // Go to the next page, but not beyond the total number of pages
+        onPageChange(Math.min(currentPage + 1, totalPages));
     };
 
-    const handlePrev = () => {
-        const prevUrl = responseData.previous;
-        if (prevUrl) {
-            const pageNumber = new URL(prevUrl).searchParams.get('page');
-            onPageChange(Number(pageNumber));
-        } else {
-            // Handle case where previous is null but we are not on page 1
-            onPageChange(1);
-        }
-    };
+    // Calculate which items are being shown, e.g., "Showing 11-20 of 100"
+    const firstItem = (currentPage - 1) * pageSize + 1;
+    const lastItem = Math.min(currentPage * pageSize, totalCount);
 
     return (
-        <div className="flex justify-center items-center space-x-2 py-4">
+        <div className="flex items-center justify-between mt-4">
+            {/* Left side: "Showing X-Y of Z" */}
+            <p className="text-sm text-base-content/70">
+                Showing <span className="font-medium">{firstItem}</span> to <span className="font-medium">{lastItem}</span> of <span className="font-medium">{totalCount}</span> results
+            </p>
+
+            {/* Right side: Buttons */}
             <div className="join">
                 <button
-                    onClick={handlePrev}
-                    disabled={!responseData.previous}
+                    className="join-item btn"
+                    onClick={handlePrevious}
+                    disabled={currentPage === 1} // Disable if on the first page
+                >
+                    <ChevronLeftIcon className="h-5 w-5" />
+                    Previous
+                </button>
+                <button
                     className="join-item btn"
                 >
-                    «
-                </button>
-                <button className="join-item btn">
                     Page {currentPage} of {totalPages}
                 </button>
                 <button
-                    onClick={handleNext}
-                    disabled={!responseData.next}
                     className="join-item btn"
+                    onClick={handleNext}
+                    disabled={currentPage === totalPages} // Disable if on the last page
                 >
-                    »
+                    Next
+                    <ChevronRightIcon className="h-5 w-5" />
                 </button>
             </div>
         </div>

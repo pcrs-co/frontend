@@ -1,102 +1,89 @@
-// src/pages/admin/products/ProductsPage.jsx
-import React, { useState } from 'react';
-import { useAdminProductsList, useAdminProductActions, useAdminProductUpload } from '../../../utils/hooks/useAdminProducts';
-import { useVendorsList } from '../../../utils/hooks/useVendors';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAdminProductsList, useAdminProductActions } from '../../../utils/hooks/useAdminProducts';
+import AdminProductBulkUploadModal from '../../../components/admin/AdminProductBulkUploadModal';
 
 const ProductsPage = () => {
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedVendor, setSelectedVendor] = useState('');
-
-    // --- CORRECTED HOOK USAGE ---
-    const { data: productsData, isLoading: isLoadingProducts } = useAdminProductsList();
-    // Correctly destructure 'data' and 'isLoading' from the useQuery return object
-    const { data: vendorsData, isLoading: isLoadingVendors } = useVendorsList();
-
-    // Extract the actual arrays from the 'data' object.
-    // Handle the case where the API might not be paginated.
-    const products = productsData?.results || productsData || [];
-    const vendors = vendorsData?.results || vendorsData || [];
-    // --- END OF CORRECTIONS ---
-
+    const { data: productsData, isLoading } = useAdminProductsList({});
     const { deleteProduct, isDeleting } = useAdminProductActions();
-    const { mutate: uploadProducts, isPending: isUploading } = useAdminProductUpload();
 
-    const handleUpload = () => {
-        if (!selectedFile || !selectedVendor) {
-            alert('Please select a vendor and a file.');
-            return;
-        }
-        uploadProducts({ vendorId: selectedVendor, file: selectedFile }, {
-            onSuccess: () => {
-                // Better to close the modal on success
-                document.getElementById('upload_modal').close();
-                setSelectedFile(null);
-                setSelectedVendor('');
-            }
-        });
-    };
+    const products = productsData?.results || [];
 
-    // Use the correct loading variables
-    if (isLoadingProducts || isLoadingVendors) {
+    if (isLoading) {
         return <div className="p-6 flex justify-center"><span className="loading loading-spinner loading-lg"></span></div>;
     }
 
     return (
-        <div className="p-6 space-y-6">
-            {/* The rest of your JSX is mostly fine */}
+        <div className="p-6 space-y-8">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">All Products</h1>
-                <button className="btn btn-primary" onClick={() => document.getElementById('upload_modal').showModal()}>
-                    Upload Products
+                <h1 className="text-3xl font-bold">Product Management (Admin)</h1>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => document.getElementById('admin_bulk_upload_modal').showModal()}
+                >
+                    Bulk Upload Products
                 </button>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="table w-full">
-                    {/* ... Table Head ... */}
-                    <tbody>
-                        {products?.map(product => (
-                            <tr key={product.id} className="hover">
-                                <td>{product.name}</td>
-                                <td>{product.vendor_name}</td>
-                                <td>${product.price}</td>
-                                <td>{product.quantity}</td>
-                                <td className="text-right">
-                                    <button
-                                        onClick={() => deleteProduct(product.id)}
-                                        className="btn btn-sm btn-error"
-                                        disabled={isDeleting}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="card bg-base-100 shadow-xl">
+                <div className="card-body">
+                    <div className="overflow-x-auto">
+                        <table className="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Vendor</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th className="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map(product => (
+                                    <tr key={product.id} className="hover">
+                                        <td>
+                                            <div className="flex items-center gap-3">
+                                                <div className="avatar">
+                                                    <div className="mask mask-squircle w-12 h-12">
+                                                        <img src={product.images?.[0]?.image || 'https://via.placeholder.com/150'} alt={product.name} />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold">{product.name}</div>
+                                                    <div className="text-sm opacity-50">{product.brand}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{product.vendor_details?.company_name || 'N/A'}</td>
+                                        <td>${product.price.toLocaleString()}</td>
+                                        <td>{product.quantity}</td>
+                                        <td className="text-right space-x-2">
+                                            <Link to={`/admin/products/${product.id}`} className="btn btn-sm btn-outline">Details</Link>
+                                            <button
+                                                onClick={() => {
+                                                    if (window.confirm('Are you sure? This action is permanent.')) {
+                                                        deleteProduct(product.id);
+                                                    }
+                                                }}
+                                                className="btn btn-sm btn-outline btn-error"
+                                                disabled={isDeleting}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {products.length === 0 && (
+                                    <tr><td colSpan="5" className="text-center py-4">No products found in the system.</td></tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <dialog id="upload_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Upload Product File</h3>
-                    <div className="py-4 space-y-4">
-                        <label className="form-control w-full">
-                            <div className="label"><span className="label-text">Select Vendor*</span></div>
-                            <select
-                                className="select select-bordered"
-                                value={selectedVendor}
-                                onChange={(e) => setSelectedVendor(e.target.value)}
-                            >
-                                <option disabled value="">Pick one</option>
-                                {/* Use the correctly extracted vendors array */}
-                                {vendors.map(v => <option key={v.id} value={v.id}>{v.company_name}</option>)}
-                            </select>
-                        </label>
-                        {/* ... other inputs */}
-                    </div>
-                    {/* ... modal actions */}
-                </div>
-            </dialog>
+            {/* The modal component sits here, ready to be called */}
+            <AdminProductBulkUploadModal modalId="admin_bulk_upload_modal" />
         </div>
     );
 };

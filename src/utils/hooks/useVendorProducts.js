@@ -1,55 +1,70 @@
-// src/utils/hooks/useVendorProducts.js
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '../../context/ToastContext';
 import {
     getVendorProducts,
     createVendorProduct,
     updateVendorProduct,
     deleteVendorProduct,
-    uploadVendorProducts
+    uploadVendorProductsBulk
 } from '../api/products';
 
 const VENDOR_PRODUCTS_QUERY_KEY = 'vendorProducts';
 
 export const useVendorProducts = () => {
     const queryClient = useQueryClient();
+    const { showToast } = useToast();
 
-    // A function to invalidate the cache and force a refetch
     const invalidate = () => {
         queryClient.invalidateQueries({ queryKey: [VENDOR_PRODUCTS_QUERY_KEY] });
     };
 
-    // Fetching data with useQuery
     const { data: products, isLoading, isError, error } = useQuery({
         queryKey: [VENDOR_PRODUCTS_QUERY_KEY],
         queryFn: getVendorProducts,
     });
 
-    // Mutations for CUD and upload actions
     const { mutate: addProduct, isPending: isAdding } = useMutation({
         mutationFn: createVendorProduct,
-        onSuccess: invalidate,
+        onSuccess: () => {
+            invalidate();
+            showToast({ message: 'Product added successfully!', type: 'success' });
+        },
+        onError: (err) => showToast({ message: `Error: ${err.message}`, type: 'error' }),
     });
 
     const { mutate: editProduct, isPending: isEditing } = useMutation({
-        mutationFn: ({ id, payload }) => updateVendorProduct({ id, payload }),
-        onSuccess: invalidate,
+        mutationFn: updateVendorProduct,
+        onSuccess: (data) => {
+            invalidate();
+            queryClient.setQueryData(['adminProductDetails', data.id], data); // Also update detail cache
+            showToast({ message: 'Product updated successfully!', type: 'success' });
+        },
+        onError: (err) => showToast({ message: `Error: ${err.message}`, type: 'error' }),
     });
 
     const { mutate: removeProduct, isPending: isRemoving } = useMutation({
         mutationFn: deleteVendorProduct,
-        onSuccess: invalidate,
+        onSuccess: () => {
+            invalidate();
+            showToast({ message: 'Product deleted successfully!', type: 'success' });
+        },
+        onError: (err) => showToast({ message: `Error: ${err.message}`, type: 'error' }),
     });
 
     const { mutate: uploadFile, isPending: isUploading } = useMutation({
-        mutationFn: ({ file }) => uploadVendorProducts({ file }),
-        onSuccess: invalidate,
+        mutationFn: uploadVendorProductsBulk,
+        onSuccess: (data) => {
+            invalidate();
+            showToast({ message: data.message || 'Products uploaded!', type: 'success' });
+        },
+        onError: (error) => {
+            const errorMessage = error.response?.data?.detail || error.response?.data[0] || 'Upload failed.';
+            showToast({ message: errorMessage, type: 'error' });
+        },
     });
 
     return {
-        products,
-        isLoading,
-        isError,
-        error,
+        products, isLoading, isError, error,
         addProduct, isAdding,
         editProduct, isEditing,
         removeProduct, isRemoving,

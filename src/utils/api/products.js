@@ -3,7 +3,6 @@ import api from '../api';
 
 // ======================================================
 // --- VENDOR-SPECIFIC PRODUCT ACTIONS ---
-// (Endpoints starting with /vendor/products/)
 // ======================================================
 
 /**
@@ -11,20 +10,23 @@ import api from '../api';
  */
 export const getVendorProducts = async () => {
     const { data } = await api.get('/vendor/products/');
-    return data.results; // Assumes pagination
+    return data.results; // Assumes your endpoint is paginated
 };
 
 /**
- * Creates a new product for the authenticated vendor.
+ * Creates a single product for the authenticated vendor.
+ * @param {FormData} productData - The product data, including any images.
  */
 export const createVendorProduct = async (productData) => {
-    // If sending files, ensure productData is FormData
     const { data } = await api.post('/vendor/products/', productData);
     return data;
 };
 
 /**
  * Updates a product owned by the authenticated vendor.
+ * @param {object} params
+ * @param {string|number} params.id - The ID of the product to update.
+ * @param {FormData} params.payload - The updated product data.
  */
 export const updateVendorProduct = async ({ id, payload }) => {
     const { data } = await api.put(`/vendor/products/${id}/`, payload);
@@ -40,37 +42,57 @@ export const deleteVendorProduct = async (id) => {
 };
 
 /**
- * Uploads a file of products for the authenticated vendor.
- * NOTE: Your backend has a {vendor_id} in the URL, but for a vendor-specific
- * endpoint, the backend should ideally get the vendor from the authenticated user.
- * This function assumes the backend can get the vendor from the token.
+ * Uploads a spreadsheet and a zip file of images for bulk product creation.
+ * @param {object} data - An object containing the files.
+ * @param {File} data.spreadsheetFile - The .csv or .xlsx file.
+ * @param {File|null} data.imageZipFile - The optional .zip file of images.
  */
-export const uploadVendorProducts = async ({ file }) => {
+export const uploadVendorProductsBulk = async ({ spreadsheetFile, imageZipFile }) => {
     const formData = new FormData();
-    formData.append('file', file);
-    const { data } = await api.post(
-        `/vendor/products/upload/`, // Simplified URL
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
-    return data;
+    formData.append('file', spreadsheetFile);
+    if (imageZipFile) {
+        formData.append('image_zip', imageZipFile);
+    }
+    // Assumes the custom action is at /vendor/products/upload/
+    const { data: responseData } = await api.post('/vendor/products/upload/', formData);
+    return responseData;
 };
+
 
 // ======================================================
 // --- ADMIN-SPECIFIC PRODUCT ACTIONS ---
-// (Endpoints starting with /admin/products/)
 // ======================================================
 
 /**
  * Fetches ALL products from any vendor for the admin panel.
+ * @param {object} params - Optional query params like page.
  */
-export const getAdminProducts = async () => {
-    const { data } = await api.get('/admin/products/');
-    return data.results; // Assumes pagination
+export const getAdminProducts = async (params = {}) => {
+    const { data } = await api.get('/admin/products/', { params });
+    return data; // Return the full paginated response
 };
 
 /**
+ * Fetches the details for a single product.
+ * @param {string|number} id - The product ID.
+ */
+export const getAdminProductDetails = async (id) => {
+    const { data } = await api.get(`/admin/products/${id}/`);
+    return data;
+};
 
+/**
+ * Updates a single product as an admin.
+ * @param {object} params
+ * @param {string|number} params.id - The ID of the product to update.
+ * @param {FormData} params.payload - The updated product data.
+ */
+export const updateAdminProduct = async ({ id, payload }) => {
+    const { data } = await api.put(`/admin/products/${id}/`, payload);
+    return data;
+};
+
+/**
  * Deletes any product as an admin.
  */
 export const deleteAdminProduct = async (id) => {
@@ -79,30 +101,18 @@ export const deleteAdminProduct = async (id) => {
 };
 
 /**
- * Uploads a file of products for a SPECIFIC vendor, identified by ID.
+ * Uploads a spreadsheet and zip file for a SPECIFIC vendor.
+ * @param {object} data
+ * @param {string} data.vendorId - The ID of the vendor.
+ * @param {File} data.spreadsheetFile - The .csv or .xlsx file.
+ * @param {File|null} data.imageZipFile - The optional .zip file of images.
  */
-export const uploadAdminProducts = async ({ vendorId, file }) => {
+export const uploadAdminProductsBulk = async ({ vendorId, spreadsheetFile, imageZipFile }) => {
     const formData = new FormData();
-    formData.append('file', file);
-    const { data } = await api.post(
-        `/admin/products/upload/${vendorId}/`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
+    formData.append('file', spreadsheetFile);
+    if (imageZipFile) {
+        formData.append('image_zip', imageZipFile);
+    }
+    const { data } = await api.post(`/admin/products/upload/${vendorId}/`, formData);
     return data;
 };
-
-export const getAdminProductsForVendor = async ({ vendorId, page = 1, perPage = 3 }) => {
-    // We pass the vendorId as a query parameter
-    const { data } = await api.get(`/admin/products/`, {
-        params: {
-            vendor_id: vendorId,
-            page: page,
-            per_page: perPage
-        }
-    });
-    return data; // Returns the paginated response { count, next, previous, results }
-};
-
-// Note: Admin create/update functions for products can be added here if needed,
-// following the pattern of `createAdminProduct` from the previous response.

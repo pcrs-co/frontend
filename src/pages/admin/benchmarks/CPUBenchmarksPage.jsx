@@ -5,8 +5,10 @@ const CPUBenchmarksPage = () => {
     return (
         <BenchmarkManager
             resourceName="cpu-benchmarks"
-            title="Manage CPU Benchmarks"
-            fileTypeHint="Upload a .csv, .xls, .xlsx, or .ods file with 'name' and 'score' columns."
+            title="CPU Benchmarks"
+            fileTypeHint="Upload a file with 'cpuname' and 'cpumark' columns."
+            nameField="cpu"
+            scoreField="score"
         />
     );
 };

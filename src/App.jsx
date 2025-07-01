@@ -18,6 +18,7 @@ import OrdersPage from "./pages/admin/orders/OrdersPage";
 import CustomersPage from "./pages/admin/users/CustomersPage";
 import CPUBenchmarksPage from "./pages/admin/benchmarks/CPUBenchmarksPage";
 import GPUBenchmarksPage from "./pages/admin/benchmarks/GPUBenchmarksPage";
+import DiskBenchmarksPage from "./pages/admin/benchmarks/DiskBenchmarksPage";
 import VendorDetailPage from "./pages/admin/vendors/VendorDetailPage";
 import ProductDetailPage from "./pages/admin/products/ProductDetailPage";
 import OrderDetailPage from "./pages/admin/orders/OrderDetailPage";
@@ -96,6 +97,7 @@ function App() {
             <Route path="benchmarks">
               <Route path="cpu" element={<CPUBenchmarksPage />} />
               <Route path="gpu" element={<GPUBenchmarksPage />} />
+              <Route path="disk" element={<DiskBenchmarksPage />} />
             </Route>
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
