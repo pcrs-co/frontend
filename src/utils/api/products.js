@@ -116,3 +116,14 @@ export const uploadAdminProductsBulk = async ({ vendorId, spreadsheetFile, image
     const { data } = await api.post(`/admin/products/upload/`, formData);
     return data;
 };
+
+// +++ ADD THIS NEW FUNCTION +++
+/**
+ * Fetches the public details for a single product by its ID.
+ * @param {string|number} productId - The product ID.
+ */
+export const getPublicProductDetails = async (productId) => {
+    // Note the simpler URL without /admin/ or /vendor/
+    const { data } = await api.get(`/products/${productId}/`);
+    return data;
+};

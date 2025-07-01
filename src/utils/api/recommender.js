@@ -30,11 +30,23 @@ export const generateAndFetchSpecs = async (activitiesPayload) => {
     return data;
 };
 
-// The 'fetchRecommendedProducts' function for the Results page remains the same.
-export const fetchRecommendedProducts = async () => {
+// The 'fetchRecommendedProducts' function for the Results page
+// +++ CHANGE: It now accepts filter parameters +++
+export const fetchRecommendedProducts = async (filters = {}) => {
     const sessionId = localStorage.getItem('recommender_session_id');
-    const queryParams = sessionId ? `?session_id=${sessionId}` : '';
-    const { data } = await api.get(`/recommend_product/${queryParams}`);
+    const params = new URLSearchParams();
+
+    if (sessionId) {
+        params.append('session_id', sessionId);
+    }
+    if (filters.spec_level) {
+        params.append('spec_level', filters.spec_level);
+    }
+    if (filters.max_price) {
+        params.append('max_price', filters.max_price);
+    }
+
+    const { data } = await api.get(`/recommend_product/?${params.toString()}`);
     return data;
 };
 
@@ -45,5 +57,11 @@ export const fetchLatestRecommendation = async () => {
 
     // The backend prioritizes the user from the auth token if available
     const { data } = await api.get(`/recommend/latest/${queryParams}`);
+    return data;
+};
+
+// ... add this new function
+export const fetchUserRecommendationHistory = async () => {
+    const { data } = await api.get('/history/recommendations/');
     return data;
 };

@@ -23,8 +23,7 @@ import VendorDetailPage from "./pages/admin/vendors/VendorDetailPage";
 import ProductDetailPage from "./pages/admin/products/ProductDetailPage";
 import OrderDetailPage from "./pages/admin/orders/OrderDetailPage";
 import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage";
-import UserProfilePage from "./pages/UserProfilePage";
-import RecommenderPage from "./pages/RecommenderPage";
+import UserProfilePage from "./pages/UserProfilePage"; import RecommenderPage from "./pages/RecommenderPage";
 import Results from "./pages/Results";
 import Layout from "./Layout";
 
@@ -120,7 +119,6 @@ function App() {
             <Route path="orders" element={<VendorOrdersPage />} />
           </Route>
           {/* +++ END OF VENDOR ROUTE GROUP UPDATE +++ */}
-
         </Routes>
       </Router>
     </>

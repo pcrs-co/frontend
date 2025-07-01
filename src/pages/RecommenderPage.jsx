@@ -1,10 +1,11 @@
 // src/pages/Results.jsx
 
-import React from 'react';
+import React, { useState } from 'react'; // +++ CHANGE: Import useState +++
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchRecommendedProducts } from '../utils/api/recommender';
+import { fetchRecommendedProducts, fetchLatestRecommendation } from '../utils/api/recommender';
 import { Link, useNavigate } from 'react-router-dom';
-import ProductCard from '../components/products/ProductCard'; // Assuming you have this styled component
+import ProductCard from '../components/products/ProductCard';
+import ProductDetailModal from '../components/products/ProductDetailModal'; // +++ CHANGE: Make sure this import is correct +++
 
 const SpecSidebarDisplay = ({ title, specs, isRecommended = false }) => (
     <div className={`card shadow-md ${isRecommended ? 'bg-primary text-primary-content' : 'bg-base-300'}`}>
@@ -14,7 +15,6 @@ const SpecSidebarDisplay = ({ title, specs, isRecommended = false }) => (
             <ul className="space-y-1 text-sm">
                 <li className="flex justify-between"><span>CPU:</span> <strong>{specs?.cpu || 'N/A'}</strong></li>
                 <li className="flex justify-between"><span>GPU:</span> <strong>{specs?.gpu || 'N/A'}</strong></li>
-                {/* ++ FIX: Match the backend serializer's output ++ */}
                 <li className="flex justify-between"><span>RAM:</span> <strong>{specs?.ram_gb ? `${specs.ram_gb} GB` : 'N/A'}</strong></li>
                 <li className="flex justify-between"><span>Storage:</span> <strong>{specs?.storage_gb ? `${specs.storage_gb} GB ${specs.storage_type}` : 'N/A'}</strong></li>
             </ul>
@@ -26,19 +26,37 @@ export default function Results() {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
-    // Instantly get the specs that were cached by the useRecommender hook
-    const specData = queryClient.getQueryData(['generatedSpecs']);
+    // +++ CHANGE: Add state to manage the product detail modal +++
+    const [selectedProductId, setSelectedProductId] = useState(null);
 
-    // This query will only run when `enabled` is true
+    // This logic for fetching specs is perfect, no changes needed here.
+    const cachedSpecData = queryClient.getQueryData(['generatedSpecs']);
+    const { data: fetchedSpecData, isLoading: isLoadingSpecs, isError: isErrorSpecs } = useQuery({
+        queryKey: ['latestRecommendation'],
+        queryFn: fetchLatestRecommendation,
+        enabled: !cachedSpecData,
+    });
+    const specData = cachedSpecData || fetchedSpecData;
+
+    // This query logic is also great, no changes needed.
     const { data: productData, isLoading, isError, refetch } = useQuery({
         queryKey: ['recommendedProducts'],
         queryFn: fetchRecommendedProducts,
-        enabled: false, // Don't run on page load
+        enabled: false,
         retry: 1,
     });
 
+    // +++ CHANGE: Add handler functions for the modal +++
+    const handleViewDetails = (productId) => {
+        setSelectedProductId(productId);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedProductId(null);
+    };
+
+    // This fallback logic is excellent.
     if (!specData) {
-        // This handles cases where the user navigates directly to /results
         return (
             <div className="hero min-h-[calc(100vh-200px)]">
                 <div className="hero-content text-center">
@@ -76,7 +94,14 @@ export default function Results() {
                 {/* Product Display Area */}
                 {productData && !isLoading && (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                        {products.map(product => <ProductCard key={product.id} product={product} />)}
+                        {/* +++ CHANGE: Pass the handler to each ProductCard +++ */}
+                        {products.map(product => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                onViewDetails={() => handleViewDetails(product.id)}
+                            />
+                        ))}
                     </div>
                 )}
                 {productData && products.length === 0 && !isLoading && (
@@ -109,6 +134,14 @@ export default function Results() {
                     </div>
                 </div>
             </aside>
+
+            {/* +++ CHANGE: Conditionally render the modal at the end of the component +++ */}
+            {selectedProductId && (
+                <ProductDetailModal
+                    productId={selectedProductId}
+                    onClose={handleCloseModal}
+                />
+            )}
         </div>
     );
 }

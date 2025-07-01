@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useVendorProducts } from '../../utils/hooks/useVendorProducts';
 import ProductFormModal from '../../components/vendor/ProductFormModal';
-import ProductBulkUploadModal from '../../components/vendor/ProductBulkUploadModal'; // Renamed import
+import ProductBulkUploadModal from '../../components/vendor/ProductBulkUploadModal';
+import ProductDetailModal from '../../components/products/ProductDetailModal'; // <-- 1. IMPORT
 
 export default function VendorProductsPage() {
     const {
@@ -10,6 +11,7 @@ export default function VendorProductsPage() {
     } = useVendorProducts();
 
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [viewProductId, setViewProductId] = useState(null); // <-- 2. ADD STATE FOR VIEWING
 
     const openAddModal = () => {
         setSelectedProduct(null);
@@ -80,9 +82,11 @@ export default function VendorProductsPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>${p.price.toLocaleString()}</td>
+                                        <td>TSh {p.price ? new Intl.NumberFormat().format(p.price) : 'N/A'}</td>
                                         <td>{p.quantity}</td>
                                         <td className="text-right space-x-2">
+                                            {/* 3. ADD VIEW BUTTON */}
+                                            <button onClick={() => setViewProductId(p.id)} className="btn btn-sm btn-outline">View</button>
                                             <button onClick={() => openEditModal(p)} className="btn btn-sm btn-outline btn-info">Edit</button>
                                             <button onClick={() => handleDelete(p.id)} className="btn btn-sm btn-outline btn-error" disabled={isRemoving}>Delete</button>
                                         </td>
@@ -95,7 +99,6 @@ export default function VendorProductsPage() {
                 </div>
             </div>
 
-            {/* Modals are now here, ready to be called */}
             <ProductFormModal
                 formId="product_form_modal"
                 product={selectedProduct}
@@ -103,6 +106,14 @@ export default function VendorProductsPage() {
                 isSaving={isAdding || isEditing}
             />
             <ProductBulkUploadModal modalId="vendor_bulk_upload_modal" />
+
+            {/* 4. RENDER THE MODAL */}
+            {viewProductId && (
+                <ProductDetailModal
+                    productId={viewProductId}
+                    onClose={() => setViewProductId(null)}
+                />
+            )}
         </div>
     );
 }

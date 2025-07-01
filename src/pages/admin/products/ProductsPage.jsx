@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react'; // <-- 1. IMPORT useState
 import { Link } from 'react-router-dom';
 import { useAdminProductsList, useAdminProductActions } from '../../../utils/hooks/useAdminProducts';
 import AdminProductBulkUploadModal from '../../../components/admin/AdminProductBulkUploadModal';
+import ProductDetailModal from '../../../components/products/ProductDetailModal'; // <-- 2. IMPORT MODAL
 
 const ProductsPage = () => {
     const { data: productsData, isLoading } = useAdminProductsList({});
     const { deleteProduct, isDeleting } = useAdminProductActions();
+    const [viewProductId, setViewProductId] = useState(null); // <-- 3. ADD STATE
 
     const products = productsData?.results || [];
 
@@ -29,6 +31,7 @@ const ProductsPage = () => {
                 <div className="card-body">
                     <div className="overflow-x-auto">
                         <table className="table w-full">
+                            {/* ... table head ... */}
                             <thead>
                                 <tr>
                                     <th>Product</th>
@@ -54,11 +57,13 @@ const ProductsPage = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{product.vendor_details?.company_name || 'N/A'}</td>
-                                        <td>${product.price.toLocaleString()}</td>
+                                        <td>{product.vendor?.company_name || 'N/A'}</td>
+                                        <td>TSh {product.price ? new Intl.NumberFormat().format(product.price) : 'N/A'}</td>
                                         <td>{product.quantity}</td>
                                         <td className="text-right space-x-2">
-                                            <Link to={`/admin/products/${product.id}`} className="btn btn-sm btn-outline">Details</Link>
+                                            {/* 4. REPLACE 'Details' LINK WITH 'View' BUTTON */}
+                                            <button onClick={() => setViewProductId(product.id)} className="btn btn-sm btn-outline">View</button>
+                                            <Link to={`/admin/products/${product.id}`} className="btn btn-sm btn-outline btn-info">Edit</Link>
                                             <button
                                                 onClick={() => {
                                                     if (window.confirm('Are you sure? This action is permanent.')) {
@@ -82,8 +87,15 @@ const ProductsPage = () => {
                 </div>
             </div>
 
-            {/* The modal component sits here, ready to be called */}
             <AdminProductBulkUploadModal modalId="admin_bulk_upload_modal" />
+
+            {/* 5. RENDER THE MODAL */}
+            {viewProductId && (
+                <ProductDetailModal
+                    productId={viewProductId}
+                    onClose={() => setViewProductId(null)}
+                />
+            )}
         </div>
     );
 };

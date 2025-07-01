@@ -1,63 +1,66 @@
 // src/pages/Results.jsx
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchRecommendedProducts, fetchLatestRecommendation } from '../utils/api/recommender';
-import { Link, useNavigate } from 'react-router-dom';
-import ProductCard from '../components/products/ProductCard'; // Assuming you have this styled component
-
-const SpecSidebarDisplay = ({ title, specs, isRecommended = false }) => (
-    <div className={`card shadow-md ${isRecommended ? 'bg-primary text-primary-content' : 'bg-base-300'}`}>
-        <div className="card-body p-4">
-            <h4 className="card-title text-lg">{title}</h4>
-            <div className="divider my-1"></div>
-            <ul className="space-y-1 text-sm">
-                <li className="flex justify-between"><span>CPU:</span> <strong>{specs?.cpu || 'N/A'}</strong></li>
-                <li className="flex justify-between"><span>GPU:</span> <strong>{specs?.gpu || 'N/A'}</strong></li>
-                {/* ++ FIX: Match the backend serializer's output ++ */}
-                <li className="flex justify-between"><span>RAM:</span> <strong>{specs?.ram_gb ? `${specs.ram_gb} GB` : 'N/A'}</strong></li>
-                <li className="flex justify-between"><span>Storage:</span> <strong>{specs?.storage_gb ? `${specs.storage_gb} GB ${specs.storage_type}` : 'N/A'}</strong></li>
-            </ul>
-        </div>
-    </div>
-);
+import { Link, useLocation } from 'react-router-dom';
+import ProductCard from '../components/products/ProductCard';
+import ProductDetailModal from '../components/products/ProductDetailModal';
+import RecommendationHeader from '../components/core/RecommendationHeader'; // <-- Import the new header
+import SpecDrawer from '../components/layout/SpecDrawer';                 // <-- Import the new drawer content
+import { Bars3Icon, InformationCircleIcon } from '@heroicons/react/24/solid';
 
 export default function Results() {
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
+    const location = useLocation();
 
-    // --- LOGIC CHANGE START ---
-    // 1. Try to get specs instantly from the cache (from the previous page).
+    // State management remains the same
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    const [specLevel, setSpecLevel] = useState('recommended');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [debouncedMaxPrice, setDebouncedMaxPrice] = useState('');
+
+    useEffect(() => {
+        const handler = setTimeout(() => { setDebouncedMaxPrice(maxPrice); }, 500);
+        return () => clearTimeout(handler);
+    }, [maxPrice]);
+
+    // Spec fetching logic remains the same
+    const navStateSpecData = location.state?.specData;
     const cachedSpecData = queryClient.getQueryData(['generatedSpecs']);
-
-    // 2. If the cache is empty (e.g., page was reloaded), fetch the latest recommendation.
-    const { data: fetchedSpecData, isLoading: isLoadingSpecs, isError: isErrorSpecs } = useQuery({
+    const { data: fetchedSpecData, isLoading: isLoadingSpecs } = useQuery({
         queryKey: ['latestRecommendation'],
         queryFn: fetchLatestRecommendation,
-        // ONLY run this query if the cached data does NOT exist.
-        enabled: !cachedSpecData,
+        enabled: !navStateSpecData && !cachedSpecData,
+    });
+    const specData = navStateSpecData || cachedSpecData || fetchedSpecData;
+
+    // Product fetching logic remains the same
+    const { data: productData, isLoading: isLoadingProducts, isError, error } = useQuery({
+        queryKey: ['recommendedProducts', specData?.id, specLevel, debouncedMaxPrice],
+        queryFn: () => fetchRecommendedProducts({ spec_level: specLevel, max_price: debouncedMaxPrice }),
+        enabled: !!specData,
     });
 
-    // 3. Determine the final spec data to display. Prioritize the fresh cache.
-    const specData = cachedSpecData || fetchedSpecData;
-    // --- LOGIC CHANGE END ---
-    // This query will only run when `enabled` is true
-    const { data: productData, isLoading, isError, refetch } = useQuery({
-        queryKey: ['recommendedProducts'],
-        queryFn: fetchRecommendedProducts,
-        enabled: false, // Don't run on page load
-        retry: 1,
-    });
+    if (isLoadingSpecs) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <div className="text-center">
+                    <span className="loading loading-spinner loading-lg text-primary"></span>
+                    <p className="mt-4 text-lg">Analyzing your needs...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (!specData) {
-        // This handles cases where the user navigates directly to /results
         return (
-            <div className="hero min-h-[calc(100vh-200px)]">
-                <div className="hero-content text-center">
-                    <div className="max-w-md">
-                        <h1 className="text-4xl font-bold">Let's Find Your PC!</h1>
-                        <p className="py-6">It looks like you landed here directly. Please start from the homepage to get a personalized recommendation.</p>
-                        <Link to="/" className="btn btn-primary">Back to Home</Link>
+            <div className="flex h-screen items-center justify-center">
+                <div className="text-center card bg-base-100 p-10 shadow-xl">
+                    <h2 className="text-2xl font-bold">No Recommendation Found</h2>
+                    <p className="mt-2">We couldn't find a recommendation for your session.</p>
+                    <div className="mt-6">
+                        <Link to="/" className="btn btn-primary">Start a New Recommendation</Link>
                     </div>
                 </div>
             </div>
@@ -67,60 +70,84 @@ export default function Results() {
     const products = productData?.results || [];
 
     return (
-        <div className="drawer lg:drawer-open">
-            <input id="results-drawer" type="checkbox" className="drawer-toggle" />
-            <div className="drawer-content flex flex-col p-4 md:p-6 bg-base-200">
-                {/* Main Content Area */}
-                <div className="text-center p-4">
-                    <h1 className="text-3xl font-bold">Your Custom PC Blueprint</h1>
-                    <p className="text-base-content/70 mt-2">Based on your needs, we recommend the following hardware. Click below to find matching products.</p>
-                </div>
+        <div className="drawer">
+            <input id="spec-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content flex flex-col bg-base-100">
 
-                <div className="text-center my-6">
-                    <button className="btn btn-success btn-lg" onClick={() => refetch()} disabled={isLoading}>
-                        {isLoading ? <>
-                            <span className="loading loading-spinner"></span>
-                            Searching...
-                        </> : 'Show Matching PCs'}
-                    </button>
-                </div>
-
-                {/* Product Display Area */}
-                {productData && !isLoading && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                        {products.map(product => <ProductCard key={product.id} product={product} />)}
+                {/* --- Main Page Content --- */}
+                <main className="p-4 md:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto w-full">
+                    
+                    {/* 1. The NEW Recommendation Header - (Hidden on mobile) */}
+                    <div className="hidden lg:block">
+                        <RecommendationHeader specData={specData} />
                     </div>
-                )}
-                {productData && products.length === 0 && !isLoading && (
-                    <div className="card bg-base-100 shadow-xl mt-6">
-                        <div className="card-body items-center text-center">
-                            <span className="text-5xl">😞</span>
-                            <h2 className="card-title text-2xl mt-4">No Products Found In Stock</h2>
-                            <p>We couldn't find any PCs in our current inventory that match your recommended specs. You can still use these specs to search elsewhere!</p>
+
+                    {/* Mobile-only button to open drawer */}
+                     <div className="lg:hidden text-center">
+                        <label htmlFor="spec-drawer" className="btn btn-primary drawer-button">
+                           <InformationCircleIcon className="w-6 h-6"/> View Your Recommended Specs
+                        </label>
+                    </div>
+
+                    {/* 2. Filter & Search Section */}
+                    <div className="card bg-base-200/50 shadow-sm p-4">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center">
+                            <div className="form-control w-full sm:w-auto flex-grow">
+                                <label className="label py-1"><span className="label-text font-semibold">Show products matching:</span></label>
+                                <div className="join w-full">
+                                    <button className={`join-item btn flex-1 ${specLevel === 'recommended' ? 'btn-active btn-primary' : ''}`} onClick={() => setSpecLevel('recommended')}>
+                                        Recommended
+                                    </button>
+                                    <button className={`join-item btn flex-1 ${specLevel === 'minimum' ? 'btn-active btn-primary' : ''}`} onClick={() => setSpecLevel('minimum')}>
+                                        Minimum
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="form-control w-full sm:w-auto">
+                                <label className="label py-1"><span className="label-text font-semibold">Max Budget (TSh)</span></label>
+                                <input type="number" placeholder="e.g., 2500000" className="input input-bordered w-full sm:w-48" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+                            </div>
                         </div>
                     </div>
-                )}
-                {isError && (
-                    <div className="alert alert-error shadow-lg">
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <span>Error fetching products. Please try again.</span>
-                        </div>
+
+                    {/* 3. Product Display Area */}
+                    <div>
+                        <h2 className="text-2xl font-bold">Matching Products ({productData?.count || 0})</h2>
+                        {isLoadingProducts ? (
+                            <div className="text-center py-20"><span className="loading loading-spinner loading-lg"></span></div>
+                        ) : isError ? (
+                            <div role="alert" className="alert alert-error mt-4">
+                                <span>Error fetching products: {error.message}. Please try again.</span>
+                            </div>
+                        ) : products.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
+                                {products.map(product => (
+                                    <ProductCard key={product.id} product={product} onViewDetails={() => setSelectedProductId(product.id)} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="card bg-base-200 mt-6">
+                                <div className="card-body items-center text-center p-10">
+                                    <span className="text-6xl">😞</span>
+                                    <h2 className="card-title text-2xl mt-4">No Products Found</h2>
+                                    <p>No available products match the current filters. <br/> Try adjusting your budget or selecting a different spec level.</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
+                </main>
 
             </div>
-            <aside className="drawer-side" style={{ scrollbarWidth: 'none' }}>
-                <label htmlFor="results-drawer" className="drawer-overlay"></label>
-                <div className="menu p-4 w-80 bg-base-300 text-base-content overflow-y-auto">
-                    <h3 className="text-xl font-bold p-2">Your Specifications</h3>
-                    <div className="divider mt-0"></div>
-                    <div className="p-2 space-y-4">
-                        <SpecSidebarDisplay title="Recommended" specs={specData.recommended_specs} isRecommended={true} />
-                        <SpecSidebarDisplay title="Minimum" specs={specData.minimum_specs} />
-                    </div>
-                </div>
-            </aside>
+            {/* --- The Drawer for Mobile --- */}
+            <div className="drawer-side z-50">
+                <label htmlFor="spec-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+                <SpecDrawer specData={specData} />
+            </div>
+
+            {/* Modal for viewing product details */}
+            {selectedProductId && (
+                <ProductDetailModal productId={selectedProductId} onClose={() => setSelectedProductId(null)} />
+            )}
         </div>
     );
 }
