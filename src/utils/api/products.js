@@ -50,10 +50,7 @@ export const deleteVendorProduct = async (id) => {
 export const uploadVendorProductsBulk = async ({ spreadsheetFile, imageZipFile }) => {
     const formData = new FormData();
     formData.append('file', spreadsheetFile);
-    if (imageZipFile) {
-        formData.append('image_zip', imageZipFile);
-    }
-    // Assumes the custom action is at /vendor/products/upload/
+    if (imageZipFile) formData.append('image_zip', imageZipFile);
     const { data: responseData } = await api.post('/vendor/products/upload/', formData);
     return responseData;
 };
@@ -109,10 +106,13 @@ export const deleteAdminProduct = async (id) => {
  */
 export const uploadAdminProductsBulk = async ({ vendorId, spreadsheetFile, imageZipFile }) => {
     const formData = new FormData();
+    // --- FIX: Add vendor_id to the FormData ---
+    formData.append('vendor_id', vendorId);
     formData.append('file', spreadsheetFile);
     if (imageZipFile) {
         formData.append('image_zip', imageZipFile);
     }
-    const { data } = await api.post(`/admin/products/upload/${vendorId}/`, formData);
+    // The URL is now simpler
+    const { data } = await api.post(`/admin/products/upload/`, formData);
     return data;
 };

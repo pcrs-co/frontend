@@ -80,7 +80,11 @@ export const useAdminProductActions = () => {
             showToast({ message: data.message || 'Products uploaded successfully!', type: 'success' });
         },
         onError: (error) => {
-            const errorMessage = error.response?.data?.detail || error.response?.data[0] || 'Upload failed.';
+            const errorMessage =
+                error.response?.data?.error ||
+                error.response?.data?.detail ||
+                Object.values(error.response?.data || {})?.[0] ||
+                'Upload failed.';
             showToast({ message: errorMessage, type: 'error' });
         },
     });
