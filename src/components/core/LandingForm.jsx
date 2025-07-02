@@ -1,80 +1,65 @@
-// src/components/core/LandingForm.jsx
+"use client"
 
-import { useForm } from "react-hook-form";
-import clsx from "clsx";
-import { useRecommender } from "../../utils/hooks/useRecommender";
-import { useSuggestions } from "../../utils/hooks/useSuggestions";
-import AutocompleteInput from '../common/AutocompleteInput';
+import { useState } from "react"
+import DynamicForm from "./DynamicForm"
 
-export default function LandingForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    mode: "onChange",
-    defaultValues: {
-      primary_activity: "",
-      secondary_activities: "",
-    }
-  });
+// Mock hooks - replace with your actual implementations
+const useRecommender = () => {
+  const [isPending, setIsPending] = useState(false)
 
-  const { startRecommendation, isPending: isRecommending } = useRecommender();
+  const startRecommendation = async (payload) => {
+    setIsPending(true)
+    console.log("Starting recommendation with payload:", payload)
 
-  // Here is the magic! One line to get dynamic, cached suggestions.
-  const { suggestions, isLoading: isLoadingSuggestions } = useSuggestions();
+    // Simulate API call
+    setTimeout(() => {
+      setIsPending(false)
+      // Using DaisyUI toast notification
+      const toast = document.createElement("div")
+      toast.className = "toast toast-top toast-end"
+      toast.innerHTML = `
+        <div class="alert alert-success">
+          <div>
+            <span class="font-bold">Recommendation Complete!</span>
+            <div class="text-xs">Primary: ${payload.primary_activity}</div>
+            <div class="text-xs">Preferences: ${payload.preferences.join(", ")}</div>
+          </div>
+        </div>
+      `
+      document.body.appendChild(toast)
+      setTimeout(() => toast.remove(), 5000)
+    }, 2000)
+  }
 
-  const onSubmit = (formData) => {
-    const payload = {
-      primary_activity: formData.primary_activity,
-      secondary_activities: formData.secondary_activities
-        .split(',')
-        .map(s => s.trim())
-        .filter(Boolean),
-    };
-    startRecommendation(payload);
-  };
+  return { startRecommendation, isPending }
+}
 
-  // The form is disabled while the recommender is working OR while fetching suggestions.
-  const isDisabled = isRecommending || isLoadingSuggestions;
+export default function LandingPage() {
+  const { startRecommendation, isPending } = useRecommender()
+
+  const handleFormSubmit = (payload) => {
+    startRecommendation(payload)
+  }
 
   return (
-    <div className="hero min-h-[calc(100vh-200px)] bg-base-200">
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center lg:text-left lg:pl-10">
-          <h1 className="text-5xl font-bold">Your Perfect PC Awaits.</h1>
-          <p className="py-6">Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact hardware you need. No jargon, just results.</p>
-        </div>
-        <div className="card flex-shrink-0 w-full max-w-lg shadow-2xl bg-base-100">
-          <form onSubmit={handleSubmit(onSubmit)} className="card-body">
-            <AutocompleteInput
-              name="primary_activity"
-              label="What is your MAIN activity?"
-              register={register}
-              placeholder={isLoadingSuggestions ? "Loading activities..." : "e.g., Gaming"}
-              suggestions={suggestions.activities} // <-- USE DYNAMIC DATA FROM THE HOOK
-              error={errors.primary_activity}
-              required={true}
-              disabled={isDisabled}
-            />
-
-            <AutocompleteInput
-              name="secondary_activities"
-              label="List any other activities (comma-separated)"
-              register={register}
-              placeholder="e.g., Live Streaming"
-              suggestions={suggestions.activities} // <-- USE DYNAMIC DATA FROM THE HOOK
-              disabled={isDisabled}
-            />
-
-            <div className="form-control mt-6">
-              <button
-                type="submit"
-                disabled={isDisabled}
-                className={clsx("btn btn-primary", isRecommending && "loading")}
-              >
-                {isRecommending ? "Analyzing..." : "Calculate My Specs"}
-              </button>
+    <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200">
+      <div className="container mx-auto py-12">
+        {/* Hero Section */}
+        <div className="hero mb-12">
+          <div className="hero-content text-center">
+            <div className="max-w-4xl">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6">Your Perfect PC Awaits.</h1>
+              <p className="text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto">
+                Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact
+                hardware you need. No jargon, just results.
+              </p>
             </div>
-          </form>
+          </div>
         </div>
+
+        {/* Form */}
+        <DynamicForm onFormSubmit={handleFormSubmit} isSubmitting={isPending} />
       </div>
     </div>
-  );
+  )
 }
