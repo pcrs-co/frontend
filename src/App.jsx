@@ -26,11 +26,7 @@ import CustomerDetailPage from "./pages/admin/users/CustomerDetailPage";
 import UserProfilePage from "./pages/UserProfilePage"; import RecommenderPage from "./pages/RecommenderPage";
 import Results from "./pages/Results";
 import Layout from "./Layout";
-
-// +++ 1. IMPORT THE NEW VENDOR PAGES +++
-// Make sure you have created these files:
-// - src/pages/vendor/ProductsPage.jsx
-// - src/pages/vendor/OrdersPage.jsx
+import DynamicForm from "./components/core/DynamicForm"
 import VendorProductsPage from "./pages/vendor/ProductsPage";
 import VendorOrdersPage from "./pages/vendor/OrdersPage";
 // +++ END OF NEW IMPORTS +++
@@ -49,6 +45,7 @@ function App() {
           {/* Public + Fallback */}
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Layout><Routes><Route index element={<HomePage />} /></Routes></Layout>} />
+          <Route path="/form" element={<Layout><Routes><Route index element={<DynamicForm />} /></Routes></Layout>} />
           <Route path="/results" element={<Layout><Routes><Route index element={<Results />} /></Routes></Layout>} />
 
 
