@@ -53,6 +53,7 @@ export default function LandingPage() {
                 Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact
                 hardware you need. No jargon, just results.
               </p>
+
             </div>
           </div>
         </div>

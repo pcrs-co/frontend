@@ -3,33 +3,36 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
-// --- CHANGE: We only need one API function now ---
 import { generateAndFetchSpecs } from "../api/recommender";
 
 export const useRecommender = () => {
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const queryClient = useQueryClient();
 
-    // The mutation is now simpler and more direct.
     const { mutate: startRecommendation, isPending } = useMutation({
-        // The mutation function now just calls our single, powerful backend endpoint.
-        // It passes the user's activities directly.
         mutationFn: generateAndFetchSpecs,
 
-        onSuccess: (specData) => {
-            // This logic remains the same! It runs after the single API call succeeds.
+        onSuccess: (newSpecData) => {
             showToast({ message: "Specifications generated successfully!", type: "success" });
 
-            // Cache the spec data so the results page can access it instantly
-            queryClient.setQueryData(['generatedSpecs'], specData);
+            // Invalidate any old recommendation queries to ensure stale data is cleared.
+            queryClient.invalidateQueries({ queryKey: ['latestRecommendation'] });
 
-            // Navigate the user to the results page
-            navigate('/results');
+            // Pass the fresh data directly to the results page via navigation state.
+            // This is the most reliable way to ensure the correct data is shown,
+            // bypassing any potential caching issues for anonymous or repeat users.
+            navigate('/results', {
+                state: {
+                    specData: newSpecData,
+                    // A timestamp forces React Router to see this as a new navigation event.
+                    timestamp: new Date().getTime()
+                }
+            });
         },
         onError: (error) => {
-            const errorMessage = error.response?.data?.detail || error.response?.data?.error || error.message || "An unknown error occurred.";
-            showToast({ message: `Analysis failed: ${errorMessage}`, type: "error" });
+            const errorMessage = error.response?.data?.detail || "An unexpected error occurred during analysis.";
+            showToast({ message: errorMessage, type: "error" });
         },
     });
 
