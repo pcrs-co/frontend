@@ -14,6 +14,9 @@ export const useRecommender = () => {
         mutationFn: generateAndFetchSpecs,
 
         onSuccess: (newSpecData) => {
+            if (newSpecData.session_id) {
+                localStorage.setItem('recommender_session_id', newSpecData.session_id);
+            }
             showToast({ message: "Specifications generated successfully!", type: "success" });
 
             // Invalidate any old recommendation queries to ensure stale data is cleared.
