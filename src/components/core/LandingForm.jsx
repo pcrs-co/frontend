@@ -1,44 +1,50 @@
 "use client"
 
-import { useState } from "react"
 import DynamicForm from "./DynamicForm"
-
-// Mock hooks - replace with your actual implementations
-const useRecommender = () => {
-  const [isPending, setIsPending] = useState(false)
-
-  const startRecommendation = async (payload) => {
-    setIsPending(true)
-    console.log("Starting recommendation with payload:", payload)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsPending(false)
-      // Using DaisyUI toast notification
-      const toast = document.createElement("div")
-      toast.className = "toast toast-top toast-end"
-      toast.innerHTML = `
-        <div class="alert alert-success">
-          <div>
-            <span class="font-bold">Recommendation Complete!</span>
-            <div class="text-xs">Primary: ${payload.primary_activity}</div>
-            <div class="text-xs">Preferences: ${payload.preferences.join(", ")}</div>
-          </div>
-        </div>
-      `
-      document.body.appendChild(toast)
-      setTimeout(() => toast.remove(), 5000)
-    }, 2000)
-  }
-
-  return { startRecommendation, isPending }
-}
+// 1. IMPORT THE REAL HOOKS
+import { useRecommender } from "../../utils/hooks/useRecommender"; // Adjust path as needed
+import { useToast } from "../../context/ToastContext"; // To show toasts
 
 export default function LandingPage() {
+  // 2. USE THE REAL RECOMMENDER HOOK
   const { startRecommendation, isPending } = useRecommender()
+  const { showToast } = useToast()
 
-  const handleFormSubmit = (payload) => {
-    startRecommendation(payload)
+  // 3. ADAPT THE SUBMIT HANDLER TO MATCH THE BACKEND'S EXPECTED FORMAT
+  const handleFormSubmit = (formPayload) => {
+    // The DynamicForm gives us:
+    // formPayload = {
+    //   primary_activity: "High-Fidelity 3D Gaming",
+    //   preferences: ["Gaming", "Media Streaming", "Maximum Performance (Desktop)"],
+    //   raw_answers: { ... }
+    // }
+
+    // Your backend UserPreferenceSerializer expects:
+    // {
+    //   primary_activity: "High-Fidelity 3D Gaming",
+    //   secondary_activities: ["Gaming", "Media Streaming"],
+    //   considerations: "User prefers a desktop for maximum performance."
+    // }
+
+    const { primary_activity, preferences } = formPayload;
+    
+    // The `primary_activity` from the form is already perfect.
+    // The `preferences` array contains a mix of secondary activities and other notes.
+    // We can join them together to form the `considerations` string.
+    // The AI is smart enough to parse this.
+    
+    // We can also extract secondary activities if needed, but sending all preferences
+    // as a single "considerations" string is robust and effective.
+    const considerations_string = preferences.join(', ');
+
+    const finalApiPayload = {
+      primary_activity: primary_activity,
+      secondary_activities: [], // We are sending everything in considerations for simplicity and power.
+      considerations: considerations_string,
+    };
+    
+    console.log("SENDING FINAL PAYLOAD TO API:", finalApiPayload)
+    startRecommendation(finalApiPayload);
   }
 
   return (
@@ -53,7 +59,6 @@ export default function LandingPage() {
                 Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact
                 hardware you need. No jargon, just results.
               </p>
-
             </div>
           </div>
         </div>
