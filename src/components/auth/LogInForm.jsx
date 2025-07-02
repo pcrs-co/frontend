@@ -39,7 +39,8 @@ export default function LogInForm() {
         vendor: "/vendor/dashboard",
       };
 
-      navigate(routeMap[data.role] || "/");
+      routeMap[data.role] ? navigate(routeMap[data.role]) : window.location.reload();
+
     } catch (error) {
       const res = error.response;
       let toastMessage = "Unexpected error occurred";
