@@ -1,7 +1,6 @@
 // src/components/products/ProductCard.jsx
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // A small, reusable component for displaying specs with icons.
 const SpecIcon = ({ icon, text, title }) => {
@@ -11,34 +10,40 @@ const SpecIcon = ({ icon, text, title }) => {
       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         {icon}
       </svg>
-      {/* The 'truncate' class is essential for responsiveness */}
       <span className="truncate">{text}</span>
     </div>
   );
 };
 
 export default function ProductCard({ product, onViewDetails }) {
-  const navigate = useNavigate();
-
   const imageUrl = product.images?.[0]?.image || `https://dummyimage.com/400x300/f0f0f0/aaa.png&text=No+Image`;
 
   const formattedPrice = product.price > 0
     ? `TSh ${new Intl.NumberFormat('en-US').format(product.price)}`
     : 'Price on request';
 
-  const stockStatus = product.quantity > 0
-    ? { text: 'In Stock', className: 'badge-success' }
-    : { text: 'Out of Stock', className: 'badge-error' };
-
   const processorSpec = product.processor?.data_received.split(',')[0] || 'N/A';
   const graphicSpec = product.graphic?.data_received.split(',')[0] || 'N/A';
   const memorySpec = product.memory?.data_received || 'N/A';
 
-  return (
-    <div className="card bg-base-100 shadow-xl transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 relative group">
+  const getTagClass = (type) => {
+    switch (type) {
+      case 'success': return 'badge-success';
+      case 'info': return 'badge-info';
+      case 'warning': return 'badge-warning';
+      default: return 'badge-ghost';
+    }
+  };
 
-      <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-1">
-        <div className={`badge ${stockStatus.className} badge-sm text-white`}>{stockStatus.text}</div>
+  return (
+    <div className="card bg-base-100 shadow-xl transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1 group">
+      {/* --- TAGS SECTION --- */}
+      <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1">
+        {product.match_details?.tags?.map(tag => (
+          <div key={tag.text} className={`badge badge-sm text-white ${getTagClass(tag.type)}`}>
+            {tag.text}
+          </div>
+        ))}
       </div>
 
       <figure className="h-48 bg-base-200 overflow-hidden">
