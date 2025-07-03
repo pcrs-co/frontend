@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+
 import {
   AcademicCapIcon,
   BuildingStorefrontIcon,
@@ -86,7 +87,6 @@ const conversationFlow = [
       return "secondary_workflow"
     },
   },
-
   // Drill-Down: Gaming
   {
     id: "gaming_focus",
@@ -115,7 +115,6 @@ const conversationFlow = [
     ],
     next: "secondary_workflow",
   },
-
   // Drill-Down: Creative
   {
     id: "creative_focus",
@@ -150,7 +149,6 @@ const conversationFlow = [
     ],
     next: "secondary_workflow",
   },
-
   // Drill-Down: Development
   {
     id: "dev_focus",
@@ -179,7 +177,6 @@ const conversationFlow = [
     ],
     next: "secondary_workflow",
   },
-
   // Question 2: The Secondary Use Case
   {
     id: "secondary_workflow",
@@ -195,7 +192,6 @@ const conversationFlow = [
     ],
     next: "mobility_needs",
   },
-
   // Question 3: Mobility & Form Factor
   {
     id: "mobility_needs",
@@ -229,10 +225,14 @@ const conversationFlow = [
 export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
   const [stepIndex, setStepIndex] = useState(0)
   const [answers, setAnswers] = useState({})
+  // Track the actual path taken through the conversation flow
+  const [stepHistory, setStepHistory] = useState([])
 
   const currentStep = conversationFlow[stepIndex]
+
   const isLastStep =
     !currentStep.next || (typeof currentStep.next === "function" && !currentStep.next(answers[currentStep.id]))
+
   const canProceed =
     answers[currentStep.id] !== undefined &&
     answers[currentStep.id] !== null &&
@@ -247,6 +247,7 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
     }
 
     const currentAnswer = answers[currentStep.id] || (currentStep.type === "multi-select" ? [] : null)
+
     let updatedAnswer
 
     if (currentStep.type === "multi-select") {
@@ -294,6 +295,9 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
       return
     }
 
+    // Add current step to history before moving forward
+    setStepHistory([...stepHistory, stepIndex])
+
     const nextIndex = conversationFlow.findIndex((s) => s.id === nextStepId)
     if (nextIndex > -1) {
       setStepIndex(nextIndex)
@@ -301,8 +305,13 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
   }
 
   const handleBack = () => {
-    if (stepIndex > 0) {
-      setStepIndex(stepIndex - 1)
+    if (stepHistory.length > 0) {
+      // Get the actual previous step from history
+      const previousStepIndex = stepHistory[stepHistory.length - 1]
+      // Remove the last step from history
+      setStepHistory(stepHistory.slice(0, -1))
+      // Go to the previous step
+      setStepIndex(previousStepIndex)
     }
   }
 
@@ -320,9 +329,8 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
     return (
       <div
         key={option.value || "null"}
-        className={`card bg-base-100 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md border-2 ${
-          isSelected ? "border-primary bg-primary/5" : "border-base-300 hover:border-base-400"
-        }`}
+        className={`card bg-base-100 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md border-2 ${isSelected ? "border-primary bg-primary/5" : "border-base-300 hover:border-base-400"
+          }`}
         onClick={() => handleSelect(option.value)}
       >
         <div className="card-body p-4">
@@ -345,11 +353,8 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
         <div className="card-body">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            {/* <div className="badge badge-outline">
-              Step {stepIndex + 1} of {conversationFlow.length}
-            </div> */}
             <div className="flex gap-2">
-              {stepIndex > 0 && (
+              {stepHistory.length > 0 && (
                 <button className="btn btn-outline btn-sm" onClick={handleBack}>
                   <ChevronLeftIcon className="w-4 h-4 mr-1" />
                   Back
@@ -358,16 +363,9 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
             </div>
           </div>
 
-          {/* Progress bar */}
-          {/* <div className="w-full bg-base-300 rounded-full h-2 mb-6">
-            <div
-              className="bg-primary h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((stepIndex + 1) / conversationFlow.length) * 100}%` }}
-            ></div>
-          </div> */}
-
           {/* Question */}
           <h2 className="card-title text-xl mb-2">{currentStep.question}</h2>
+
           <p className="text-base-content/70 mb-6">{currentStep.helpText}</p>
 
           {/* Options */}
