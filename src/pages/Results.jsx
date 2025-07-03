@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchLatestRecommendation, fetchRecommendedProducts } from '../utils/api/recommender';
+import { fetchLatestRecommendation } from '../utils/api/recommender';
+import { getAllProducts } from '../utils/api/products'; // <-- Import the new function
 import { Link, useLocation } from 'react-router-dom';
 
 import ProductCard from '../components/products/ProductCard';
@@ -45,11 +46,11 @@ const ProductGrid = ({ specLevel, specData }) => {
     const [selectedProductId, setSelectedProductId] = useState(null);
 
     const { data: productData, isLoading, isError } = useQuery({
-        queryKey: ['recommendedProducts', specData.id, specLevel],
+        queryKey: ['allProducts', specData.id, specLevel],
         // --- CHANGE START ---
         // Request a large page size to fetch all products at once, assuming the
         // backend pagination is configured to allow this (e.g., max_page_size).
-        queryFn: () => fetchRecommendedProducts({ spec_level: specLevel, page_size: 999 }),
+        queryFn: () => getAllProducts({ spec_level: specLevel, page_size: 999 }),
         // --- CHANGE END ---
         enabled: !!specData,
     });

@@ -127,3 +127,14 @@ export const getPublicProductDetails = async (productId) => {
     const { data } = await api.get(`/products/${productId}/`);
     return data;
 };
+
+/**
+ * Fetches ALL products from the public endpoint for display.
+ * @param {object} params - Optional query params like page.
+ */
+export const getAllProducts = async (params = {}) => {
+    // This assumes you have a public endpoint at '/products/' that lists all products.
+    // We will create this endpoint in the backend.
+    const { data } = await api.get('/products/', { params });
+    return data;
+};
