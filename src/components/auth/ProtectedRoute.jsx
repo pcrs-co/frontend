@@ -54,7 +54,7 @@ function ProtectedRoute({ children, allowedRoles = [] }) {
 
   if (isAuthorized === null) return <div className="loading loading-spinner loading-xl right-50 bottom-50"></div>;
   if (isAuthorized === "forbidden") return <Navigate to="/403" />;
-  if (isAuthorized === false) return <Navigate to="/signin" />;
+  if (isAuthorized === false) return <Navigate to="/login" />;
 
   return children;
 }

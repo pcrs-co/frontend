@@ -7,8 +7,9 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../utils/constants";
 import { useToast } from "../../context/ToastContext";
 import { PersonIcon, KeyIcon, ArrowUpRightIcon } from "../common/MiscIcons";
 import PassToggle from "./PassToggle";
+import { LoadingIcon } from "../../components/common/AlertIcons";
 
-export default function SignInForm() {
+export default function LogInForm() {
   const {
     register,
     handleSubmit,
@@ -31,14 +32,15 @@ export default function SignInForm() {
       localStorage.setItem("userRole", data.role);
       localStorage.setItem("username", data.username);
 
-      showToast({ message: "Signed In successfully!", type: "success" });
+      showToast({ message: "Logged In successfully!", type: "success" });
 
       const routeMap = {
         admin: "/admin/dashboard",
         vendor: "/vendor/dashboard",
       };
 
-      navigate(routeMap[data.role] || "/");
+      routeMap[data.role] ? navigate(routeMap[data.role]) : window.location.reload();
+
     } catch (error) {
       const res = error.response;
       let toastMessage = "Unexpected error occurred";
@@ -172,10 +174,10 @@ export default function SignInForm() {
           >
             {loading ? (
               <>
-                <span className="loading loading-spinner" /> Loading
+                <LoadingIcon /> Loading
               </>
             ) : (
-              "Sign In"
+              "Log In"
             )}
           </button>
         </div>
