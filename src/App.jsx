@@ -84,7 +84,6 @@ function App() {
             </Route>
             <Route path="orders">
               <Route index element={<OrdersPage />} />
-              <Route path=":orderId" element={<OrderDetailPage />} />
             </Route>
             <Route path="users">
               <Route index element={<CustomersPage />} />

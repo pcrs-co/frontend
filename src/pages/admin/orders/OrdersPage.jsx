@@ -1,23 +1,32 @@
 // src/pages/admin/orders/OrdersPage.jsx
-import React from 'react';
-import { Link } from 'react-router-dom';
-// --- CHANGE START ---
-// FIX: Import the new, unified hooks.
+
+import React, { useState } from 'react';
+// import { Link } from 'react-router-dom'; // No longer need Link for details page
 import { useOrdersList, useOrderActions } from '../../../utils/hooks/useOrders';
-import { useToast } from '../../../context/ToastContext'; // Import useToast
-// --- CHANGE END ---
+import { useToast } from '../../../context/ToastContext';
+import OrderDetailsModal from '../../../components/admin/OrderDetailModal'; // <-- IMPORT THE NEW MODAL
 
 const OrdersPage = () => {
-    const { showToast } = useToast(); // Initialize the toast hook
+    const { showToast } = useToast();
 
-    // --- CHANGE START ---
-    // FIX: Use the single useOrdersList hook. The backend handles filtering by role.
     const { data: ordersResponse, isLoading } = useOrdersList();
     const orders = ordersResponse?.results || ordersResponse || [];
 
-    // FIX: Use the single useOrderActions hook.
     const { updateOrder, isUpdating, removeOrder, isDeleting } = useOrderActions();
-    // --- CHANGE END ---
+
+    // --- State to control the modal ---
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openOrderDetailsModal = (id) => {
+        setSelectedOrderId(id);
+        setIsModalOpen(true);
+    };
+
+    const closeOrderDetailsModal = () => {
+        setSelectedOrderId(null);
+        setIsModalOpen(false);
+    };
 
     const handleAction = (orderId, action) => {
         updateOrder({ orderId, action }, {
@@ -27,7 +36,7 @@ const OrdersPage = () => {
     };
 
     const handleDelete = (orderId) => {
-        if (window.confirm(`Are you sure you want to permanently delete order #${orderId}?`)) {
+        if (window.confirm(`Are you sure you want to permanently delete order #${orderId}? This action cannot be undone.`)) {
             removeOrder(orderId, {
                 onSuccess: () => showToast({ message: `Order #${orderId} deleted.`, type: 'success' }),
                 onError: (err) => showToast({ message: err.response?.data?.detail || err.message, type: 'error' }),
@@ -59,11 +68,9 @@ const OrdersPage = () => {
                                 <td className="font-mono">#{order.id}</td>
                                 <td>{order.user?.email || 'N/A'}</td>
                                 <td>{order.product?.name || 'N/A'}</td>
-                                <td><span className="badge badge-ghost">{order.status}</span></td>
+                                <td><span className={`badge ${order.status === 'pending' ? 'badge-warning' : order.status === 'confirmed' ? 'badge-success' : 'badge-error'} badge-ghost`}>{order.status}</span></td>
                                 <td className="text-right">
                                     <div className="flex justify-end gap-2">
-                                        {/* --- CHANGE START --- */}
-                                        {/* FIX: Show action buttons only for pending orders */}
                                         {order.status === 'pending' && (
                                             <>
                                                 <button
@@ -82,8 +89,13 @@ const OrdersPage = () => {
                                                 </button>
                                             </>
                                         )}
-                                        {/* FIX: Link to a detail page */}
-                                        <Link to={`/admin/orders/${order.id}`} className="btn btn-sm btn-ghost">View</Link>
+                                        {/* --- CHANGE: Call modal open function --- */}
+                                        <button
+                                            onClick={() => openOrderDetailsModal(order.id)}
+                                            className="btn btn-sm btn-ghost"
+                                        >
+                                            View
+                                        </button>
                                         <button
                                             onClick={() => handleDelete(order.id)}
                                             className="btn btn-sm btn-error"
@@ -91,7 +103,6 @@ const OrdersPage = () => {
                                         >
                                             Delete
                                         </button>
-                                        {/* --- CHANGE END --- */}
                                     </div>
                                 </td>
                             </tr>
@@ -101,6 +112,12 @@ const OrdersPage = () => {
                     </tbody>
                 </table>
             </div>
+            {/* --- Render the modal --- */}
+            <OrderDetailsModal
+                orderId={selectedOrderId}
+                isOpen={isModalOpen}
+                onClose={closeOrderDetailsModal}
+            />
         </div>
     );
 };

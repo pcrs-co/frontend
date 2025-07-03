@@ -24,3 +24,13 @@ export const deleteOrder = async (orderId) => {
     await api.delete(`/orders/${orderId}/`);
     return orderId;
 };
+
+
+/**
+ * Fetches details for a single order.
+ * @param {string|number} orderId - The ID of the order.
+ */
+export const getOrderDetail = async (orderId) => {
+    const { data } = await api.get(`/admin/orders/${orderId}/`);
+    return data;
+};
