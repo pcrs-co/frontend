@@ -62,10 +62,33 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        {/* Responsive Wrapper */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:min-h-[600px]">
 
-        {/* Form */}
-        <DynamicForm onFormSubmit={handleFormSubmit} isSubmitting={isPending} />
+          {/* Hero Section */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="hero w-full">
+              <div className="hero-content text-center lg:text-left w-full">
+                <div className="max-w-4xl">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6">Your Perfect PC Awaits.</h1>
+                  <p className="text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto lg:mx-0">
+                    Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact
+                    hardware you need. No jargon, just results.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Section */}
+          <div className="flex-1 w-full flex items-center justify-center">
+            <DynamicForm onFormSubmit={handleFormSubmit} isSubmitting={isPending} />
+          </div>
+
+        </div>
       </div>
+
+
     </div>
   )
 }
