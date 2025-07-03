@@ -27,12 +27,12 @@ export default function LandingPage() {
     // }
 
     const { primary_activity, preferences } = formPayload;
-    
+
     // The `primary_activity` from the form is already perfect.
     // The `preferences` array contains a mix of secondary activities and other notes.
     // We can join them together to form the `considerations` string.
     // The AI is smart enough to parse this.
-    
+
     // We can also extract secondary activities if needed, but sending all preferences
     // as a single "considerations" string is robust and effective.
     const considerations_string = preferences.join(', ');
@@ -42,7 +42,7 @@ export default function LandingPage() {
       secondary_activities: [], // We are sending everything in considerations for simplicity and power.
       considerations: considerations_string,
     };
-    
+
     console.log("SENDING FINAL PAYLOAD TO API:", finalApiPayload)
     startRecommendation(finalApiPayload);
   }
