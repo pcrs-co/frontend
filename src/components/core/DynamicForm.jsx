@@ -20,6 +20,12 @@ import {
   SunIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  CurrencyDollarIcon,
+  ClockIcon,
+  FireIcon,
+  SparklesIcon,
+  CpuChipIcon,
+  TvIcon,
 } from "@heroicons/react/24/outline"
 
 // Icon mapping for cleaner code
@@ -39,44 +45,50 @@ const iconMap = {
   FilmIcon,
   CheckIcon,
   SunIcon,
+  CurrencyDollarIcon,
+  ClockIcon,
+  FireIcon,
+  SparklesIcon,
+  CpuChipIcon,
+  TvIcon,
 }
 
 const conversationFlow = [
   // Question 1: The High-Level Use Case
   {
     id: "workflow_type",
-    question: "Let's start with your primary goal. What will be the main purpose of your new PC?",
-    helpText: "Select the one that best describes your daily activities.",
+    question: "What's your main mission with this new PC?",
+    helpText: "Think about what you'll spend most of your time doing - this drives everything else.",
     type: "single-select",
     options: [
       {
-        text: "Education & Everyday Use",
+        text: "Learning & Everyday Computing",
         value: "Academic & General Use",
-        description: "For research, essays, streaming, and browsing.",
+        description: "Research, assignments, streaming shows, and web browsing.",
         icon: "AcademicCapIcon",
       },
       {
-        text: "Professional & Business",
+        text: "Work & Professional Tasks",
         value: "Office Productivity",
-        description: "For documents, spreadsheets, video calls, and management.",
+        description: "Spreadsheets, presentations, video meetings, and business apps.",
         icon: "BuildingStorefrontIcon",
       },
       {
-        text: "Gaming & Entertainment",
+        text: "Gaming & Interactive Entertainment",
         value: "Gaming",
-        description: "For playing the latest titles and enjoying media.",
+        description: "Playing modern games, from indie titles to AAA blockbusters.",
         icon: "PuzzlePieceIcon",
       },
       {
-        text: "Creative & Content Creation",
+        text: "Creative Projects & Content",
         value: "Creative Work",
-        description: "For photo/video editing, design, music, or streaming.",
+        description: "Photo editing, video production, graphic design, or music creation.",
         icon: "PencilSquareIcon",
       },
       {
-        text: "Software & Engineering",
+        text: "Programming & Technical Work",
         value: "Programming & Development",
-        description: "For coding, compiling, and running specialized software.",
+        description: "Software development, data analysis, or running specialized tools.",
         icon: "CodeBracketIcon",
       },
     ],
@@ -84,139 +96,191 @@ const conversationFlow = [
       if (value === "Gaming") return "gaming_focus"
       if (value === "Creative Work") return "creative_focus"
       if (value === "Programming & Development") return "dev_focus"
-      return "secondary_workflow"
+      return "performance_priority"
     },
   },
+
   // Drill-Down: Gaming
   {
     id: "gaming_focus",
-    question: "For your gaming experience, what is the highest priority?",
-    helpText: "This helps determine the balance between graphics and speed.",
+    question: "What kind of gaming experience gets you most excited?",
+    helpText: "This helps us balance between stunning visuals and lightning-fast performance.",
     type: "single-select",
     options: [
       {
-        text: "Peak Visual Fidelity",
+        text: "Cinematic Single-Player Adventures",
         value: "High-Fidelity 3D Gaming",
-        description: "Stunning graphics in single-player epics (e.g., Cyberpunk, Starfield).",
-        icon: "RocketLaunchIcon",
+        description: "Immersive worlds with ray tracing (Cyberpunk 2077, Red Dead Redemption).",
+        icon: "SparklesIcon",
       },
       {
-        text: "Maximum Framerate",
+        text: "Competitive Multiplayer Dominance",
         value: "Competitive eSports Gaming",
-        description: "Highest FPS for competitive games (e.g., Valorant, CS:GO).",
-        icon: "BoltIcon",
+        description: "High refresh rates for the edge (Valorant, Apex Legends, CS2).",
+        icon: "FireIcon",
       },
       {
-        text: "A Balanced Experience",
+        text: "Variety Gaming Sessions",
         value: "General Gaming",
-        description: "A solid, all-around performer for a mix of everything.",
+        description: "Great performance across indie games, strategy, and action titles.",
         icon: "UserGroupIcon",
       },
+      {
+        text: "VR & Next-Gen Experiences",
+        value: "VR Gaming",
+        description: "Virtual reality and cutting-edge gaming technologies.",
+        icon: "RocketLaunchIcon",
+      },
     ],
-    next: "secondary_workflow",
+    next: "performance_priority",
   },
+
   // Drill-Down: Creative
   {
     id: "creative_focus",
-    question: "In your creative suite, which task is the most demanding?",
-    helpText: "This pinpoints the most critical hardware component.",
+    question: "Which creative workflow pushes your current setup to its limits?",
+    helpText: "We'll prioritize the hardware that matters most for your heaviest workload.",
     type: "single-select",
     options: [
       {
-        text: "Editing High-Resolution Video (4K+)",
+        text: "4K+ Video Production",
         value: "4K Video Editing",
-        description: "Using Premiere Pro, DaVinci Resolve.",
+        description: "Timeline scrubbing, color grading, and rendering in Premiere/DaVinci.",
         icon: "VideoCameraIcon",
       },
       {
-        text: "Complex 3D Modeling & Rendering",
+        text: "3D Modeling & Animation",
         value: "3D Rendering & Animation",
-        description: "Using Blender, Cinema 4D, V-Ray.",
+        description: "Complex scenes in Blender, Maya, or Cinema 4D with GPU rendering.",
         icon: "BeakerIcon",
       },
       {
-        text: "Professional Photo & Raster Editing",
+        text: "High-Resolution Photography",
         value: "Professional Photo Editing",
-        description: "Large files in Photoshop, Lightroom.",
+        description: "RAW processing, compositing, and retouching in Photoshop/Lightroom.",
         icon: "CameraIcon",
       },
       {
-        text: "Live Streaming Content",
+        text: "Live Content Creation",
         value: "Live Streaming",
-        description: "Broadcasting on Twitch, YouTube.",
-        icon: "VideoCameraIcon",
+        description: "Multi-camera streaming, real-time effects, and audience interaction.",
+        icon: "TvIcon",
+      },
+      {
+        text: "Motion Graphics & VFX",
+        value: "Motion Graphics",
+        description: "After Effects compositions, particle systems, and visual effects.",
+        icon: "FilmIcon",
       },
     ],
-    next: "secondary_workflow",
+    next: "performance_priority",
   },
+
   // Drill-Down: Development
   {
     id: "dev_focus",
-    question: "For your development workflow, what's a key requirement?",
-    helpText: "This tells us about your memory and processing needs.",
+    question: "What development task currently makes you grab coffee while waiting?",
+    helpText: "We'll focus on the specs that eliminate those productivity bottlenecks.",
     type: "single-select",
     options: [
       {
-        text: "Running Heavy IDEs & Compilers",
+        text: "Large-Scale Compilation",
         value: "Heavy Compilation",
-        description: "Large C++, Java, or Rust projects.",
-        icon: "CodeBracketIcon",
+        description: "Building massive C++, Rust, or enterprise Java projects.",
+        icon: "CpuChipIcon",
       },
       {
-        text: "Virtualization (Docker, VMs)",
+        text: "Container & VM Orchestration",
         value: "Virtualization & Containers",
-        description: "Running multiple operating systems or containers.",
+        description: "Docker swarms, Kubernetes clusters, or multiple OS environments.",
         icon: "ComputerDesktopIcon",
       },
       {
-        text: "AI / Machine Learning Models",
+        text: "AI Model Training & Inference",
         value: "AI & Machine Learning",
-        description: "Training or running models with large datasets.",
+        description: "Training neural networks, processing datasets, or running LLMs locally.",
         icon: "BeakerIcon",
       },
+      {
+        text: "Database & Analytics Workloads",
+        value: "Data Processing",
+        description: "Large dataset processing, ETL pipelines, or real-time analytics.",
+        icon: "ClockIcon",
+      },
     ],
-    next: "secondary_workflow",
+    next: "performance_priority",
   },
-  // Question 2: The Secondary Use Case
+
+  // Question 2: Performance Priority (replaces secondary workflow)
   {
-    id: "secondary_workflow",
-    question: "Besides your primary goal, what else will you do frequently?",
-    helpText: "Select up to two other common activities.",
-    type: "multi-select",
-    max_selections: 2,
-    options: [
-      { text: "Gaming", value: "Gaming", icon: "PuzzlePieceIcon" },
-      { text: "Streaming Media (Netflix, etc)", value: "Media Streaming", icon: "FilmIcon" },
-      { text: "Office & Productivity tasks", value: "Office Productivity", icon: "BuildingStorefrontIcon" },
-      { text: "Nothing else significant", value: null, icon: "CheckIcon" },
-    ],
-    next: "mobility_needs",
-  },
-  // Question 3: Mobility & Form Factor
-  {
-    id: "mobility_needs",
-    question: "How important is portability?",
-    helpText: "This will help us decide between a laptop and a desktop.",
+    id: "performance_priority",
+    question: "When your PC is working hard, what matters most to you?",
+    helpText: "This helps us balance the build between different performance aspects.",
     type: "single-select",
     options: [
       {
-        text: "Essential (Daily Carry)",
-        value: "High Portability (Laptop)",
-        description: "I need a lightweight device for class or travel.",
-        icon: "AcademicCapIcon",
+        text: "Lightning-Fast Responsiveness",
+        value: "Speed Priority",
+        description: "Instant app launches, quick file transfers, snappy multitasking.",
+        icon: "BoltIcon",
       },
       {
-        text: "Somewhat Important",
-        value: "Balanced (Performance Laptop)",
-        description: "I move it occasionally but value power.",
+        text: "Whisper-Quiet Operation",
+        value: "Quiet Priority",
+        description: "Minimal fan noise during intensive tasks, peaceful workspace.",
         icon: "SunIcon",
       },
       {
-        text: "Not Important (Stationary)",
-        value: "Maximum Performance (Desktop)",
-        description: "It will stay at my desk.",
-        icon: "ComputerDesktopIcon",
+        text: "Maximum Raw Power",
+        value: "Performance Priority",
+        description: "Highest possible performance, even if it means more heat/noise.",
+        icon: "FireIcon",
       },
+      {
+        text: "Balanced & Reliable",
+        value: "Balanced Priority",
+        description: "Good performance with reasonable temperatures and noise levels.",
+        icon: "CheckIcon",
+      },
+    ],
+    next: "budget_range",
+  },
+
+  // Question 3: Budget Range (replaces mobility)
+  {
+    id: "budget_range",
+    question: "What's your budget for this PC build?",
+    helpText: "Move the slider to set your comfortable spending range in Tanzanian Shillings.",
+    type: "slider",
+    min: 1000000, // 1M TZS
+    max: 10000000, // 10M TZS
+    step: 250000, // 250K TZS steps
+    defaultValue: 2500000, // 2.5M TZS default
+    formatValue: (value) => `${(value / 1000000).toFixed(1)}M TZS`,
+    getBudgetCategory: (value) => {
+      if (value < 2000000) return "Budget Build"
+      if (value < 3750000) return "Mid-Range Build"
+      if (value < 6250000) return "High-End Build"
+      return "Enthusiast Build"
+    },
+    next: "additional_needs",
+  },
+
+  // Question 4: Additional Considerations
+  {
+    id: "additional_needs",
+    question: "Any special requirements or nice-to-haves?",
+    helpText: "Select any that apply to your situation - or skip if none matter.",
+    type: "multi-select",
+    max_selections: 3,
+    options: [
+      { text: "Multiple Monitor Support", value: "Multi-Monitor", icon: "ComputerDesktopIcon" },
+      { text: "WiFi 6E/7 Connectivity", value: "Advanced WiFi", icon: "BoltIcon" },
+      { text: "Extensive Storage (2TB+)", value: "Large Storage", icon: "FilmIcon" },
+      { text: "RGB Lighting & Aesthetics", value: "RGB Lighting", icon: "SparklesIcon" },
+      { text: "Compact Form Factor", value: "Small Form Factor", icon: "CpuChipIcon" },
+      { text: "Future Upgrade Flexibility", value: "Upgradeable", icon: "RocketLaunchIcon" },
+      { text: "None of these matter", value: null, icon: "CheckIcon" },
     ],
     next: null,
   },
@@ -229,7 +293,6 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
   const [stepHistory, setStepHistory] = useState([])
 
   const currentStep = conversationFlow[stepIndex]
-
   const isLastStep =
     !currentStep.next || (typeof currentStep.next === "function" && !currentStep.next(answers[currentStep.id]))
 
@@ -237,17 +300,19 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
     answers[currentStep.id] !== undefined &&
     answers[currentStep.id] !== null &&
     (currentStep.type !== "multi-select" ||
-      (Array.isArray(answers[currentStep.id]) && answers[currentStep.id].length > 0))
+      (Array.isArray(answers[currentStep.id]) && answers[currentStep.id].length > 0)) &&
+    (currentStep.type !== "slider" || answers[currentStep.id] >= currentStep.min)
 
   const handleSelect = (value) => {
     if (value === null && currentStep.type === "multi-select") {
-      // "Nothing else significant" option - proceed without selecting anything
+      // "None of these matter" option - proceed without selecting anything
       handleNext()
       return
     }
 
-    const currentAnswer = answers[currentStep.id] || (currentStep.type === "multi-select" ? [] : null)
-
+    const currentAnswer =
+      answers[currentStep.id] ||
+      (currentStep.type === "multi-select" ? [] : currentStep.type === "slider" ? currentStep.defaultValue : null)
     let updatedAnswer
 
     if (currentStep.type === "multi-select") {
@@ -274,18 +339,26 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
       const primary_activity =
         answers.gaming_focus || answers.creative_focus || answers.dev_focus || answers.workflow_type || "General Use"
 
+      // Get budget category from slider value
+      const budgetStep = conversationFlow.find((step) => step.id === "budget_range")
+      const budgetCategory = budgetStep?.getBudgetCategory(answers.budget_range) || "Mid-Range Build"
+
       const preferences = [
         // Include the original workflow type if it's different from the specialized focus
         answers.workflow_type !== primary_activity ? answers.workflow_type : null,
-        // Include secondary workflows
-        ...(Array.isArray(answers.secondary_workflow) ? answers.secondary_workflow : []),
-        // Include mobility preference
-        answers.mobility_needs,
+        // Include performance priority
+        answers.performance_priority,
+        // Include budget category
+        budgetCategory,
+        // Include additional needs
+        ...(Array.isArray(answers.additional_needs) ? answers.additional_needs : []),
       ].filter(Boolean)
 
       const payload = {
         primary_activity,
         preferences,
+        budget_amount: answers.budget_range,
+        budget_category: budgetCategory,
         // Include raw answers for debugging/additional processing
         raw_answers: answers,
       }
@@ -297,7 +370,6 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
 
     // Add current step to history before moving forward
     setStepHistory([...stepHistory, stepIndex])
-
     const nextIndex = conversationFlow.findIndex((s) => s.id === nextStepId)
     if (nextIndex > -1) {
       setStepIndex(nextIndex)
@@ -321,6 +393,45 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
   }
 
   const renderOption = (option) => {
+    // Handle slider type
+    if (currentStep.type === "slider") {
+      const currentValue = answers[currentStep.id] || currentStep.defaultValue
+      const budgetCategory = currentStep.getBudgetCategory(currentValue)
+
+      return (
+        <div key="slider" className="card bg-base-100 shadow-sm border-2 border-base-300 p-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-base-content/70">{currentStep.formatValue(currentStep.min)}</span>
+              <span className="text-lg font-bold text-primary">{currentStep.formatValue(currentValue)}</span>
+              <span className="text-sm text-base-content/70">{currentStep.formatValue(currentStep.max)}</span>
+            </div>
+
+            <input
+              type="range"
+              min={currentStep.min}
+              max={currentStep.max}
+              step={currentStep.step}
+              value={currentValue}
+              onChange={(e) => handleSelect(Number.parseInt(e.target.value))}
+              className="range range-primary w-full"
+            />
+
+            <div className="text-center">
+              <div className="badge badge-primary badge-lg">{budgetCategory}</div>
+              <p className="text-xs text-base-content/70 mt-2">
+                {budgetCategory === "Budget Build" && "Smart choices for essential performance"}
+                {budgetCategory === "Mid-Range Build" && "Excellent performance-per-dollar with upgrade potential"}
+                {budgetCategory === "High-End Build" && "Premium components for demanding workloads"}
+                {budgetCategory === "Enthusiast Build" && "The best available hardware for ultimate performance"}
+              </p>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // Handle regular options
     const isSelected =
       currentStep.type === "multi-select"
         ? (answers[currentStep.id] || []).includes(option.value)
@@ -362,15 +473,19 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
                 </button>
               )}
             </div>
+            {/* <div className="text-sm text-base-content/50">
+              Step {stepIndex + 1} of {conversationFlow.length}
+            </div> */}
           </div>
 
           {/* Question */}
           <h2 className="card-title text-xl mb-2">{currentStep.question}</h2>
-
           <p className="text-base-content/70 mb-6">{currentStep.helpText}</p>
 
           {/* Options */}
-          <div className="space-y-3 mb-6">{currentStep.options.map(renderOption)}</div>
+          <div className="space-y-3 mb-6">
+            {currentStep.type === "slider" ? renderOption() : currentStep.options.map(renderOption)}
+          </div>
 
           {/* Multi-select info */}
           {currentStep.type === "multi-select" && (
@@ -393,7 +508,7 @@ export default function DynamicForm({ onFormSubmit, isSubmitting = false }) {
               {isSubmitting ? (
                 "Analyzing..."
               ) : isLastStep ? (
-                "Get My Specs"
+                "Get My Perfect Build"
               ) : (
                 <>
                   Next
