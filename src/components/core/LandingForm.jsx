@@ -56,7 +56,7 @@ export default function LandingPage() {
             <div className="max-w-4xl">
               <h1 className="text-4xl md:text-6xl font-bold mb-6">Your Perfect PC Awaits.</h1>
               <p className="text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto">
-                Stop guessing. Start building. Tell us what you do, and our AI will instantly calculate the exact
+                Tell us what you do, and our AI will instantly calculate the
                 hardware you need. No jargon, just results.
               </p>
             </div>
